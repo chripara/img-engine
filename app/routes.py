@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify
-from app.services.img_service import generate
+from flask import Blueprint, jsonify, Response, request
+from app.services.img_service import generate_image
 
 bp = Blueprint('routes', __name__)
 
@@ -9,4 +9,9 @@ def health():
 
 @bp.route('/generate', methods=["GET"])
 def generate():
-    return jsonify({"image": generate()})
+    prompt = request.args.get("prompt");
+    if(prompt == None):
+        return Response(status=400)
+
+    result = generate_image(str(prompt))
+    return  Response(result, mimetype="image/png")

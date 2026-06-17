@@ -1,6 +1,5 @@
 import os
 from utils.enums import ImgBackend
-from 
 
 class Config:
     DEBUG = False
