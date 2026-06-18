@@ -1,9 +1,9 @@
 import os
-from utils.enums import ImgBackend
+from utils.enums import Checkpoint
 
 class Config:
     DEBUG = False
-    IMG_BACKEND = ImgBackend.SDXL  # Backend Selector
+    CHECKPOINT = Checkpoint.SDXL_BASE  # Checkpoint Selector
 
 class DevelopmentConfig(Config):
     DEBUG = True
