@@ -1,19 +1,18 @@
-from email.mime import image
-from click import prompt
 from app.services.backends.base_backend import BaseBackend
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
-from utils.enums import Checkpoint
-from app.services.backends.checkpoint_registry import _CHECKPOINT
+
+from utils.enums import ImgBackend
+from app.services.backends.backend_registry import _CHECKPOINT
 from PIL import Image
 import io, torch, hashlib, time, os
 
-class SDXLBackend(BaseBackend):
+class AlbedoBackend(BaseBackend):
     pipe: DiffusionPipeline
 
-    def __init__ (self, checkpoint: Checkpoint):
+    def __init__ (self):
         super().__init__()
         self.pipe = DiffusionPipeline.from_pretrained(
-            _CHECKPOINT[checkpoint],
+            _CHECKPOINT[ImgBackend.Albedo],
             torch_dtype=torch.float16,
             use_safetensors=True,
         )
