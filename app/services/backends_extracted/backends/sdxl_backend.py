@@ -3,8 +3,7 @@ from click import prompt
 from app.services.backends.base_backend import BaseBackend
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers.pipelines.stable_diffusion_xl.pipeline_stable_diffusion_xl import StableDiffusionXLPipeline
-from app.services.backends.profile_registry import _PROFILES
-from utils.enums import Checkpoint, ModelSource, Profile
+from utils.enums import Checkpoint, ModelSource
 from app.services.backends.checkpoint_registry import _CHECKPOINT
 from PIL import Image
 import io, torch, hashlib, time, os
@@ -12,17 +11,13 @@ import io, torch, hashlib, time, os
 class SDXLBackend(BaseBackend):
     pipe: DiffusionPipeline
 
-    def __init__ (self, profile: Profile):
+    def __init__ (self, checkpoint: Checkpoint):
         super().__init__()      
         self.pipe = DiffusionPipeline.from_pretrained(
-            #pretrained_model_name_or_path =
-            _CHECKPOINT[_PROFILES[profile].model],
+            _CHECKPOINT[checkpoint],
             torch_dtype=torch.float16,
-            variant=_PROFILES[profile].variant,
-            use_safetensors=True,     # χρήση safetensors
-            vae=_PROFILES[profile].vae_id,         # AutoencoderKL instance
-            scheduler=_PROFILES[profile].scheduler,      # scheduler instance (σπάνια εδώ)
-            device_map="auto",        # auto device placement,
+            variant="fp16",
+            use_safetensors=True,
         )
         #self.pipe.enable_attention_slicing() #For large models, this can help reduce memory usage
         self.pipe.to("cuda")
