@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, Response, request
-from utils.enums import Checkpoint
+from utils.enums import Checkpoint, Profile
 from app.services.img_service import generate_image
 
 bp = Blueprint('routes', __name__)
@@ -12,9 +12,9 @@ def health():
 def generate():
     data = request.json
     prompt = data.get("prompt")
-    checkpoint = data.get("checkpoint")
-    if not prompt or not checkpoint:
+    profile = data.get("profile")
+    if not prompt or not profile:
         return Response(status=400)
 
-    result = generate_image(str(prompt), Checkpoint(checkpoint))
+    result = generate_image(str(prompt), Profile(profile))
     return  Response(result, mimetype="image/png")
