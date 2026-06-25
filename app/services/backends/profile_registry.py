@@ -2,9 +2,7 @@ from typing import Type
 from dataclasses import dataclass
 from utils.enums import Checkpoint, Profile
 from diffusers.schedulers.scheduling_euler_discrete import EulerDiscreteScheduler
-from diffusers.schedulers.scheduling_euler_ancestral_discrete import EulerAncestralDiscreteScheduler
 from diffusers.schedulers.scheduling_dpmsolver_multistep import DPMSolverMultistepScheduler
-from diffusers.schedulers.scheduling_dpmsolver_singlestep import DPMSolverSinglestepScheduler
 
 @dataclass
 class ProfileSpec:
@@ -44,7 +42,7 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         name = Profile.PRODUCT.value,
         description = "Equipment, weapons, relics, icons — isolated objects",
         model = Checkpoint.DREAMSHAPER_XL,
-        scheduler = DPMSolverSinglestepScheduler,
+        scheduler = EulerDiscreteScheduler,
         steps = 30,
         cfg = 7.0,
         native_size = (1024, 1024),
