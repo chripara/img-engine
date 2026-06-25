@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, Response, request
 from utils.enums import Checkpoint, Profile
-from app.services.img_service import generate_image
+from app.services.Image.img_service import generate_image
+from app.schemas.generate import GenerateRequest
 
 bp = Blueprint('routes', __name__)
 
@@ -11,10 +12,15 @@ def health():
 @bp.route('/generate', methods=["POST"])
 def generate():
     data = request.json
-    prompt = data.get("prompt")
-    profile = data.get("profile")
-    if not prompt or not profile:
+    req = GenerateRequest(**data)
+    
+    if not req.prompt or not req.profile:
         return Response(status=400)
 
-    result = generate_image(str(prompt), Profile(profile))
+    if req.refine:
+        from app.services.prompts.prompt_service import refine as refine_prompt
+        generate_request = req
+        req.prompt = refine_prompt(generate_request)
+
+    result = generate_image(req)
     return  Response(result, mimetype="image/png")
