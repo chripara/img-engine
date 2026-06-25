@@ -1,15 +1,15 @@
+import io, torch, hashlib, time, os, profile, gc
 from email.mime import image
-import profile
 from click import prompt
-from app.services.backends.base_backend import BaseBackend
+from app.services.Image.backends.base_backend import BaseBackend
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers.pipelines.stable_diffusion_xl.pipeline_stable_diffusion_xl import StableDiffusionXLPipeline
-from app.services.backends.profile_registry import _PROFILES
+from app.services.Image.backends.profile_registry import _PROFILES
 from utils.enums import Checkpoint, ModelSource, Profile
-from app.services.backends.checkpoint_registry import _CHECKPOINT
+from app.services.Image.backends.checkpoint_registry import _CHECKPOINT
 from PIL import Image
-import io, torch, hashlib, time, os
 from diffusers.models.autoencoders.autoencoder_kl import AutoencoderKL
+from compel import Compel, ReturnedEmbeddingsType
 
 class SDXLBackend(BaseBackend):
     pipe: DiffusionPipeline
@@ -23,27 +23,35 @@ class SDXLBackend(BaseBackend):
         ) if _PROFILES[profile].vae_id else None
 
         self.pipe = DiffusionPipeline.from_pretrained(
-            #pretrained_model_name_or_path =
             _CHECKPOINT[_PROFILES[profile].model],
-            torch_dtype = torch.float16,
-            #**({"variant": _PROFILES[profile].variant} if _PROFILES[profile].variant else {}),
+            torch_dtype = torch.float16,            
             use_safetensors = True,     # χρήση safetensors            
             **({"vae": vae} if vae else {}),
-            # device_map="balanced",        # auto device placement,
         )
-        #self.pipe.enable_attention_slicing() #For large models, this can help reduce memory usage
         self.steps = _PROFILES[profile].steps
         self.cfg = _PROFILES[profile].cfg
         self.pipe.scheduler = _PROFILES[profile].scheduler.from_config(self.pipe.scheduler.config) 
         self.pipe.to("cuda")
+        self.compel = Compel(
+            tokenizer=[self.pipe.tokenizer, self.pipe.tokenizer_2],
+            text_encoder=[self.pipe.text_encoder, self.pipe.text_encoder_2],
+            returned_embeddings_type=ReturnedEmbeddingsType.PENULTIMATE_HIDDEN_STATES_NON_NORMALIZED,
+            requires_pooled=[False, True]
+        )
 
     def generate(self, prompt: str) -> bytes:
 
-        # Generate a dump image 
-        # img = Image.new("RGBA", (200, 200), (0, 128, 255, 255))  # μπλε τετράγωνο
-        
         # Generate an image using the SDXL model
-        result = self.pipe(prompt=prompt, num_inference_steps=self.steps, guidance_scale=self.cfg)
+        conditioning, pooled = self.compel(prompt)
+        print(type(self.pipe))
+        print(hasattr(self.pipe, 'tokenizer_2'))
+        result = self.pipe(
+            prompt_embeds=conditioning,
+            pooled_prompt_embeds=pooled, num_inference_steps=self.steps, guidance_scale=self.cfg)
+
+        gc.collect()
+        torch.cuda.empty_cache()
+        
         image = result.images[0]
         
         buffer = io.BytesIO()

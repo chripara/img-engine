@@ -1,8 +1,8 @@
 from typing import Callable, TypedDict, Type
 
-from utils.enums import ImgBackend, Checkpoint, ModelSource
-from app.services.backends.base_backend import BaseBackend
-from app.services.backends.sdxl_backend import SDXLBackend
+from utils.enums import ImgBackend, Checkpoint
+from app.services.Image.backends.base_backend import BaseBackend
+from app.services.Image.backends.sdxl_backend import SDXLBackend
 from utils.image_converter import ImageConverter
 
 
