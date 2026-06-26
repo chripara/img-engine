@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, Response, request
+from pydantic import ValidationError
 from utils.enums import Checkpoint, Profile
 from app.services.Image.img_service import generate_image
 from app.schemas.generate import GenerateRequest
@@ -11,8 +12,10 @@ def health():
 
 @bp.route('/generate', methods=["POST"])
 def generate():
-    data = request.json
-    req = GenerateRequest(**data)
+    try:
+        req = GenerateRequest(**request.json)
+    except ValidationError as e:
+        return jsonify({"error": e.errors()}), 422
     
     if not req.prompt or not req.profile:
         return Response(status=400)
