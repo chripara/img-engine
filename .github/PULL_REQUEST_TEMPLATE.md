@@ -2,13 +2,10 @@
 <!-- What changed -->
 
 ## Story
-<!-- US-IMG-EXX-SXX / IMG-XXX -->
+<!-- IMG-XXX / US-IMG-EXX-SXX -->
 
 ## Changes
 - 
-
-## Acceptance Criteria
-- [ ] 
 
 ## Test
 <!-- How it was tested -->
