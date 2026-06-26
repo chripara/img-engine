@@ -6,7 +6,7 @@ from utils.enums import ImgBackend, Checkpoint, Profile
 from app.services.image.backends.backend_registry import _BACKENDS, BackendEntry
 from app.services.image.backends.profile_registry import _PROFILES, ProfileSpec
 from app.services.image.backends.base_backend import BaseBackend
-import gc, torch
+import gc, torch, random
 
 _instances: dict[Checkpoint, BaseBackend] = {}
 
@@ -38,7 +38,8 @@ class ImageEngine:
             raise ValueError("profile is required")
 
         print("Prompt:", req.prompt)
-        result = self.backend.generate(req.prompt, req.seed)
+        seed = random.randint(req.seed - req.spread, req.seed + req.spread) if req.seed is not None and req.spread is not None else req.seed
+        result = self.backend.generate(req.prompt, seed)
         image_bytes = self._get_converter(req.profile)(result) if isinstance(result, Image.Image) else result
         return  image_bytes
 

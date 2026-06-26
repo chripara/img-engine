@@ -9,4 +9,5 @@ class GenerateRequest(BaseModel):
     environment: str | None
     feeling: str | None
     seed: int | None = Field(default=None, ge=0, le=2**32 - 1)
+    spread: int | None = Field(default=None, ge=0)
     refine: bool = False

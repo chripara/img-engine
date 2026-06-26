@@ -91,26 +91,28 @@ def launch_ui():
                 with gr.Row(equal_height=True):
                         use_seed = gr.Checkbox(label="Use Seed", value=False)
                         seed = gr.Number(label="Seed", value=42, precision=0)
+                        spread = gr.Number(label="Spread", value=0, precision=0)
                 generate_button = gr.Button("Generate")
             with gr.Column():
                 gallery = gr.Gallery(label="Output Images")
                 #output_image = gr.Image(label="Output Image")
 
 
-        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int, seed: int, use_seed: bool) -> list[Image.Image]:
+        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int, seed: int, use_seed: bool, spread: int) -> list[Image.Image]:
             request = GenerateRequest(
-                    profile=profile,    
-                    prompt=prompt,
-                    subject=subject,
-                    environment=environment,
-                    feeling=feeling,
-                    refine=refine,
-                    num_images=num_images,
-                    seed=seed if use_seed else None
-                    )
+                profile=profile,    
+                prompt=prompt,
+                subject=subject,
+                environment=environment,
+                feeling=feeling,
+                refine=refine,
+                num_images=num_images,
+                seed=seed if use_seed else None,
+                spread=spread if use_seed else None
+                )
+            
             print(request)
             
-            print("@@@@@ seed:", request.seed)
             response = requests.post("http://localhost:5000/generate", json=request.model_dump())
             images = []
 
@@ -121,6 +123,6 @@ def launch_ui():
                     images.append(Image.open(io.BytesIO(content)))
             return images
 
-        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine, num_images, seed , use_seed], outputs=[gallery])
+        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine, num_images, seed , use_seed, spread], outputs=[gallery])
 
     demo.launch(server_port=7860)
