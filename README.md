@@ -12,7 +12,7 @@
 
 ## What is img-engine?
 
-**img-engine** is a fully local, offline image generation engine built on top of [Stable Diffusion XL (SDXL)](https://stability.ai/stable-diffusion) and the [HuggingFace Diffusers](https://github.com/huggingface/diffusers) library. It provides a structured, production-ready pipeline for generating high-quality images from text prompts — with no cloud dependency, no data leaving your machine.
+**img-engine** is a fully local, offline image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend architecture. Swap diffusion models — SDXL-class, Flux, Stable Diffusion 3.5, or any future checkpoint — without changing the pipeline. It provides a structured, production-ready interface for generating high-quality images from text prompts, with no cloud dependency and no data leaving your machine.
 
 Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
 
