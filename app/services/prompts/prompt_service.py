@@ -11,7 +11,7 @@ Rules:
 - Incorporate the feeling as visual style/mood/palette descriptors
 - Incorporate the environment as background/context
 - Keep the subject as the focal point
-- Keep the output under 150 tokens
+- Keep the output up to 600 characters
 - If the prompt contains a named character, deity or any other known figure, preserve their iconic attributes 
 (weapons, appearance, powers, person) in the output prompt.
 - Use comma-separated descriptive keywords"""
