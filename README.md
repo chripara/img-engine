@@ -1,6 +1,6 @@
 # img-engine
 
-> Local, offline SDXL-class image generation engine with profile-based model recipes, batch generation, prompt refinement, and VRAM-safe execution. Built for game asset pipelines and creative production workflows.
+> Local, offline image generation engine with pluggable model backends, profile-based recipes, batch generation, prompt refinement, and VRAM-safe execution. Built for game asset pipelines and creative production workflows.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
 ![PyTorch](https://img.shields.io/badge/PyTorch-CUDA-ee4c2c?logo=pytorch)
