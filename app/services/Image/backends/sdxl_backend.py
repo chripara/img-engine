@@ -1,12 +1,12 @@
 import io, torch, hashlib, time, os, profile, gc
 from email.mime import image
 from click import prompt
-from app.services.Image.backends.base_backend import BaseBackend
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers.pipelines.stable_diffusion_xl.pipeline_stable_diffusion_xl import StableDiffusionXLPipeline
-from app.services.Image.backends.profile_registry import _PROFILES
+from app.services.image.backends.base_backend import BaseBackend
+from app.services.image.backends.profile_registry import _PROFILES
+from app.services.image.backends.checkpoint_registry import _CHECKPOINT
 from utils.enums import Checkpoint, ModelSource, Profile
-from app.services.Image.backends.checkpoint_registry import _CHECKPOINT
 from PIL import Image
 from diffusers.models.autoencoders.autoencoder_kl import AutoencoderKL
 from compel import Compel, ReturnedEmbeddingsType

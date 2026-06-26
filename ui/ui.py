@@ -1,3 +1,6 @@
+import base64
+from unittest import result
+
 import gradio as gr
 import requests, io
 from ui.schema import GenerateRequest
@@ -69,23 +72,47 @@ def launch_ui():
                         ("True", True),
                     ]
                 )
+                num_images = gr.Dropdown(
+                    label="Number of Images",
+                    choices=[
+                        ("1", 1),
+                        ("2", 2),
+                        ("3", 3),
+                        ("4", 4), 
+                        ("5", 5),
+                        ("6", 6),
+                        ("7", 7),
+                        ("8", 8),
+                        ("9", 9),
+                        ("10", 10),
+                    ]
+                )
                 generate_button = gr.Button("Generate")
             with gr.Column():
-                output_image = gr.Image(label="Output Image")
+                gallery = gr.Gallery(label="Output Images")
+                #output_image = gr.Image(label="Output Image")
 
-        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool):
+        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int) -> list[Image.Image]:
            request = GenerateRequest(
                 profile=profile,    
                 prompt=prompt,
                 subject=subject,
                 environment=environment,
                 feeling=feeling,
-                refine=refine
+                refine=refine,
+                num_images=num_images
                 )
            print(request)
            response = requests.post("http://localhost:5000/generate", json=request.model_dump())
-           return Image.open(io.BytesIO(response.content)) if response.status_code == 200 else None
+           images = []
 
-        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine], outputs=output_image)
+           if response.status_code == 200:
+                data = response.json()
+                result = [base64.b64decode(img) for img in data["images"]]
+                for content in result:
+                   images.append(Image.open(io.BytesIO(content)))
+           return images
+
+        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine, num_images], outputs=[gallery])
 
     demo.launch(server_port=7860)
