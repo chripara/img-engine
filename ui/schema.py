@@ -7,4 +7,5 @@ class GenerateRequest(BaseModel):
     subject: str | None
     environment: str | None
     feeling: str | None
+    seed: int | None = Field(default=None, ge=0, le=2**32 - 1)
     refine: bool = False

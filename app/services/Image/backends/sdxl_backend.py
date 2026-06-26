@@ -1,13 +1,10 @@
-import io, torch, hashlib, time, os, profile, gc
-from email.mime import image
+import io, torch, hashlib, time, os, gc
 from click import prompt
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
-from diffusers.pipelines.stable_diffusion_xl.pipeline_stable_diffusion_xl import StableDiffusionXLPipeline
 from app.services.image.backends.base_backend import BaseBackend
 from app.services.image.backends.profile_registry import _PROFILES
 from app.services.image.backends.checkpoint_registry import _CHECKPOINT
-from utils.enums import Checkpoint, ModelSource, Profile
-from PIL import Image
+from utils.enums import Profile
 from diffusers.models.autoencoders.autoencoder_kl import AutoencoderKL
 from compel import Compel, ReturnedEmbeddingsType
 
@@ -39,15 +36,20 @@ class SDXLBackend(BaseBackend):
             requires_pooled=[False, True]
         )
 
-    def generate(self, prompt: str) -> bytes:
+    def generate(self, prompt: str, seed: int | None) -> bytes:
 
         # Generate an image using the SDXL model
         conditioning, pooled = self.compel(prompt)
         print(type(self.pipe))
         print(hasattr(self.pipe, 'tokenizer_2'))
+        generator = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
+    
         result = self.pipe(
-            prompt_embeds=conditioning,
-            pooled_prompt_embeds=pooled, num_inference_steps=self.steps, guidance_scale=self.cfg)
+            prompt_embeds = conditioning,
+            pooled_prompt_embeds = pooled, 
+            num_inference_steps = self.steps, 
+            guidance_scale = self.cfg,
+            generator = generator,)
 
         gc.collect()
         torch.cuda.empty_cache()

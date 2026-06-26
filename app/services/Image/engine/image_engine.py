@@ -38,7 +38,7 @@ class ImageEngine:
             raise ValueError("profile is required")
 
         print("Prompt:", req.prompt)
-        result = self.backend.generate(req.prompt)
+        result = self.backend.generate(req.prompt, req.seed)
         image_bytes = self._get_converter(req.profile)(result) if isinstance(result, Image.Image) else result
         return  image_bytes
 

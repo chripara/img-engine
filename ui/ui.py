@@ -1,4 +1,5 @@
 import base64
+from random import random
 from unittest import result
 
 import gradio as gr
@@ -15,7 +16,7 @@ def launch_ui():
             with gr.Column():
                 prompt = gr.Textbox(label="Prompt", placeholder="Enter your prompt here...")
                 profile = gr.Dropdown(
-                    label="profile",
+                    label="Profile",
                     choices=[
                         ("Character / Hero", Profile.CHARACTER.value),
                         ("Product / Item", Profile.PRODUCT.value),
@@ -87,32 +88,39 @@ def launch_ui():
                         ("10", 10),
                     ]
                 )
+                with gr.Row(equal_height=True):
+                        use_seed = gr.Checkbox(label="Use Seed", value=False)
+                        seed = gr.Number(label="Seed", value=42, precision=0)
                 generate_button = gr.Button("Generate")
             with gr.Column():
                 gallery = gr.Gallery(label="Output Images")
                 #output_image = gr.Image(label="Output Image")
 
-        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int) -> list[Image.Image]:
-           request = GenerateRequest(
-                profile=profile,    
-                prompt=prompt,
-                subject=subject,
-                environment=environment,
-                feeling=feeling,
-                refine=refine,
-                num_images=num_images
-                )
-           print(request)
-           response = requests.post("http://localhost:5000/generate", json=request.model_dump())
-           images = []
 
-           if response.status_code == 200:
+        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int, seed: int, use_seed: bool) -> list[Image.Image]:
+            request = GenerateRequest(
+                    profile=profile,    
+                    prompt=prompt,
+                    subject=subject,
+                    environment=environment,
+                    feeling=feeling,
+                    refine=refine,
+                    num_images=num_images,
+                    seed=seed if use_seed else None
+                    )
+            print(request)
+            
+            print("@@@@@ seed:", request.seed)
+            response = requests.post("http://localhost:5000/generate", json=request.model_dump())
+            images = []
+
+            if response.status_code == 200:
                 data = response.json()
                 result = [base64.b64decode(img) for img in data["images"]]
                 for content in result:
-                   images.append(Image.open(io.BytesIO(content)))
-           return images
+                    images.append(Image.open(io.BytesIO(content)))
+            return images
 
-        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine, num_images], outputs=[gallery])
+        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine, num_images, seed , use_seed], outputs=[gallery])
 
     demo.launch(server_port=7860)
