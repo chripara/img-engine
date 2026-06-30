@@ -73,6 +73,22 @@ def launch_ui():
                         ("True", True),
                     ]
                 )
+                resolution = gr.Dropdown(
+                    label="Size",
+                    choices=[
+                        ("standard 1024"),
+                        ("high 2K"),
+                        ("ultra 4K+"),
+                    ]
+                )
+                upscale_quality = gr.Dropdown(
+                    label="Upscale Quality",
+                    choices=[
+                        ("none"),
+                        ("enhanced"),
+                        ("generative"),
+                    ]
+                )
                 num_images = gr.Dropdown(
                     label="Number of Images",
                     choices=[
@@ -98,7 +114,7 @@ def launch_ui():
                 #output_image = gr.Image(label="Output Image")
 
 
-        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int, seed: int, use_seed: bool, spread: int) -> list[Image.Image]:
+        def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int, seed: int, use_seed: bool, spread: int, resolution: str, upscale_quality: str) -> list[Image.Image]:
             request = GenerateRequest(
                 profile=profile,    
                 prompt=prompt,
@@ -108,7 +124,9 @@ def launch_ui():
                 refine=refine,
                 num_images=num_images,
                 seed=seed if use_seed else None,
-                spread=spread if use_seed else None
+                spread=spread if use_seed else None,
+                resolution = resolution if resolution else None,
+                upscale_quality = upscale_quality if upscale_quality else None
                 )
             
             print(request)
@@ -119,10 +137,22 @@ def launch_ui():
             if response.status_code == 200:
                 data = response.json()
                 result = [base64.b64decode(img) for img in data["images"]]
+                # for i, content in enumerate(result):
+                #     decoded = base64.b64decode(content)
+                #     print(f"Image {i}: {len(decoded)} bytes, header: {decoded[:4]}")
+                #     print(f"Decoded images type: {type(decoded)}, count: {len(decoded)}")
+                #     image = Image.open(io.BytesIO(decoded))
+                #     print(f"Decoded images type: {type(image)}, count: {len(image)}")
+                #
+                #     images.append(Image.open(io.BytesIO(decoded)))
                 for content in result:
+                    print(f"Content bytes: {len(content)}, first bytes: {content[:4]}")
+                    # content = base64.b64decode(content)
+                    # decoded = base64.b64decode(content)
+                    # print(f"Image {i}: {len(decoded)} bytes, header: {decoded[:4]}")
                     images.append(Image.open(io.BytesIO(content)))
             return images
 
-        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine, num_images, seed , use_seed, spread], outputs=[gallery])
+        generate_button.click(generate_image, inputs=[profile, prompt, feeling, subject, environment, refine, num_images, seed , use_seed, spread, resolution, upscale_quality], outputs=[gallery])
 
     demo.launch(server_port=7860)

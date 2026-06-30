@@ -1,9 +1,9 @@
 import io, torch, hashlib, time, os, gc
-from click import prompt
+from PIL import Image
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from app.services.image.backends.base_backend import BaseBackend
-from app.services.image.backends.profile_registry import _PROFILES
-from app.services.image.backends.checkpoint_registry import _CHECKPOINT
+from app.services.registries.profile_registry import _PROFILES
+from app.services.image.registries.checkpoint_registry import _CHECKPOINT
 from utils.enums import Profile
 from diffusers.models.autoencoders.autoencoder_kl import AutoencoderKL
 from compel import Compel, ReturnedEmbeddingsType
@@ -36,7 +36,7 @@ class SDXLBackend(BaseBackend):
             requires_pooled=[False, True]
         )
 
-    def generate(self, prompt: str, seed: int | None) -> bytes:
+    def generate(self, prompt: str, seed: int | None) -> Image.Image:
 
         # Generate an image using the SDXL model
         conditioning, pooled = self.compel(prompt)
@@ -51,9 +51,6 @@ class SDXLBackend(BaseBackend):
             guidance_scale = self.cfg,
             generator = generator,)
 
-        gc.collect()
-        torch.cuda.empty_cache()
-        
         image = result.images[0]
         
         buffer = io.BytesIO()
@@ -67,4 +64,10 @@ class SDXLBackend(BaseBackend):
         with open(os.path.join(output_dir, filename), "wb") as f:
             f.write(png_bytes)
 
-        return png_bytes
+        return image
+
+    def unload(self) -> None:
+        self.pipe = None
+        del self.pipe
+        torch.cuda.empty_cache()
+        gc.collect()
