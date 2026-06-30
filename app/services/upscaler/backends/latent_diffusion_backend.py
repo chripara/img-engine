@@ -48,7 +48,7 @@ class LatentDiffusionBackend(BaseBackend):
         image = result
         
         buffer = io.BytesIO()
-        image.save(buffer, format="PNG")
+        image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
 
         hash = hashlib.md5(req.prompt.encode()).hexdigest()[:8]

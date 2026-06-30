@@ -54,7 +54,7 @@ class SDXLBackend(BaseBackend):
         image = result.images[0]
         
         buffer = io.BytesIO()
-        image.save(buffer, format="PNG")
+        image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
 
         hash = hashlib.md5(prompt.encode()).hexdigest()[:8]
