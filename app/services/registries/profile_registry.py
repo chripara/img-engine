@@ -1,6 +1,6 @@
 from typing import Type
 from dataclasses import dataclass
-from utils.enums import Checkpoint, Profile
+from utils.enums import Checkpoint, Profile, Upscaler
 from diffusers.schedulers.scheduling_euler_discrete import EulerDiscreteScheduler
 from diffusers.schedulers.scheduling_dpmsolver_multistep import DPMSolverMultistepScheduler
 
@@ -14,6 +14,7 @@ class ProfileSpec:
     cfg: float
     native_size: tuple     # (width, height)
     default_negative: str  # "" μέχρι E08-S05
+    esrgan_upscaler: Upscaler
     vae_id: str | None = None      # "madebyollin/sdxl-vae-fp16-fix" ή None
     refiner: bool = False
     upscale: str = "none"  # none | 1440p | 4k
@@ -31,6 +32,7 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         cfg = 7.0,
         native_size = (1024, 1024),
         default_negative = "",
+        esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
         refiner = False,
         upscale = "none",
@@ -47,6 +49,7 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         cfg = 7.0,
         native_size = (1024, 1024),
         default_negative = "",
+        esrgan_upscaler = Upscaler.ANIME_ESRGAN,
         vae_id = "madebyollin/sdxl-vae-fp16-fix",
         refiner = False,
         upscale = "none",
@@ -63,6 +66,7 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         cfg = 4.5,
         native_size = (832, 1216),
         default_negative = "",
+        esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
         refiner = False,
         upscale = "none",

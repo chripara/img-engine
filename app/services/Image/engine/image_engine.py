@@ -3,34 +3,39 @@ from flask import current_app
 from PIL import Image
 from app.schemas.generate import GenerateRequest
 from utils.enums import ImgBackend, Checkpoint, Profile
-from app.services.image.backends.backend_registry import _BACKENDS, BackendEntry
-from app.services.image.backends.profile_registry import _PROFILES, ProfileSpec
+from app.services.image.registries.backend_registry import _BACKENDS, BackendEntry
+from app.services.registries.profile_registry import _PROFILES, ProfileSpec
 from app.services.image.backends.base_backend import BaseBackend
 import gc, torch, random
-
-_instances: dict[Checkpoint, BaseBackend] = {}
 
 
 class ImageEngine:
     def __init__(self, req: GenerateRequest):
         self.profile = req.profile
-        self.model = _PROFILES[req.profile].model
-        if self.model not in _instances:
-            _instances[self.model] = _BACKENDS[self.model]["backend"](profile=req.profile)
-        self.backend = _instances[self.model]
-        self.converter = _BACKENDS[self.model]["converter"]
+        self.model = _PROFILES[req.profile].model        
+        self.backend = self._get_backend(req)
 
     def __enter__(self):
         return self
 
     def __exit__(self, *args):
-        del _instances[self.model]
+        self.model = None
+        self.backend.unload()
         del self.model
         torch.cuda.empty_cache()
         gc.collect()
 
-
-    def generate_image(self, req: GenerateRequest) -> bytes:
+    def _get_backend(self, req: GenerateRequest) -> BaseBackend: 
+        match self.model:
+            case (
+                Checkpoint.SDXL_BASE |
+                Checkpoint.ALBEDO_BASE |
+                Checkpoint.JUGGERNAUT_XL | 
+                Checkpoint.DREAMSHAPER_XL
+            ):
+                return _BACKENDS[self.model]["backend"](profile=req.profile)
+                
+    def generate_image(self, req: GenerateRequest) -> Image.Image:
         if not req.prompt:
             raise ValueError("prompt is required")
 
@@ -40,28 +45,7 @@ class ImageEngine:
         print("Prompt:", req.prompt)
         seed = random.randint(req.seed - req.spread, req.seed + req.spread) if req.seed is not None and req.spread is not None else req.seed
         result = self.backend.generate(req.prompt, seed)
-        image_bytes = self._get_converter(req.profile)(result) if isinstance(result, Image.Image) else result
-        return  image_bytes
+        return  result
 
 
-    # def _get_backend(self, selected_profile: Profile | None = None) -> BaseBackend:
-    #     profile = selected_profile if selected_profile else self._resolve_profile()
-    #     #cache_attr = f"backend_{backend['backend'].__name__}"
-    #     if  _PROFILES[profile].model not in _instances:
-    #         _instances[ _PROFILES[profile].model] = _BACKENDS[ _PROFILES[profile].model]["backend"](profile=profile)
 
-    #     return _instances[ _PROFILES[profile].model]
-
-
-    def _get_converter(self, selected_profile: Profile | None = None) -> Callable[..., bytes]:
-        profile = _PROFILES[selected_profile] if selected_profile else _PROFILES[self.profile]
-        checkpoint = profile.model  # Assuming Profile has a value attribute
-
-        return _BACKENDS[checkpoint]["converter"]
-
-
-    # def _resolve_profile(self) -> Profile:
-    #     profile = current_app.config["PROFILE"]
-    #     if profile not in Profile:
-    #         raise ValueError(f"Invalid profile: {profile}")
-    #     return profile
