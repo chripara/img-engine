@@ -57,8 +57,7 @@ class SDXLBackend(BaseBackend):
         image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
 
-        hash = hashlib.md5(prompt.encode()).hexdigest()[:8]
-        filename = f"{int(time.time())}_{hash}.png"
+        filename = f"seed_{seed if seed else 'NaN'}.png"
         output_dir = "output_images"
         os.makedirs(output_dir, exist_ok=True)
         with open(os.path.join(output_dir, filename), "wb") as f:
