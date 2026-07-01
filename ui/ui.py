@@ -103,7 +103,6 @@ def launch_ui():
                 generate_button = gr.Button("Generate")
             with gr.Column():
                 gallery = gr.Gallery(label="Output Images")
-                #output_image = gr.Image(label="Output Image")
 
 
         def generate_image(profile: str, prompt: str, feeling: str, subject: str, environment: str, refine: bool, num_images: int, seed: int, use_seed: bool, spread: int, upscale_quality: str) -> list[Image.Image]:
@@ -128,19 +127,8 @@ def launch_ui():
             if response.status_code == 200:
                 data = response.json()
                 result = [base64.b64decode(img) for img in data["images"]]
-                # for i, content in enumerate(result):
-                #     decoded = base64.b64decode(content)
-                #     print(f"Image {i}: {len(decoded)} bytes, header: {decoded[:4]}")
-                #     print(f"Decoded images type: {type(decoded)}, count: {len(decoded)}")
-                #     image = Image.open(io.BytesIO(decoded))
-                #     print(f"Decoded images type: {type(image)}, count: {len(image)}")
-                #
-                #     images.append(Image.open(io.BytesIO(decoded)))
+
                 for content in result:
-                    print(f"Content bytes: {len(content)}, first bytes: {content[:4]}")
-                    # content = base64.b64decode(content)
-                    # decoded = base64.b64decode(content)
-                    # print(f"Image {i}: {len(decoded)} bytes, header: {decoded[:4]}")
                     images.append(Image.open(io.BytesIO(content)))
             return images
 
