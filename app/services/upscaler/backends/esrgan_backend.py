@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-import io, torch, hashlib, time, os
+import io, torch, hashlib, time, os, gc
 from PIL import Image
 from spandrel import ModelLoader
 from app.services.upscaler.registries.upscaler_registry import _UPSCALERS
@@ -51,6 +51,7 @@ class ESRGANBackend(BaseBackend):
     def unload(self) -> None:
         self._upsampler = None
         torch.cuda.empty_cache()
+        gc.collect()
 
     def __enter__(self) -> ESRGANBackend:
         self.load()

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from utils.enums import Profile, Resolution, UpscaleQuality
+from utils.enums import Profile, UpscaleQuality
 
 class GenerateRequest(BaseModel):
     profile: Profile
@@ -11,5 +11,4 @@ class GenerateRequest(BaseModel):
     refine: bool = False
     seed: int | None = Field(default=None, ge=0, le=2**32 - 1)
     spread: int | None = Field(default=None, ge=0)
-    resolution: Resolution | None = Field(default=Resolution.STANDARD)
     upscale_quality: UpscaleQuality | None = Field(default=UpscaleQuality.NONE)

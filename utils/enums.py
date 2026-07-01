@@ -21,11 +21,6 @@ class Profile(Enum):
     PRODUCT = "product"
     SCENE_FRAME = "scene_frame"
 
-class Resolution(Enum):
-    STANDARD = "standard 1024"
-    HIGH = "high 2K" 
-    ULTRA = "ultra 4K+"
-
 class UpscaleQuality(Enum):
     NONE = "none"
     ENHANCED = "enhanced"

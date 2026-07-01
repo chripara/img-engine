@@ -45,7 +45,6 @@ class ImageEngine:
         print("Prompt:", req.prompt)
         seed = random.randint(req.seed - req.spread, req.seed + req.spread) if req.seed is not None and req.spread is not None else req.seed
         result = self.backend.generate(req.prompt, seed)
-        self.backend
         return  result
 
 

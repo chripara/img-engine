@@ -4,7 +4,7 @@ from utils.enums import UpscaleQuality
 from utils.image_converter import ImageConverter
 from app.services.upscaler.upscaler_service import upscale_image
 from app.services.registries.profile_registry import _PROFILES
-import base64, torch, gc
+import base64
 
 class PipelineService():
     def generation_pipeline(req: GenerateRequest) -> list[str]:

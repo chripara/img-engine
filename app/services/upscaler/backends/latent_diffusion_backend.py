@@ -1,5 +1,5 @@
 from __future__ import annotations
-import io, torch, hashlib, time, os
+import io, torch, hashlib, time, os, gc
 from PIL import Image
 from diffusers.pipelines.stable_diffusion import StableDiffusionUpscalePipeline
 from app.services.upscaler.registries.upscaler_registry import _UPSCALERS
@@ -63,6 +63,7 @@ class LatentDiffusionBackend(BaseBackend):
     def unload(self) -> None:
         self._pipe = None
         torch.cuda.empty_cache()
+        gc.collect()
 
     def __enter__(self) -> LatentDiffusionBackend:
         self.load()

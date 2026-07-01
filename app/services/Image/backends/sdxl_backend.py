@@ -22,7 +22,7 @@ class SDXLBackend(BaseBackend):
         self.pipe = DiffusionPipeline.from_pretrained(
             _CHECKPOINT[_PROFILES[profile].model],
             torch_dtype = torch.float16,            
-            use_safetensors = True,     # χρήση safetensors            
+            use_safetensors = True,
             **({"vae": vae} if vae else {}),
         )
         self.steps = _PROFILES[profile].steps
