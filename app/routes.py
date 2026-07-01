@@ -2,8 +2,7 @@ import base64
 
 from flask import Blueprint, jsonify, Response, request
 from pydantic import ValidationError
-from utils.enums import Checkpoint, Profile
-from app.services.image.img_service import generate_image
+from app.services.pipeline_service import PipelineService
 from app.schemas.generate import GenerateRequest
 
 bp = Blueprint('routes', __name__)
@@ -27,5 +26,7 @@ def generate():
         generate_request = req
         req.prompt = refine_prompt(generate_request)
 
-    result = encoded = [base64.b64encode(img).decode() for img in generate_image(req)]
-    return jsonify({"images": encoded})
+    images = PipelineService.generation_pipeline(req)
+    print(f"Encoded[0] length: {len(images[0])}, preview: {images[0][:20]}")
+
+    return jsonify({"images": images})

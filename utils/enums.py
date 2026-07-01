@@ -12,11 +12,21 @@ class Checkpoint(Enum):
     DREAMSHAPER_XL = "dreamshaper_xl"
 
 class ModelSource(Enum):
-    DIFFUSERS = "diffusers"        # from_pretrained()
-    SINGLE_FILE = "single_file"    # from_single_file()
-    GGUF = "gguf"                  # from_single_file() with special config
+    DIFFUSERS = "diffusers"        
+    SINGLE_FILE = "single_file"    
+    GGUF = "gguf"                  
 
 class Profile(Enum):
     CHARACTER = "character"
     PRODUCT = "product"
     SCENE_FRAME = "scene_frame"
+
+class UpscaleQuality(Enum):
+    NONE = "none"
+    ENHANCED = "enhanced"
+    GENERATIVE = "generative"
+
+class Upscaler(Enum):
+    ESRGAN = "esrgan"
+    ANIME_ESRGAN = "anime_esrgan"
+    LATENT = "latent"
