@@ -5,3 +5,4 @@ __pycache__/
 *.egg-info/
 dist/
 output_images/
+local_models/

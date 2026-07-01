@@ -3,9 +3,6 @@ import subprocess
 import atexit
 from config import DevelopmentConfig
 
-# Ollama is a local LLM server that we will start when the Flask app starts and stop when the Flask app stops.
-# it is necessary up until i create the Prompt Refinement Engine that has each own pipeline...
-# So it is just a temporary solution to get the app running with the current prompt refinement engine.
 _ollama = None
 
 def start_ollama():
