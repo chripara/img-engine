@@ -15,13 +15,11 @@ class PipelineService():
 
         images = generate_image(req)
 
-        print(f"Images type: {type(images[0])}, count: {len(images)}")
         converter = ImageConverter.Pil_Image_to_Bytes_Png
 
         match req.upscale_quality:
             case UpscaleQuality.NONE:
                 encoded = [base64.b64encode(converter(img)).decode() for img in images]
-                print(f"Encoded images type: {type(encoded)}, count: {len(encoded)}")
                 return encoded
             case UpscaleQuality.ENHANCED:
                 imgs = upscale_image(req,_PROFILES[req.profile],images)

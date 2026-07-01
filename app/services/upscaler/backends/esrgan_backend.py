@@ -39,8 +39,7 @@ class ESRGANBackend(BaseBackend):
         image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
 
-        hash = hashlib.md5(req.prompt.encode()).hexdigest()[:8]
-        filename = f"{int(time.time())}_{hash}_esrgan.png"
+        filename = f"seed_{req.seed if req.seed else 'NaN'}_esrgan.png"
         output_dir = "output_images"
         os.makedirs(output_dir, exist_ok=True)
         with open(os.path.join(output_dir, filename), "wb") as f:
