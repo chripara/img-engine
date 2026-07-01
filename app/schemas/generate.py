@@ -9,6 +9,6 @@ class GenerateRequest(BaseModel):
     environment: str | None
     feeling: str | None
     refine: bool = False
-    seed: int | None = Field(default=None, ge=0, le=2**32 - 1)
+    seed: int | None = Field(default=None, le=2**32 - 1)
     spread: int | None = Field(default=None, ge=0)
     upscale_quality: UpscaleQuality | None = Field(default=UpscaleQuality.NONE)

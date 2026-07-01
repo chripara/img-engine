@@ -26,6 +26,8 @@ def generate():
         generate_request = req
         req.prompt = refine_prompt(generate_request)
 
+    # if req.
+
     images = PipelineService.generation_pipeline(req)
     print(f"Encoded[0] length: {len(images[0])}, preview: {images[0][:20]}")
 
