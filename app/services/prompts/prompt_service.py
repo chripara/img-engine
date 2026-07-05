@@ -27,7 +27,11 @@ def refine(generate_request: GenerateRequest) -> str:
         "model": "mistral",
         "system": SYSTEM_PROMPT,
         "prompt": user_message,
-        "stream": False
+        "stream": False,
+        "options": {
+            "seed": generate_request.seed,
+            "temperature" : 0
+        }
     })
 
     return response.json()["response"].strip()

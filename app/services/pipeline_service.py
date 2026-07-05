@@ -4,16 +4,24 @@ from utils.enums import UpscaleQuality
 from utils.image_converter import ImageConverter
 from app.services.upscaler.upscaler_service import upscale_image
 from app.services.registries.profile_registry import _PROFILES
-import base64
+import base64, random
 
 class PipelineService():
     def generation_pipeline(req: GenerateRequest) -> list[str]:
+        if req.seed is not None:
+            seeds = [random.randint(req.seed - req.spread,
+                req.seed + req.spread) if req.seed is not None and req.spread is not None else req.seed for _ in range(req.num_images)]
+        else:
+            seeds = [req.seed for _ in range(req.num_images)]
+
         if req.refine:
             from app.services.prompts.prompt_service import refine as refine_prompt
             refined_prompt = refine_prompt(req)
             req = req.model_copy(update={"prompt": refined_prompt})
 
-        images = generate_image(req)
+
+
+        images = generate_image(req, seeds)
 
         print(f"Images type: {type(images[0])}, count: {len(images)}")
         converter = ImageConverter.Pil_Image_to_Bytes_Png

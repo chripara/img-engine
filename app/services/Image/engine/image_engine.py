@@ -35,7 +35,7 @@ class ImageEngine:
             ):
                 return _BACKENDS[self.model]["backend"](profile=req.profile)
                 
-    def generate_image(self, req: GenerateRequest) -> Image.Image:
+    def generate_image(self, req: GenerateRequest, seed: int | None = None) -> Image.Image:
         if not req.prompt:
             raise ValueError("prompt is required")
 
@@ -43,7 +43,6 @@ class ImageEngine:
             raise ValueError("profile is required")
 
         print("Prompt:", req.prompt)
-        seed = random.randint(req.seed - req.spread, req.seed + req.spread) if req.seed is not None and req.spread is not None else req.seed
         result = self.backend.generate(req.prompt, seed)
         return  result
 
