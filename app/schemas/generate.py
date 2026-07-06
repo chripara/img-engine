@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from PIL import Image
+from pydantic import BaseModel, Field, ConfigDict
 from utils.enums import GuidanceType
 
 from utils.enums import Profile, UpscaleQuality
@@ -11,6 +12,12 @@ class GuidanceSettings(BaseModel):
 class GuidanceInput(BaseModel):
     images: list[str]
     controls: list[GuidanceSettings]
+    strength: float | None = None
+
+class GuidanceResult(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    images: list[Image.Image]
+    controls: list[GuidanceType]
 
 class GenerateRequest(BaseModel):
     profile: Profile

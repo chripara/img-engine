@@ -20,11 +20,11 @@ def generate():
     
     if not req.prompt or not req.profile:
         return Response(status=400)
-
-    if req.refine:
-        from app.services.prompts.prompt_service import refine as refine_prompt
-        generate_request = req
-        req.prompt = refine_prompt(generate_request)
+    #
+    # if req.refine:
+    #     from app.services.prompts.prompt_service import refine as refine_prompt
+    #     generate_request = req
+    #     req.prompt = refine_prompt(generate_request)
 
     images = PipelineService.generation_pipeline(req)
     print(f"Encoded[0] length: {len(images[0])}, preview: {images[0][:20]}")

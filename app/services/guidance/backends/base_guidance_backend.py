@@ -5,6 +5,15 @@ from utils.enums import GuidanceType
 
 
 class BaseGuidanceBackend(ABC):
+
     @abstractmethod
-    def preprocess(self, guidanceType: GuidanceType, image: Image.Image) -> Image.Image:
+    def load(self, guidance_type: GuidanceType) -> None:
+        pass
+
+    @abstractmethod
+    def unload(self) -> None:
+        pass
+
+    @abstractmethod
+    def preprocess(self, image: Image.Image) -> Image.Image:
         pass
