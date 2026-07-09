@@ -11,7 +11,7 @@ class BaseGuidanceBackend(ABC):
         pass
 
     @abstractmethod
-    def unload(self) -> None:
+    def unload(self):
         pass
 
     @abstractmethod

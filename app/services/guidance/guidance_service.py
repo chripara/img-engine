@@ -1,5 +1,6 @@
 from app.schemas.generate import GenerateRequest, GuidanceInput, GuidanceResult
 from app.services.guidance.engine.guidance_engine import GuidanceEngine
+import base64, io
 from PIL import Image
 def generate_guidance(req: GenerateRequest) -> list[GuidanceResult]:
 
@@ -11,9 +12,13 @@ def generate_guidance(req: GenerateRequest) -> list[GuidanceResult]:
                     continue
                 if not (0 <= control.selector < len(req.controls.images)):
                     continue
-                image = req.controls.images[control.selector]
-                result = engine.prepare_guidance(control, image)
-                control_maps.append(result)
+
+                raw = base64.b64decode(req.controls.images[control.selector])
+                image = Image.open(io.BytesIO(raw))
+
+                result = engine.prepare(control, image)
+                if result is not None:
+                    control_maps.append(result)
 
         return control_maps
     else:

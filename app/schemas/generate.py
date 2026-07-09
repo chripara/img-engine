@@ -16,8 +16,9 @@ class GuidanceInput(BaseModel):
 
 class GuidanceResult(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    images: list[Image.Image]
-    controls: list[GuidanceType]
+    image: Image.Image
+    type: GuidanceType
+    strength: float | None
 
 class GenerateRequest(BaseModel):
     profile: Profile

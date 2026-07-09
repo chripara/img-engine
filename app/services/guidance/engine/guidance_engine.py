@@ -1,16 +1,15 @@
 from PIL import Image
-from typing import Type
 from app.schemas.generate import GuidanceSettings, GenerateRequest, GuidanceResult
 from app.services.guidance.backends.base_guidance_backend import BaseGuidanceBackend
-from app.services.guidance.registries.backend_registry import _GUIDANCE_BACKEND, _SDXL_PREPROCESSORS
+from app.services.guidance.registries.backend_registry import _GUIDANCE_BACKEND
 from app.services.registries.profile_registry import _PROFILES
 import torch, gc
 
-class GuidanceEngine(BaseGuidanceBackend):
+class GuidanceEngine:
     def __init__(self, req: GenerateRequest):
-        self._backend: Type[BaseGuidanceBackend] = _GUIDANCE_BACKEND[_SDXL_PREPROCESSORS[_PROFILES[req.profile].model]]
+        self._backend: BaseGuidanceBackend = _GUIDANCE_BACKEND[_PROFILES[req.profile].model]()   # χωρίς ["backend"]
 
-    def __enter__(self) -> GuidanceSettings:
+    def __enter__(self) -> "GuidanceEngine":
         return self
 
     def __exit__(self, *args):
@@ -20,11 +19,15 @@ class GuidanceEngine(BaseGuidanceBackend):
         gc.collect()
 
     def prepare(self, control: GuidanceSettings, image: Image.Image) -> GuidanceResult | None:
-        guidance_result = GuidanceResult()
         self._backend.load(control.type)
-        guidance_result.image = self._backend.preprocess(image)
-        guidance_result.strength = control.strength
+        processed = self._backend.preprocess(image)
         self._backend.unload()
 
-        return guidance_result
+        if processed is None:
+            return None
 
+        return GuidanceResult(
+            type=control.type,
+            image=processed,
+            strength=control.strength,
+        )

@@ -46,7 +46,7 @@ class ImageEngine:
             raise ValueError("profile is required")
 
         print("Prompt:", req.prompt)
-        result = self._backend.generate(req.prompt, seed)
+        result = self._backend.generate(req.prompt, seed, controls)
 
 
 

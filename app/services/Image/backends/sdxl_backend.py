@@ -2,6 +2,8 @@ import io, torch, hashlib, time, os, gc
 from PIL import Image
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers import StableDiffusionXLControlNetPipeline, ControlNetModel
+
+from app.schemas.generate import GuidanceResult
 from app.services.image.backends.base_backend import BaseBackend
 from app.services.registries.profile_registry import _PROFILES
 from app.services.image.registries.checkpoint_registry import _CHECKPOINT
@@ -53,19 +55,32 @@ class SDXLBackend(BaseBackend):
             requires_pooled=[False, True]
         )
 
-    def generate(self, prompt: str, seed: int | None) -> Image.Image:
+    def generate(self, prompt: str, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
         # Generate an image using the SDXL model
         conditioning, pooled = self.compel(prompt)
         print(type(self._pipe))
         print(hasattr(self._pipe, 'tokenizer_2'))
         generator = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
-    
-        result = self._pipe(
-            prompt_embeds = conditioning,
-            pooled_prompt_embeds = pooled, 
-            num_inference_steps = self._steps,
-            guidance_scale = self._cfg,
-            generator = generator,)
+
+        result = DiffusionPipeline()
+
+        if controls is None:
+            result = self._pipe(
+                prompt_embeds = conditioning,
+                pooled_prompt_embeds = pooled,
+                num_inference_steps = self._steps,
+                guidance_scale = self._cfg,
+                generator = generator,)
+        else:
+            result = self._pipe(
+                prompt_embeds=conditioning,
+                pooled_prompt_embeds=pooled,
+                num_inference_steps=self._steps,
+                guidance_scale=self._cfg,
+                image=[ctr.image for ctr in controls],
+                controlnet_conditioning_scale=[ctr.strength for ctr in controls if ctr.strength is not None],
+                generator=generator, )
+
 
         image = result.images[0]
         

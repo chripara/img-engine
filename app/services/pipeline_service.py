@@ -18,8 +18,6 @@ class PipelineService():
         else:
             seeds = [req.seed for _ in range(req.num_images)]
 
-
-
         with ThreadPoolExecutor() as executor:
             future_a = executor.submit(_refine_prompt,req)
             future_b = executor.submit(_preprocess, req)
@@ -29,8 +27,7 @@ class PipelineService():
             control_maps = future_b.result()
             _get_strength(req.profile,control_maps)
 
-
-        images = generate_image(req, seeds, control_maps)
+        images = generate_image(req, seeds,  control_maps)
 
         print(f"Images type: {type(images[0])}, count: {len(images)}")
         converter = ImageConverter.Pil_Image_to_Bytes_Png
