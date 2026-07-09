@@ -39,7 +39,7 @@ class LatentDiffusionBackend(BaseBackend):
                     image=tile,
                     noise_level=int(self._denoising_strength * 100),
                     num_inference_steps=8,
-                ).images[0]
+                ).image[0]
                 result.paste(upscaled_tile, (x * 4, y * 4))
 
         image = result
