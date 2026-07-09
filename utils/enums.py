@@ -30,3 +30,9 @@ class Upscaler(Enum):
     ESRGAN = "esrgan"
     ANIME_ESRGAN = "anime_esrgan"
     LATENT = "latent"
+
+class GuidanceType(str, Enum):
+    CANNY = "canny"
+    DEPTH = "depth"
+    POSE = "pose"
+    SCRIBBLE = "scribble"
