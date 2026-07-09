@@ -16,20 +16,17 @@ class LatentDiffusionBackend(BaseBackend):
         self._pipe: StableDiffusionUpscalePipeline | None = None
 
     def load(self) -> None:
-        print(f"VRAM before: {torch.cuda.memory_allocated() / 1024 ** 2:.1f} MB")
         self._pipe = StableDiffusionUpscalePipeline.from_pretrained(
             self._model_path,
             torch_dtype=torch.float16,
         ).to("cuda")
-        # self._pipe.enable_xformers_memory_efficient_attention()
-        print(f"VRAM after load: {torch.cuda.memory_allocated() / 1024 ** 2:.1f} MB")
 
     def upscale(self, image: Image.Image, req: GenerateRequest) -> Image.Image:
         if self._pipe is None:
             raise RuntimeError("LatentDiffusionBackend not loaded. Call load() first.")
 
         tile_size = 512
-        overlap = 64  # overlap για να μην φαίνονται seams
+        overlap = 64
 
         w, h = image.size
         result = Image.new("RGB", (w * 4, h * 4))
@@ -51,8 +48,7 @@ class LatentDiffusionBackend(BaseBackend):
         image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
 
-        hash = hashlib.md5(req.prompt.encode()).hexdigest()[:8]
-        filename = f"{int(time.time())}_{hash}_latent.png"
+        filename = f"seed_{req.seed if req.seed else 'NaN'}_latent.png"
         output_dir = "output_images"
         os.makedirs(output_dir, exist_ok=True)
         with open(os.path.join(output_dir, filename), "wb") as f:

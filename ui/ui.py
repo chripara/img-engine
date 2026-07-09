@@ -242,7 +242,16 @@ def launch_ui():
                 controls=controls,
             )
 
-            print(request)
+            print(request.profile,
+            request.prompt,
+            request.subject,
+            request.environment,
+            request.feeling,
+            request.refine,
+            request.num_images,
+            request.seed,
+            request.spread,
+            request.upscale_quality)
 
             response = requests.post(
                 "http://localhost:5000/generate",
