@@ -23,6 +23,7 @@ def create_app():
 
         from app import routes
         app.register_blueprint(routes.bp)
+        routes.api.register(app)
 
         return app
 
