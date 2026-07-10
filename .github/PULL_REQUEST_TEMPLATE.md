@@ -1,11 +1,17 @@
 ## Summary
-<!-- What changed -->
+<!-- What changed and why -->
 
 ## Story
 <!-- IMG-XXX / US-IMG-EXX-SXX -->
 
+## Commit type
+<!-- feat / fix / chore / docs / refactor -->
+`type(scope): `
+
 ## Changes
 - 
 
-## Testing
-<!-- How it was tested -->
+## Acceptance Criteria
+- [ ] 
+
+## How it is tested
