@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from PIL import Image
-from app.schemas.generate import GenerateRequest, GuidanceResult
+from app.schemas.generate import GenerateRequest, GuidanceResult, GenerateResult, ImageResult
 from app.services.image.img_service import generate_image
 from utils.enums import UpscaleQuality, Profile
 from utils.image_converter import ImageConverter
@@ -8,10 +8,11 @@ from app.services.upscaler.upscaler_service import upscale_image
 from app.services.registries.profile_registry import _PROFILES
 from app.services.registries.guidance_registry import  _GUIDANCE_DETAILS
 from app.services.guidance.guidance_service import generate_guidance
+from app.services.validation.validator import validate
 import base64, random
 
 class PipelineService():
-    def generation_pipeline(req: GenerateRequest) -> list[str]:
+    def generation_pipeline(req: GenerateRequest) -> GenerateResult:
         if req.seed is not None:
             seeds = [random.randint(req.seed - req.spread,
                 req.seed + req.spread) if req.seed is not None and req.spread is not None else req.seed for _ in range(req.num_images)]
@@ -32,17 +33,50 @@ class PipelineService():
         converter = ImageConverter.Pil_Image_to_Bytes_Png
 
         match req.upscale_quality:
-            case UpscaleQuality.NONE:
-                encoded = [base64.b64encode(converter(img)).decode() for img in images]
-                return encoded
-            case UpscaleQuality.ENHANCED:
-                imgs = upscale_image(req,_PROFILES[req.profile],images)
-                encoded = [base64.b64encode(converter(img)).decode() for img in imgs]
-                return encoded
-            case UpscaleQuality.GENERATIVE:
-                imgs = upscale_image(req, _PROFILES[req.profile], images)
-                encoded = [base64.b64encode(converter(img)).decode() for img in imgs]
-                return encoded
+            case UpscaleQuality.ENHANCED | UpscaleQuality.GENERATIVE:
+                images = upscale_image(req, _PROFILES[req.profile], images)
+
+        image_results: list[ImageResult] = []
+        for i in range(len(images)):
+            validations = validate(images[i])
+            encoded = base64.b64encode(converter(images[i])).decode()
+            image_results.append(ImageResult(
+                image=encoded,
+                seed=seeds[i],
+                quality=validations
+            ))
+        return GenerateResult(images = image_results, refined_prompt = refined)
+        # match req.upscale_quality:
+        #     case UpscaleQuality.NONE:
+        #         imageResults: list[ImageResult] = []
+        #         for i in range(len(images)):
+        #             validations = validate(images[i])
+        #             encoded = base64.b64encode(converter(images[i])).decode()
+        #             imageResults.append(ImageResult(
+        #                 image = encoded,
+        #                 seed=seeds[i],
+        #                 quality=validations
+        #             ))
+        #         return GenerateResult(images= imageResults, refined_prompt= refined)
+        #     case UpscaleQuality.ENHANCED | UpscaleQuality.GENERATIVE:
+        #         imgs = upscale_image(req,_PROFILES[req.profile],images)
+        #         imageResults: list[ImageResult] = []
+        #         for i in range(len(images)):
+        #             validations = validate(imgs[i])
+        #             encoded = base64.b64encode(converter(imgs[i])).decode()
+        #             imageResults.append(ImageResult(
+        #                 image=encoded,
+        #                 seed=seeds[i],
+        #                 quality=validations
+        #             ))
+        #         return GenerateResult(images= imageResults, refined_prompt= refined)
+            # case UpscaleQuality.GENERATIVE:
+            #     imgs = upscale_image(req, _PROFILES[req.profile], images)
+            #     imageResults: list[ImageResult] = []
+            #     for i in range(len(images)):
+            #
+            #     encoded = [base64.b64encode(converter(img)).decode() for img in imgs]
+            #     #return encoded
 
 def _refine_prompt(req: GenerateRequest) -> str:
     refined_prompt = req.prompt

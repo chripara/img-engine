@@ -156,6 +156,8 @@ def launch_ui():
 
             with gr.Column(scale=1):
                 gallery = gr.Gallery(label="Output Images")
+                refined_prompt_box = gr.Textbox(label="Refined Prompt", interactive=False)
+                quality_output = gr.JSON(label="Quality Gates")
 
         with gr.Group(visible=False, elem_id="controlnet_modal") as controlnet_modal:
             gr.Markdown("### ControlNet")
@@ -208,12 +210,12 @@ def launch_ui():
             depth_en, depth_img, depth_str,
             pose_en, pose_img, pose_str,
             scribble_en, scribble_img, scribble_str,
-        ) -> list[Image.Image]:
+        ) -> tuple[list, str | None, list | None]:
 
             entries = [
-                (GuidanceType.CANNY, canny_en, canny_img, canny_str),
-                (GuidanceType.DEPTH, depth_en, depth_img, depth_str),
-                (GuidanceType.POSE, pose_en, pose_img, pose_str),
+                (GuidanceType.CANNY,    canny_en,    canny_img,    canny_str),
+                (GuidanceType.DEPTH,    depth_en,    depth_img,    depth_str),
+                (GuidanceType.POSE,     pose_en,     pose_img,     pose_str),
                 (GuidanceType.SCRIBBLE, scribble_en, scribble_img, scribble_str),
             ]
 
@@ -242,29 +244,32 @@ def launch_ui():
                 controls=controls,
             )
 
-            print(request.profile,
-            request.prompt,
-            request.subject,
-            request.environment,
-            request.feeling,
-            request.refine,
-            request.num_images,
-            request.seed,
-            request.spread,
-            request.upscale_quality)
-
             response = requests.post(
                 "http://localhost:5000/generate",
                 json=request.model_dump(mode="json"),
             )
-            images = []
 
-            if response.status_code == 200:
-                data = response.json()
-                result = [base64.b64decode(img) for img in data["images"]]
-                for content in result:
-                    images.append(Image.open(io.BytesIO(content)))
-            return images
+            if response.status_code != 200:
+                return [], None, None
+
+            data = response.json()
+            gallery_images = []
+            quality_data   = []
+
+            for item in data["images"]:
+                img_bytes = base64.b64decode(item["image"])
+                pil_img   = Image.open(io.BytesIO(img_bytes))
+                caption   = f"seed: {item['seed']}" if item.get("seed") else ""
+                gallery_images.append((pil_img, caption))
+
+                if item.get("quality"):
+                    quality_data.append({
+                        "seed":  item.get("seed"),
+                        "gates": item["quality"],
+                    })
+
+            refined = data.get("refined_prompt")
+            return gallery_images, refined, quality_data if quality_data else None
 
         generate_button.click(
             generate_image,
@@ -276,7 +281,7 @@ def launch_ui():
                 pose_en, pose_img, pose_str,
                 scribble_en, scribble_img, scribble_str,
             ],
-            outputs=[gallery],
+            outputs=[gallery, refined_prompt_box, quality_output],
         )
 
     demo.launch(server_port=7860)

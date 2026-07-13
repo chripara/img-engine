@@ -5,6 +5,7 @@ from diffusers import StableDiffusionXLControlNetPipeline, ControlNetModel
 
 from app.schemas.generate import GuidanceResult
 from app.services.image.backends.base_backend import BaseBackend
+from app.services.registries.image_registry import Dimensions
 from app.services.registries.profile_registry import _PROFILES
 from app.services.image.registries.checkpoint_registry import _CHECKPOINT
 from utils.enums import Profile, GuidanceType
@@ -55,7 +56,7 @@ class SDXLBackend(BaseBackend):
             requires_pooled=[False, True]
         )
 
-    def generate(self, prompt: str, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
+    def generate(self, prompt: str, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
         # Generate an image using the SDXL model
         conditioning, pooled = self.compel(prompt)
         print(type(self._pipe))
@@ -67,6 +68,8 @@ class SDXLBackend(BaseBackend):
         if controls is None:
             result = self._pipe(
                 prompt_embeds = conditioning,
+                width = dimensions.width,
+                height = dimensions.height,
                 pooled_prompt_embeds = pooled,
                 num_inference_steps = self._steps,
                 guidance_scale = self._cfg,
@@ -74,6 +77,8 @@ class SDXLBackend(BaseBackend):
         else:
             result = self._pipe(
                 prompt_embeds=conditioning,
+                width = dimensions.width,
+                height = dimensions.height,
                 pooled_prompt_embeds=pooled,
                 num_inference_steps=self._steps,
                 guidance_scale=self._cfg,
