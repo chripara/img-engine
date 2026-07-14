@@ -26,7 +26,6 @@ def generate():
     if not req.prompt or not req.profile:
         return Response(status=400)
 
-    images = PipelineService.generation_pipeline(req)
-    print(f"Encoded[0] length: {len(images[0])}, preview: {images[0][:20]}")
+    response = PipelineService.generation_pipeline(req)
 
-    return jsonify({"images": images})
+    return jsonify(response.model_dump())

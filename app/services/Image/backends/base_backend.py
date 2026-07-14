@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from PIL import Image
 
 from app.schemas.generate import GuidanceResult
+from app.services.registries.image_registry import Dimensions
 from utils.enums import Profile, GuidanceType
 
 
@@ -15,6 +16,6 @@ class BaseBackend(ABC):
         pass
 
     @abstractmethod
-    def generate(self, prompt: str, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
+    def generate(self, prompt: str, dimentions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
         pass
 

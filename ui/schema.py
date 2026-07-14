@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from utils.enums import GuidanceType
+from utils.enums import GuidanceType, AspectRatio
 
 
 class GuidanceSettings(BaseModel):
@@ -23,5 +23,6 @@ class GenerateRequest(BaseModel):
     spread: int | None = Field(0, ge=0)
     upscale_quality: str | None = Field(default="none")
     refine: bool = False
+    aspect_ratio: AspectRatio | None = Field(default=AspectRatio.SQUARE.value)
     controls: GuidanceInput | None = None
 
