@@ -16,6 +16,7 @@ class GenerateRequest(BaseModel):
     profile: str
     num_images: int = Field(..., ge=1, le=10)
     prompt: str = Field(..., max_length=600)
+    negative_prompt: str | None = Field(default=None , max_length=600)
     subject: str | None
     environment: str | None
     feeling: str | None
@@ -25,4 +26,3 @@ class GenerateRequest(BaseModel):
     refine: bool = False
     aspect_ratio: AspectRatio | None = Field(default=AspectRatio.SQUARE.value)
     controls: GuidanceInput | None = None
-
