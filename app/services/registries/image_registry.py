@@ -14,3 +14,5 @@ _ASPECT_RATIOS: dict[AspectRatio, Dimensions] = {
     AspectRatio.CARD_PORTRAIT: Dimensions(width = 832, height = 1216),
     AspectRatio.CARD_LARGE:    Dimensions(width = 1152, height = 896),
 }
+
+_SDXL_CONTROLNET_LIMIT: int = 3

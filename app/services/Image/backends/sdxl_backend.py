@@ -1,11 +1,11 @@
-import io, torch, hashlib, time, os, gc
+import io, torch, os, gc
 from PIL import Image
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers import StableDiffusionXLControlNetPipeline, ControlNetModel
 
 from app.schemas.generate import GuidanceResult
 from app.services.image.backends.base_backend import BaseBackend
-from app.services.registries.image_registry import Dimensions
+from app.services.registries.image_registry import Dimensions, _SDXL_CONTROLNET_LIMIT
 from app.services.registries.profile_registry import _PROFILES
 from app.services.image.registries.checkpoint_registry import _CHECKPOINT
 from utils.enums import Profile, GuidanceType
@@ -38,17 +38,22 @@ class SDXLBackend(BaseBackend):
                 torch_dtype=torch.float16,
                 use_safetensors=True,
                 **({"vae": vae} if vae else {}),
-            ).to("cuda")
+            )
         else:
             self._pipe = DiffusionPipeline.from_pretrained(
                 _CHECKPOINT[_PROFILES[profile].model],
                 torch_dtype=torch.float16,
                 use_safetensors=True,
                 **({"vae": vae} if vae else {}),
-            ).to("cuda")
+            )
 
         self._pipe.scheduler = _PROFILES[profile].scheduler.from_config(self._pipe.scheduler.config)
-        self._pipe.to("cuda")
+
+        if len(guidance_types) < _SDXL_CONTROLNET_LIMIT:
+            self._pipe.to("cuda")
+        else:
+            self._pipe.enable_model_cpu_offload()
+
         self.compel = Compel(
             tokenizer=[self._pipe.tokenizer, self._pipe.tokenizer_2],
             text_encoder=[self._pipe.text_encoder, self._pipe.text_encoder_2],
@@ -89,7 +94,7 @@ class SDXLBackend(BaseBackend):
                 guidance_scale=self._cfg,
                 image=[ctr.image for ctr in controls],
                 controlnet_conditioning_scale=[ctr.strength for ctr in controls if ctr.strength is not None],
-                generator=generator, )
+                generator=generator,)
 
         image = result.images[0]
         
