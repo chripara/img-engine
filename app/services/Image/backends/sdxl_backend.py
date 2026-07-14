@@ -56,9 +56,10 @@ class SDXLBackend(BaseBackend):
             requires_pooled=[False, True]
         )
 
-    def generate(self, prompt: str, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
+    def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
         # Generate an image using the SDXL model
         conditioning, pooled = self.compel(prompt)
+        negative_conditioning, negative_pooled = self.compel(negative_prompt) if negative_prompt is not None else None
         print(type(self._pipe))
         print(hasattr(self._pipe, 'tokenizer_2'))
         generator = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
@@ -68,24 +69,27 @@ class SDXLBackend(BaseBackend):
         if controls is None:
             result = self._pipe(
                 prompt_embeds = conditioning,
+                pooled_prompt_embeds = pooled,
+                negative_prompt_embeds = negative_conditioning,
+                negative_pooled_prompt_embeds = negative_pooled,
                 width = dimensions.width,
                 height = dimensions.height,
-                pooled_prompt_embeds = pooled,
                 num_inference_steps = self._steps,
                 guidance_scale = self._cfg,
                 generator = generator,)
         else:
             result = self._pipe(
                 prompt_embeds=conditioning,
+                pooled_prompt_embeds=pooled,
+                negative_prompt_embeds=negative_conditioning,
+                negative_pooled_prompt_embeds=negative_pooled,
                 width = dimensions.width,
                 height = dimensions.height,
-                pooled_prompt_embeds=pooled,
                 num_inference_steps=self._steps,
                 guidance_scale=self._cfg,
                 image=[ctr.image for ctr in controls],
                 controlnet_conditioning_scale=[ctr.strength for ctr in controls if ctr.strength is not None],
                 generator=generator, )
-
 
         image = result.images[0]
         

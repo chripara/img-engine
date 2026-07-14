@@ -49,6 +49,6 @@ class ImageEngine:
         dimensions = _ASPECT_RATIOS[req.aspect_ratio] if req.aspect_ratio else _ASPECT_RATIOS[AspectRatio.SQUARE]
 
         print("Prompt:", req.prompt)
-        result = self._backend.generate(req.prompt, dimensions, seed, controls)
+        result = self._backend.generate(req.prompt, req.negative_prompt, dimensions, seed, controls)
 
         return  result
