@@ -2,9 +2,10 @@ from typing import Callable
 from flask import current_app
 from PIL import Image
 from app.schemas.generate import GenerateRequest, GuidanceResult
-from utils.enums import ImgBackend, Checkpoint, Profile, GuidanceType
+from utils.enums import ImgBackend, Checkpoint, Profile, GuidanceType, AspectRatio
 from app.services.image.registries.backend_registry import _BACKENDS, BackendEntry
 from app.services.registries.profile_registry import _PROFILES, ProfileSpec
+from app.services.registries.image_registry import _ASPECT_RATIOS
 from app.services.image.backends.base_backend import BaseBackend
 import gc, torch, random
 
@@ -45,12 +46,9 @@ class ImageEngine:
         if not req.profile:
             raise ValueError("profile is required")
 
+        dimensions = _ASPECT_RATIOS[req.aspect_ratio] if req.aspect_ratio else _ASPECT_RATIOS[AspectRatio.SQUARE]
+
         print("Prompt:", req.prompt)
-        result = self._backend.generate(req.prompt, seed, controls)
-
-
+        result = self._backend.generate(req.prompt, dimensions, seed, controls)
 
         return  result
-
-
-
