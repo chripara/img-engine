@@ -3,11 +3,12 @@ import io, torch, hashlib, time, os, gc
 from PIL import Image
 from diffusers.pipelines.stable_diffusion import StableDiffusionUpscalePipeline
 from app.services.upscaler.registries.upscaler_registry import _UPSCALERS
-from app.services.registries.profile_registry import Profile, _PROFILES
+from app.services.registries.image_registry import _ASPECT_RATIOS
 from app.schemas.generate import GenerateRequest
 from app.services.upscaler.backends.base_backend import BaseBackend
 
-from utils.enums import Upscaler
+from utils.enums import Upscaler, AspectRatio
+
 
 class LatentDiffusionBackend(BaseBackend):
     def __init__(self, denoising_strength: float = 0.3) -> None:
@@ -19,27 +20,33 @@ class LatentDiffusionBackend(BaseBackend):
         self._pipe = StableDiffusionUpscalePipeline.from_pretrained(
             self._model_path,
             torch_dtype=torch.float16,
-        ).to("cuda")
+        )
+        self._pipe.enable_model_cpu_offload()
 
     def upscale(self, image: Image.Image, req: GenerateRequest) -> Image.Image:
         if self._pipe is None:
             raise RuntimeError("LatentDiffusionBackend not loaded. Call load() first.")
 
-        tile_size = 512
-        overlap = 64
+        dimensions = _ASPECT_RATIOS[req.aspect_ratio] if req.aspect_ratio else _ASPECT_RATIOS[AspectRatio.SQUARE]
+
+        tile_size_x = dimensions.width // 2
+        tile_size_y = dimensions.height // 2
+
+        overlap_x = dimensions.width // 16
+        overlap_y = dimensions.height // 16
 
         w, h = image.size
         result = Image.new("RGB", (w * 4, h * 4))
 
-        for y in range(0, h, tile_size - overlap):
-            for x in range(0, w, tile_size - overlap):
-                tile = image.crop((x, y, min(x + tile_size, w), min(y + tile_size, h)))
+        for y in range(0, h, tile_size_y - overlap_y):
+            for x in range(0, w, tile_size_x - overlap_x):
+                tile = image.crop((x, y, min(x + tile_size_x, w), min(y + tile_size_y, h)))
                 upscaled_tile = self._pipe(
                     prompt=req.prompt,
                     image=tile,
                     noise_level=int(self._denoising_strength * 100),
                     num_inference_steps=8,
-                ).image[0]
+                ).images[0]
                 result.paste(upscaled_tile, (x * 4, y * 4))
 
         image = result
