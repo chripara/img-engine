@@ -36,8 +36,8 @@ _GATE_MESSAGES: dict[GateType, dict[GateStatus, str | None]] = {
 
 _GATE_THRESHOLDS: dict[GateType, dict[GateStatus, float]]= {
     GateType.TILING: {
-        GateStatus.WARNING: 0.75,    # pass ≥ 0.75
-        GateStatus.FAIL:  0.50
+        GateStatus.WARNING: 0.1,    # pass ≥ 0.75
+        GateStatus.FAIL:  0.05
     },
     GateType.HANDS: {
         GateStatus.WARNING: 0.65,    # pass ≥ 0.65

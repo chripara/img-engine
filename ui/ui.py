@@ -74,6 +74,18 @@ def launch_ui():
                             ("Scene / Card Frame", Profile.SCENE_FRAME.value),
                         ]
                     )
+                    with gr.Row():
+                        aspect_ratio = gr.Dropdown(
+                            label="Aspect Ratio",
+                            choices=[
+                                ("Square 1024×1024", "square"),
+                                ("Landscape 1344×768", "landscape"),
+                                ("Portrait 768×1344", "portrait"),
+                                ("Card Portrait 832×1216", "card_portrait"),
+                                ("Card Large 1152×896", "card_large"),
+                            ],
+                            value="square",
+                        )
 
                 with gr.Group():
                     with gr.Row():
@@ -105,6 +117,7 @@ def launch_ui():
                                 ("Frozen Tundra"),
                             ]
                         )
+
                     with gr.Row():
                         subject = gr.Dropdown(
                             label="Subject",
@@ -209,7 +222,8 @@ def launch_ui():
             canny_en, canny_img, canny_str,
             depth_en, depth_img, depth_str,
             pose_en, pose_img, pose_str,
-            scribble_en, scribble_img, scribble_str,
+            aspect_ratio, scribble_en,
+            scribble_img, scribble_str,
         ) -> tuple[list, str | None, list | None]:
 
             entries = [
@@ -241,6 +255,7 @@ def launch_ui():
                 seed=seed if use_seed else None,
                 spread=spread if use_seed else None,
                 upscale_quality=upscale_quality if upscale_quality else None,
+                aspect_ratio=aspect_ratio,
                 controls=controls,
             )
 
@@ -279,6 +294,7 @@ def launch_ui():
                 canny_en, canny_img, canny_str,
                 depth_en, depth_img, depth_str,
                 pose_en, pose_img, pose_str,
+                aspect_ratio,
                 scribble_en, scribble_img, scribble_str,
             ],
             outputs=[gallery, refined_prompt_box, quality_output],
