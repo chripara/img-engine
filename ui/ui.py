@@ -66,6 +66,7 @@ def launch_ui():
 
                 with gr.Group():
                     prompt = gr.Textbox(label="Prompt", placeholder="Enter your prompt here...", lines=3)
+                    negative_prompt = gr.Textbox(label="Negative Prompt", placeholder="Enter your negative prompt here...", lines=1)
                     profile = gr.Dropdown(
                         label="Profile",
                         choices=[
@@ -224,6 +225,7 @@ def launch_ui():
             pose_en, pose_img, pose_str,
             aspect_ratio, scribble_en,
             scribble_img, scribble_str,
+            negative_prompt
         ) -> tuple[list, str | None, list | None]:
 
             entries = [
@@ -245,18 +247,19 @@ def launch_ui():
             controls = GuidanceInput(images=images_b64, controls=controls_list) if controls_list else None
 
             request = GenerateRequest(
-                profile=profile,
-                prompt=prompt,
-                subject=subject,
-                environment=environment,
-                feeling=feeling,
-                refine=refine,
-                num_images=num_images,
-                seed=seed if use_seed else None,
-                spread=spread if use_seed else None,
-                upscale_quality=upscale_quality if upscale_quality else None,
-                aspect_ratio=aspect_ratio,
-                controls=controls,
+                profile = profile,
+                prompt = prompt,
+                subject = subject,
+                environment = environment,
+                feeling = feeling,
+                refine = refine,
+                num_images = num_images,
+                seed = seed if use_seed else None,
+                spread = spread if use_seed else None,
+                upscale_quality = upscale_quality if upscale_quality else None,
+                aspect_ratio = aspect_ratio,
+                negative_prompt = negative_prompt,
+                controls = controls,
             )
 
             response = requests.post(
@@ -295,7 +298,7 @@ def launch_ui():
                 depth_en, depth_img, depth_str,
                 pose_en, pose_img, pose_str,
                 aspect_ratio,
-                scribble_en, scribble_img, scribble_str,
+                scribble_en, scribble_img, scribble_str, negative_prompt,
             ],
             outputs=[gallery, refined_prompt_box, quality_output],
         )
