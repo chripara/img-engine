@@ -16,6 +16,6 @@ class BaseBackend(ABC):
         pass
 
     @abstractmethod
-    def generate(self, prompt: str, dimentions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
+    def generate(self, prompt: str, negative_prompt: str | None, dimentions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
         pass
 
