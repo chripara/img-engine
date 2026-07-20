@@ -1,8 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor
-from PIL import Image
 from app.schemas.generate import GenerateRequest, GuidanceResult, GenerateResult, ImageResult
 from app.services.image.img_service import generate_image
-from utils.enums import UpscaleQuality, Profile
+from utils.enums.upscale import UpscaleQuality
+from utils.enums.profile import Profile
 from utils.image_converter import ImageConverter
 from app.services.upscaler.upscaler_service import upscale_image
 from app.services.registries.profile_registry import _PROFILES

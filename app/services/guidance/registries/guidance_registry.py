@@ -1,6 +1,6 @@
 from typing import Callable
 
-from utils.enums import GuidanceType
+from utils.enums.guidance import GuidanceType
 from controlnet_aux import CannyDetector, MidasDetector, OpenposeDetector, HEDdetector
 
 _SDXL_PREPROCESSORS: dict[GuidanceType, Callable] = {

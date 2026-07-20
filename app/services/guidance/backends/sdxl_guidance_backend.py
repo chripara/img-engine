@@ -1,7 +1,7 @@
 from PIL import Image
 from app.services.guidance.backends.base_guidance_backend import BaseGuidanceBackend
 from app.services.guidance.registries.guidance_registry import _SDXL_PREPROCESSORS
-from utils.enums import GuidanceType
+from utils.enums.guidance import GuidanceType
 from typing import Callable
 
 import torch, gc
