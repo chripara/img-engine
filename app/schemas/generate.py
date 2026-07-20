@@ -32,7 +32,8 @@ class GenerateRequest(BaseModel):
     seed: int | None = Field(default=None, le=2**32 - 1)
     spread: int | None = Field(default=None, ge=0)
     controls: GuidanceInput | None = Field(default=None)
-    aspect_ratio: AspectRatio | None = Field(default=AspectRatio.SQUARE.value)
+    aspect_ratio: AspectRatio | None = Field(default = AspectRatio.SQUARE.value)
+    lora_strength: float | None = Field(default = None, ge = 0, le = 1.0)
     upscale_quality: UpscaleQuality | None = Field(default=UpscaleQuality.NONE)
 
     @field_validator("aspect_ratio", mode="before")

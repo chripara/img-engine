@@ -1,53 +1,49 @@
-import io, torch, os, gc
+import io, torch, os, gc, warnings
+
 from PIL import Image
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers import StableDiffusionXLControlNetPipeline, ControlNetModel
-
 from app.schemas.generate import GuidanceResult
 from app.services.image.backends.base_backend import BaseBackend
 from app.services.registries.image_registry import Dimensions, _SDXL_CONTROLNET_LIMIT
 from app.services.registries.profile_registry import _PROFILES
 from app.services.image.registries.checkpoint_registry import _CHECKPOINT
 from utils.enums import Profile, GuidanceType
-from diffusers.models.autoencoders.autoencoder_kl import AutoencoderKL
-from app.services.image.registries.guidance_registry import _SDXL_CONTROLNET_MODELS
 from compel import Compel, ReturnedEmbeddingsType
 
 class SDXLBackend(BaseBackend):
     pipe: DiffusionPipeline
 
     def __init__ (self, profile: Profile):
-        super().__init__()              
+        super().__init__()
         self._steps = _PROFILES[profile].steps
         self._cfg = _PROFILES[profile].cfg
 
-    def load(self, profile: Profile, use_controlnet: bool, guidance_types: list[GuidanceType]) -> None:
-        vae = AutoencoderKL.from_pretrained(
-            _PROFILES[profile].vae_id,
-            torch_dtype = torch.float16
-        ) if _PROFILES[profile].vae_id else None
+
+    def load(self, profile: Profile, lora_weight: float | None, use_controlnet: bool, guidance_types: list[GuidanceType]) -> None:
+        self._define_vae(profile)
 
         if use_controlnet:
-            controlnets = [
-                ControlNetModel.from_pretrained(_SDXL_CONTROLNET_MODELS[gt], torch_dtype=torch.float16)
-                for gt in guidance_types
-            ]
+            self._define_guidance(profile, guidance_types)
+
             self._pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
                 _CHECKPOINT[_PROFILES[profile].model],
-                controlnet=controlnets,
+                controlnet=self._controlnets,
                 torch_dtype=torch.float16,
                 use_safetensors=True,
-                **({"vae": vae} if vae else {}),
+                **({"vae": self._vae} if self._vae else {}),
             )
         else:
             self._pipe = DiffusionPipeline.from_pretrained(
                 _CHECKPOINT[_PROFILES[profile].model],
                 torch_dtype=torch.float16,
                 use_safetensors=True,
-                **({"vae": vae} if vae else {}),
+                **({"vae": self._vae} if self._vae else {}),
             )
 
-        self._pipe.scheduler = _PROFILES[profile].scheduler.from_config(self._pipe.scheduler.config)
+        self._define_lora(profile, lora_weight)
+
+        self._define_scheduler(profile)
 
         if len(guidance_types) < _SDXL_CONTROLNET_LIMIT:
             self._pipe.to("cuda")
@@ -65,36 +61,22 @@ class SDXLBackend(BaseBackend):
         # Generate an image using the SDXL model
         conditioning, pooled = self.compel(prompt)
         negative_conditioning, negative_pooled = self.compel(negative_prompt) if negative_prompt is not None else None
-        print(type(self._pipe))
-        print(hasattr(self._pipe, 'tokenizer_2'))
+
+
         generator = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
 
-        result = DiffusionPipeline()
-
-        if controls is None:
-            result = self._pipe(
-                prompt_embeds = conditioning,
-                pooled_prompt_embeds = pooled,
-                negative_prompt_embeds = negative_conditioning,
-                negative_pooled_prompt_embeds = negative_pooled,
-                width = dimensions.width,
-                height = dimensions.height,
-                num_inference_steps = self._steps,
-                guidance_scale = self._cfg,
-                generator = generator,)
-        else:
-            result = self._pipe(
-                prompt_embeds=conditioning,
-                pooled_prompt_embeds=pooled,
-                negative_prompt_embeds=negative_conditioning,
-                negative_pooled_prompt_embeds=negative_pooled,
-                width = dimensions.width,
-                height = dimensions.height,
-                num_inference_steps=self._steps,
-                guidance_scale=self._cfg,
-                image=[ctr.image for ctr in controls],
-                controlnet_conditioning_scale=[ctr.strength for ctr in controls if ctr.strength is not None],
-                generator=generator,)
+        result = self._pipe(
+            prompt_embeds = conditioning,
+            pooled_prompt_embeds = pooled,
+            negative_prompt_embeds = negative_conditioning,
+            negative_pooled_prompt_embeds = negative_pooled,
+            width = dimensions.width,
+            height = dimensions.height,
+            num_inference_steps = self._steps,
+            guidance_scale = self._cfg,
+            **({"image":[ctr.image for ctr in controls]} if controls is not None else {}),
+            **({"controlnet_conditioning_scale": [ctr.strength for ctr in controls if ctr.strength is not None]} if controls is not None else {}),
+            generator = generator,)
 
         image = result.images[0]
         
@@ -111,7 +93,8 @@ class SDXLBackend(BaseBackend):
         return image
 
     def unload(self) -> None:
-        self._pipe = None
+        if self._pipe is not None:
+            self._pipe.to("cpu")
         del self._pipe
         torch.cuda.empty_cache()
         gc.collect()

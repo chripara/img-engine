@@ -88,6 +88,10 @@ def launch_ui():
                             value="square",
                         )
 
+                    gr.Markdown("### LoRA")
+                    with gr.Row():
+                        lora_strength = gr.Slider(0, 1, label="strength", value=0.5)
+
                 with gr.Group():
                     with gr.Row():
                         feeling = gr.Dropdown(
@@ -223,9 +227,9 @@ def launch_ui():
             canny_en, canny_img, canny_str,
             depth_en, depth_img, depth_str,
             pose_en, pose_img, pose_str,
-            aspect_ratio, scribble_en,
-            scribble_img, scribble_str,
-            negative_prompt
+            aspect_ratio, lora_strength,
+            scribble_en, scribble_img,
+            scribble_str, negative_prompt,
         ) -> tuple[list, str | None, list | None]:
 
             entries = [
@@ -259,6 +263,7 @@ def launch_ui():
                 upscale_quality = upscale_quality if upscale_quality else None,
                 aspect_ratio = aspect_ratio,
                 negative_prompt = negative_prompt,
+                lora_strength = lora_strength,
                 controls = controls,
             )
 
@@ -297,7 +302,7 @@ def launch_ui():
                 canny_en, canny_img, canny_str,
                 depth_en, depth_img, depth_str,
                 pose_en, pose_img, pose_str,
-                aspect_ratio,
+                aspect_ratio, lora_strength,
                 scribble_en, scribble_img, scribble_str, negative_prompt,
             ],
             outputs=[gallery, refined_prompt_box, quality_output],
