@@ -5,17 +5,22 @@ from diffusers import AutoencoderKL, DiffusionPipeline
 from app.services.registries.profile_registry import _PROFILES
 from app.schemas.generate import GuidanceResult
 from app.services.registries.image_registry import Dimensions
-from utils.enums import Profile, GuidanceType
-from app.services.image.registries.lora_registry import _LORA_REGISTRY
+from utils.enums.profile import Profile
+from utils.enums.guidance import GuidanceType
+
+from app.services.image.registries.stype_presets import _STYLE_PRESET_REGISTRY
 from app.services.image.registries.guidance_registry import _GUIDANCE_MODELS, _SDXL_CONTROLNET_MODELS
 import torch
+
+from utils.enums.style_presets import StylePreset
+
 
 class BaseBackend(ABC):
     def __init__(self):
         self._pipe: DiffusionPipeline | None = None
 
     @abstractmethod
-    def load(self, profile: Profile, lora_weight: float | None, use_controlnet: bool, guidance_types: list[GuidanceType]) -> None:
+    def load(self, profile: Profile, style_preset: StylePreset, lora_weight: float | None, use_controlnet: bool, guidance_types: list[GuidanceType]) -> None:
         pass
 
     @abstractmethod
@@ -39,15 +44,20 @@ class BaseBackend(ABC):
             for gt in guidance_types
         ]
 
-    def _define_lora(self, profile: Profile, lora_weight: float | None):
-        if lora_weight is not None and lora_weight > 0.0:
-            self._pipe.load_lora_weights(_LORA_REGISTRY[profile], adapter_name=_LORA_REGISTRY[profile])
+    def _define_lora(self, style_preset: StylePreset | None, lora_weight: float | None):
+        if style_preset is not None:
+            if lora_weight is None:
+                strength=0.8
+            else:
+                strength=lora_weight
+            self._pipe.load_lora_weights(_STYLE_PRESET_REGISTRY[style_preset], adapter_name=style_preset.value)
 
             self._pipe.set_adapters(
-                _LORA_REGISTRY[profile],
-                adapter_weights=lora_weight,
+                style_preset.value,
+                adapter_weights=strength,
             )
 
+            print("lora stregth: ",strength)
             self._pipe.fuse_lora()
 
     def _define_scheduler(self, profile: Profile):

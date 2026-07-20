@@ -1,5 +1,5 @@
 import os
-from utils.enums import Checkpoint
+from utils.enums.checkpoint import Checkpoint
 
 class Config:
     DEBUG = False

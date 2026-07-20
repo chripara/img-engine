@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from utils.enums import GateStatus
-from utils.enums import GateType
+from utils.enums.gate import GateType, GateStatus
 
 class GateStatusMessage(BaseModel):
     status: GateStatus

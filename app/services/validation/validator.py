@@ -2,7 +2,7 @@ from PIL import Image
 import numpy as np
 from app.services.validation.registries.validator_registry import _GATE_THRESHOLDS, _GATE_MESSAGES
 from app.schemas.generate import GateResult
-from utils.enums import GateType, GateStatus
+from utils.enums.gate import GateType, GateStatus
 
 def validate(image: Image.Image) -> list[GateResult]:
     gate_results: list[GateResult] = []

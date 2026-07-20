@@ -1,5 +1,4 @@
-import io, torch, os, gc, warnings
-
+import io, torch, os, gc
 from PIL import Image
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers import StableDiffusionXLControlNetPipeline, ControlNetModel
@@ -8,8 +7,12 @@ from app.services.image.backends.base_backend import BaseBackend
 from app.services.registries.image_registry import Dimensions, _SDXL_CONTROLNET_LIMIT
 from app.services.registries.profile_registry import _PROFILES
 from app.services.image.registries.checkpoint_registry import _CHECKPOINT
-from utils.enums import Profile, GuidanceType
+from utils.enums.profile import Profile
+from utils.enums.guidance import GuidanceType
 from compel import Compel, ReturnedEmbeddingsType
+
+from utils.enums.style_presets import StylePreset
+
 
 class SDXLBackend(BaseBackend):
     pipe: DiffusionPipeline
@@ -20,7 +23,7 @@ class SDXLBackend(BaseBackend):
         self._cfg = _PROFILES[profile].cfg
 
 
-    def load(self, profile: Profile, lora_weight: float | None, use_controlnet: bool, guidance_types: list[GuidanceType]) -> None:
+    def load(self, profile: Profile, style_preset: StylePreset, lora_weight: float | None, use_controlnet: bool, guidance_types: list[GuidanceType]) -> None:
         self._define_vae(profile)
 
         if use_controlnet:
@@ -41,7 +44,7 @@ class SDXLBackend(BaseBackend):
                 **({"vae": self._vae} if self._vae else {}),
             )
 
-        self._define_lora(profile, lora_weight)
+        self._define_lora(style_preset, lora_weight)
 
         self._define_scheduler(profile)
 
@@ -58,10 +61,9 @@ class SDXLBackend(BaseBackend):
         )
 
     def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
-        # Generate an image using the SDXL model
+
         conditioning, pooled = self.compel(prompt)
         negative_conditioning, negative_pooled = self.compel(negative_prompt) if negative_prompt is not None else None
-
 
         generator = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
 

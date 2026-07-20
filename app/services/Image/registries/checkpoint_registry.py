@@ -1,5 +1,4 @@
-from utils.enums import Checkpoint
-
+from utils.enums.checkpoint import Checkpoint
 
 _CHECKPOINT: dict[Checkpoint, str] = {
     Checkpoint.SDXL_BASE: "stabilityai/stable-diffusion-xl-base-1.0",

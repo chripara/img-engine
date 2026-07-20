@@ -1,6 +1,5 @@
-from typing import Mapping
-
-from utils.enums import Checkpoint, GuidanceType, Profile
+from utils.enums.guidance import GuidanceType
+from utils.enums.profile import Profile
 from diffusers import ControlNetModel, SD3ControlNetModel, FluxControlNetModel
 
 _SDXL_CONTROLNET_MODELS: dict[GuidanceType, str] = {
@@ -9,10 +8,6 @@ _SDXL_CONTROLNET_MODELS: dict[GuidanceType, str] = {
     GuidanceType.POSE:     "thibaud/controlnet-openpose-sdxl-1.0",
     GuidanceType.SCRIBBLE: "xinsir/controlnet-scribble-sdxl-1.0",
 }
-# _GUIDANCE_MODELS: dict[Profile, type[ModelMixin]] = {
-#     profile: ControlNetModel
-#     for profile in (Profile.CHARACTER, Profile.SCENE_FRAME, Profile.PRODUCT)
-# }
 
 _GUIDANCE_MODELS: dict[Profile, type[ControlNetModel | SD3ControlNetModel | FluxControlNetModel]] = {
     Profile.CHARACTER: ControlNetModel,

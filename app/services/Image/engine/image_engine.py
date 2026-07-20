@@ -1,13 +1,13 @@
-from typing import Callable
-from flask import current_app
 from PIL import Image
 from app.schemas.generate import GenerateRequest, GuidanceResult
-from utils.enums import ImgBackend, Checkpoint, Profile, GuidanceType, AspectRatio
+from utils.enums.checkpoint import Checkpoint
+from utils.enums.guidance import GuidanceType
+from utils.enums.aspect_ratio import AspectRatio
 from app.services.image.registries.backend_registry import _BACKENDS, BackendEntry
 from app.services.registries.profile_registry import _PROFILES, ProfileSpec
 from app.services.registries.image_registry import _ASPECT_RATIOS
 from app.services.image.backends.base_backend import BaseBackend
-import gc, torch, random
+import gc, torch
 
 
 class ImageEngine:
@@ -16,10 +16,11 @@ class ImageEngine:
         self._model = _PROFILES[req.profile].model
         self._backend = self._get_backend(req)
         self._guidance_types = guidance_types
+        self._style_preset = req.style_preset
         self._lora_weights = req.lora_strength
 
     def __enter__(self):
-        self._backend.load(self._profile, self._lora_weights, len(self._guidance_types) > 0, self._guidance_types)
+        self._backend.load(self._profile, self._style_preset, self._lora_weights, len(self._guidance_types) > 0, self._guidance_types)
 
         return self
 

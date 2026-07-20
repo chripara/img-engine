@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from utils.enums import Upscaler
+from utils.enums.upscale import Upscaler
 
 _UPSCALERS: dict[Upscaler, str] = {
     Upscaler.ESRGAN: "local_models\RealESRGAN_x4plus.pth",
