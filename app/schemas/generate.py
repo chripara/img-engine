@@ -1,8 +1,11 @@
 from PIL import Image
 from pydantic import BaseModel, Field, ConfigDict, field_validator
-from utils.enums import GuidanceType, AspectRatio, GateType
-
-from utils.enums import Profile, UpscaleQuality
+from utils.enums.guidance import GuidanceType
+from utils.enums.aspect_ratio import AspectRatio
+from utils.enums.gate import GateType
+from utils.enums.profile import Profile
+from utils.enums.style_presets import StylePreset
+from utils.enums.upscale import UpscaleQuality
 
 class GuidanceSettings(BaseModel):
     selector: int = Field(default=0)
@@ -33,6 +36,7 @@ class GenerateRequest(BaseModel):
     spread: int | None = Field(default=None, ge=0)
     controls: GuidanceInput | None = Field(default=None)
     aspect_ratio: AspectRatio | None = Field(default = AspectRatio.SQUARE.value)
+    style_preset: StylePreset | None = Field(default=None)
     lora_strength: float | None = Field(default = None, ge = 0, le = 1.0)
     upscale_quality: UpscaleQuality | None = Field(default=UpscaleQuality.NONE)
 

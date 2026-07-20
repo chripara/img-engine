@@ -1,6 +1,8 @@
 from typing import Type
 from dataclasses import dataclass
-from utils.enums import Checkpoint, Profile, Upscaler
+from utils.enums.checkpoint import Checkpoint
+from utils.enums.profile import Profile
+from utils.enums.upscale import Upscaler
 from diffusers.schedulers.scheduling_euler_discrete import EulerDiscreteScheduler
 from diffusers.schedulers.scheduling_dpmsolver_multistep import DPMSolverMultistepScheduler
 

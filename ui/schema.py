@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
-
-from utils.enums import GuidanceType, AspectRatio
-
+from utils.enums.guidance import GuidanceType
+from utils.enums.aspect_ratio import AspectRatio
+from utils.enums.style_presets import StylePreset
 
 class GuidanceSettings(BaseModel):
     selector: int = Field(default=0)
@@ -25,5 +25,6 @@ class GenerateRequest(BaseModel):
     upscale_quality: str | None = Field(default="none")
     refine: bool = False
     aspect_ratio: AspectRatio | None = Field(default=AspectRatio.SQUARE.value)
+    style_preset: StylePreset | None = Field(default=None)
     lora_strength: float | None = Field(default = None, ge = 0, le = 1.0)
     controls: GuidanceInput | None = None

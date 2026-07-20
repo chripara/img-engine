@@ -1,6 +1,6 @@
 import torch, gc
 from PIL import Image
-from utils.enums import UpscaleQuality
+from utils.enums.upscale import UpscaleQuality
 from app.schemas.generate import GenerateRequest
 from app.services.registries.profile_registry import ProfileSpec
 from app.services.upscaler.backends.esrgan_backend import ESRGANBackend
