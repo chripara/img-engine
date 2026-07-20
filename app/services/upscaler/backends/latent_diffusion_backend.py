@@ -1,13 +1,13 @@
 from __future__ import annotations
-import io, torch, hashlib, time, os, gc
+import io, torch, os, gc
 from PIL import Image
 from diffusers.pipelines.stable_diffusion import StableDiffusionUpscalePipeline
 from app.services.upscaler.registries.upscaler_registry import _UPSCALERS
 from app.services.registries.image_registry import _ASPECT_RATIOS
 from app.schemas.generate import GenerateRequest
 from app.services.upscaler.backends.base_backend import BaseBackend
-
-from utils.enums import Upscaler, AspectRatio
+from utils.enums.upscale import Upscaler
+from utils.enums.aspect_ratio import AspectRatio
 
 
 class LatentDiffusionBackend(BaseBackend):

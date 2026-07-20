@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from PIL import Image
-from app.schemas.generate import GenerateRequest
-from utils.enums import GuidanceType
+from utils.enums.guidance import GuidanceType
 
 
 class BaseGuidanceBackend(ABC):

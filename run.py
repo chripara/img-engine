@@ -1,7 +1,6 @@
 import threading, warnings
 from diffusers.utils import logging as diffusers_logging
 
-# def _disable_warnings(self):
 diffusers_logging.set_verbosity_error()
 warnings.filterwarnings("ignore", message=".*cannot run with `cpu` device.*")
 warnings.filterwarnings("ignore", message=".*Overwriting.*in registry.*")

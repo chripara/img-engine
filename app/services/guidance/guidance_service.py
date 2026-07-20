@@ -1,4 +1,4 @@
-from app.schemas.generate import GenerateRequest, GuidanceInput, GuidanceResult
+from app.schemas.generate import GenerateRequest, GuidanceResult
 from app.services.guidance.engine.guidance_engine import GuidanceEngine
 import base64, io
 from PIL import Image

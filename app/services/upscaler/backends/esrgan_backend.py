@@ -6,7 +6,7 @@ from PIL import Image
 from spandrel import ModelLoader
 from app.services.upscaler.registries.upscaler_registry import _UPSCALERS
 from app.services.upscaler.backends.base_backend import BaseBackend
-from utils.enums import Upscaler
+from utils.enums.upscale import Upscaler
 from app.schemas.generate import GenerateRequest
 
 _ESRGAN_NUM_BLOCK: dict[Upscaler, int] ={

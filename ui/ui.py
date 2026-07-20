@@ -1,15 +1,15 @@
 import base64
 import io
-
 import gradio as gr
 import requests
 from gradio_modal import Modal
 from PIL import Image
-
 from ui.schema import GenerateRequest, GuidanceInput, GuidanceSettings
-from utils.enums import Checkpoint, Profile, GuidanceType
+from utils.enums.profile import Profile
+from utils.enums.guidance import GuidanceType
 from app.services.registries.profile_registry import _PROFILES
 from app.services.registries.guidance_registry import _GUIDANCE_DETAILS
+from utils.enums.style_presets import StylePreset
 
 GUIDANCE_TYPES = [GuidanceType.CANNY, GuidanceType.DEPTH, GuidanceType.POSE, GuidanceType.SCRIBBLE]
 
@@ -31,6 +31,18 @@ CONTROLNET_CSS = """
 }
 """
 
+_STYLE_PRESET_LABELS: list[tuple[str, str | None]] = [
+    ("None", None),
+    ("Fantasy", StylePreset.FANTASY.value),
+    ("Dark Fantasy", StylePreset.DARK_FANTASY.value),
+    ("Cartoonish Fantasy", StylePreset.CARTOONISH_FANTASY.value),
+    ("Cyberpunk", StylePreset.CYBERPUNK.value),
+    ("Realism Cartoonish", StylePreset.REALISM_CARTOONISH.value),
+    ("Technological Fantasy / Scifi Fantasy", StylePreset.SCIFI_FANTASY.value),
+    ("Magic Medieval Fantasy", StylePreset.MEDIEVAL_FANTASY.value),
+    ("Japan Anime Aesthetic", StylePreset.ANIME_AESTHETIC.value),
+]
+
 def _pil_to_b64(img: Image.Image) -> str:
     buffer = io.BytesIO()
     img.save(buffer, format="PNG")
@@ -44,7 +56,6 @@ def _update_strength_defaults(profile_value: str):
     defaults = _GUIDANCE_DETAILS[checkpoint].defaults
     return [gr.update(value=defaults[gt]) for gt in GUIDANCE_TYPES]
 
-
 def _update_selectors(canny_en, depth_en, pose_en, scribble_en):
     enabled_flags = [canny_en, depth_en, pose_en, scribble_en]
     selectors = []
@@ -56,7 +67,6 @@ def _update_selectors(canny_en, depth_en, pose_en, scribble_en):
         else:
             selectors.append(None)
     return selectors
-
 
 def launch_ui():
 
@@ -86,6 +96,14 @@ def launch_ui():
                                 ("Card Large 1152×896", "card_large"),
                             ],
                             value="square",
+                        )
+
+                    gr.Markdown("### Style Preset")
+                    with gr.Row():
+                        style_preset = gr.Dropdown(
+                            choices=_STYLE_PRESET_LABELS,
+                            label="Style",
+                            value=None,
                         )
 
                     gr.Markdown("### LoRA")
@@ -229,7 +247,7 @@ def launch_ui():
             pose_en, pose_img, pose_str,
             aspect_ratio, lora_strength,
             scribble_en, scribble_img,
-            scribble_str, negative_prompt,
+            scribble_str, negative_prompt, style_preset
         ) -> tuple[list, str | None, list | None]:
 
             entries = [
@@ -265,6 +283,7 @@ def launch_ui():
                 negative_prompt = negative_prompt,
                 lora_strength = lora_strength,
                 controls = controls,
+                style_preset = style_preset
             )
 
             response = requests.post(
@@ -303,7 +322,7 @@ def launch_ui():
                 depth_en, depth_img, depth_str,
                 pose_en, pose_img, pose_str,
                 aspect_ratio, lora_strength,
-                scribble_en, scribble_img, scribble_str, negative_prompt,
+                scribble_en, scribble_img, scribble_str, negative_prompt, style_preset,
             ],
             outputs=[gallery, refined_prompt_box, quality_output],
         )
