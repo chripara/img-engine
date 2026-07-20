@@ -25,4 +25,5 @@ class GenerateRequest(BaseModel):
     upscale_quality: str | None = Field(default="none")
     refine: bool = False
     aspect_ratio: AspectRatio | None = Field(default=AspectRatio.SQUARE.value)
+    lora_strength: float | None = Field(default = None, ge = 0, le = 1.0)
     controls: GuidanceInput | None = None
