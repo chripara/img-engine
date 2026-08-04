@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, Response, request
 from pydantic import ValidationError
 from app.services.pipeline_service import PipelineService
 from app.schemas.generate import GenerateRequest
-from flask_pydantic_spec import FlaskPydanticSpec, Request, Response
+from flask_pydantic_spec import FlaskPydanticSpec, Request,  Response as SpecResponse
 
 bp = Blueprint('routes', __name__)
 
@@ -14,7 +14,7 @@ def health():
     return jsonify({"status": "ok"})
 
 @bp.route('/generate', methods=["POST"])
-@api.validate(body=Request(GenerateRequest), resp=Response(HTTP_200=None))
+@api.validate(body=Request(GenerateRequest), resp=SpecResponse(HTTP_200=None))
 def generate():
     try:
         req = GenerateRequest(**request.json)
