@@ -63,7 +63,7 @@ class SDXLBackend(BaseBackend):
     def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
 
         conditioning, pooled = self.compel(prompt)
-        negative_conditioning, negative_pooled = self.compel(negative_prompt) if negative_prompt is not None else None
+        negative_conditioning, negative_pooled = self.compel(negative_prompt) if negative_prompt is not None else (None, None)
 
         generator = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
 
