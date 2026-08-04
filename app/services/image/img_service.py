@@ -6,6 +6,6 @@ def generate_image(req: GenerateRequest, seeds: list[int] | None = None, control
     guidance_types = [ctr.type for ctr in controls if controls is not None]
 
     with ImageEngine(req, guidance_types) as engine:
-        images = [engine.generate_image(req, seed, controls) for seed in seeds]
+        images = [engine.generate_image(req, seed, controls, index) for index, seed in enumerate(seeds)]
 
     return images
