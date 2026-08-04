@@ -9,7 +9,7 @@ _GATE_MESSAGES: dict[GateType, dict[GateStatus, str | None]] = {
     GateType.TILING: {
         GateStatus.PASS: None,
         GateStatus.WARNING: "Tiling pattern detected",
-        GateStatus.FAIL: "Severe tiling artifact — image unusable",
+        GateStatus.FAIL: "Severe tiling artifact — Image unusable",
     },
     GateType.HANDS: {
         GateStatus.PASS: None,

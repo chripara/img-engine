@@ -1,4 +1,4 @@
-from app.services.image.engine.image_engine import ImageEngine
+from app.services.Image.engine.image_engine import ImageEngine
 from app.schemas.generate import GenerateRequest, GuidanceResult
 from PIL import Image
 

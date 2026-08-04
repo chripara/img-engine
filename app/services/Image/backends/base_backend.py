@@ -8,8 +8,8 @@ from app.services.registries.image_registry import Dimensions
 from utils.enums.profile import Profile
 from utils.enums.guidance import GuidanceType
 
-from app.services.image.registries.stype_presets import _STYLE_PRESET_REGISTRY
-from app.services.image.registries.guidance_registry import _GUIDANCE_MODELS, _SDXL_CONTROLNET_MODELS
+from app.services.Image.registries.stype_presets import _STYLE_PRESET_REGISTRY
+from app.services.Image.registries.guidance_registry import _GUIDANCE_MODELS, _SDXL_CONTROLNET_MODELS
 import torch
 
 from utils.enums.style_presets import StylePreset

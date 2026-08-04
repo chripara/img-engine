@@ -3,10 +3,10 @@ from app.schemas.generate import GenerateRequest, GuidanceResult
 from utils.enums.checkpoint import Checkpoint
 from utils.enums.guidance import GuidanceType
 from utils.enums.aspect_ratio import AspectRatio
-from app.services.image.registries.backend_registry import _BACKENDS, BackendEntry
+from app.services.Image.registries.backend_registry import _BACKENDS, BackendEntry
 from app.services.registries.profile_registry import _PROFILES, ProfileSpec
 from app.services.registries.image_registry import _ASPECT_RATIOS
-from app.services.image.backends.base_backend import BaseBackend
+from app.services.Image.backends.base_backend import BaseBackend
 import gc, torch
 
 

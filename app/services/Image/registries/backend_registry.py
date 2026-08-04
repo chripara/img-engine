@@ -1,7 +1,7 @@
 from typing import Callable, TypedDict, Type
 from utils.enums.checkpoint import Checkpoint
-from app.services.image.backends.base_backend import BaseBackend
-from app.services.image.backends.sdxl_backend import SDXLBackend
+from app.services.Image.backends.base_backend import BaseBackend
+from app.services.Image.backends.sdxl_backend import SDXLBackend
 from utils.image_converter import ImageConverter
 
 class BackendEntry(TypedDict):

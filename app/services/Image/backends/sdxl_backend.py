@@ -3,10 +3,10 @@ from PIL import Image
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers import StableDiffusionXLControlNetPipeline, ControlNetModel
 from app.schemas.generate import GuidanceResult
-from app.services.image.backends.base_backend import BaseBackend
+from app.services.Image.backends.base_backend import BaseBackend
 from app.services.registries.image_registry import Dimensions, _SDXL_CONTROLNET_LIMIT
 from app.services.registries.profile_registry import _PROFILES
-from app.services.image.registries.checkpoint_registry import _CHECKPOINT
+from app.services.Image.registries.checkpoint_registry import _CHECKPOINT
 from utils.enums.profile import Profile
 from utils.enums.guidance import GuidanceType
 from compel import Compel, ReturnedEmbeddingsType
@@ -76,7 +76,7 @@ class SDXLBackend(BaseBackend):
             height = dimensions.height,
             num_inference_steps = self._steps,
             guidance_scale = self._cfg,
-            **({"image":[ctr.image for ctr in controls]} if controls is not None else {}),
+            **({"Image":[ctr.image for ctr in controls]} if controls is not None else {}),
             **({"controlnet_conditioning_scale": [ctr.strength for ctr in controls if ctr.strength is not None]} if controls is not None else {}),
             generator = generator,)
 
