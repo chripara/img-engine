@@ -28,7 +28,7 @@ class BaseBackend(ABC):
         pass
 
     @abstractmethod
-    def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult] | None) -> Image.Image:
+    def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult] | None, index: int = 0) -> Image.Image:
         pass
 
     def _define_vae(self, profile: Profile):
