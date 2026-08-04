@@ -67,10 +67,6 @@ def _refine_prompt(req: GenerateRequest) -> str:
 def _preprocess(req: GenerateRequest) -> list[GuidanceResult]:
     return generate_guidance(req)
 
-# def _get_strength(profile: Profile, controls: list[GuidanceResult]) -> None:
-#     for guidance_result in controls:
-#         if guidance_result.strength is None:
-#             guidance_result.model_copy(update={"strength": _GUIDANCE_DETAILS[_PROFILES[profile].model].defaults[guidance_result.type]})
 def _get_strength(profile: Profile, controls: list[GuidanceResult]) -> None:
     for i, guidance_result in enumerate(controls):
         if guidance_result.strength is None:
