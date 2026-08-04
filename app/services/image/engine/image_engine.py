@@ -41,7 +41,7 @@ class ImageEngine:
             ):
                 return _BACKENDS[self._model]["backend"](profile=req.profile)
                 
-    def generate_image(self, req: GenerateRequest, seed: int | None = None, controls: list[GuidanceResult] | None = None) -> Image.Image:
+    def generate_image(self, req: GenerateRequest, seed: int | None = None, controls: list[GuidanceResult] | None = None, index: int = 0) -> Image.Image:
         if not req.prompt:
             raise ValueError("prompt is required")
 
@@ -51,6 +51,6 @@ class ImageEngine:
         dimensions = _ASPECT_RATIOS[req.aspect_ratio] if req.aspect_ratio else _ASPECT_RATIOS[AspectRatio.SQUARE]
 
         print("Prompt:", req.prompt)
-        result = self._backend.generate(req.prompt, req.negative_prompt, dimensions, seed, controls)
+        result = self._backend.generate(req.prompt, req.negative_prompt, dimensions, seed, controls, index)
 
         return  result

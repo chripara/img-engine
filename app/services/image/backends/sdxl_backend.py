@@ -60,7 +60,7 @@ class SDXLBackend(BaseBackend):
             requires_pooled=[False, True]
         )
 
-    def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult]) -> Image.Image:
+    def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult], index: int = 0) -> Image.Image:
 
         conditioning, pooled = self.compel(prompt)
         negative_conditioning, negative_pooled = self.compel(negative_prompt) if negative_prompt is not None else (None, None)
@@ -86,7 +86,7 @@ class SDXLBackend(BaseBackend):
         image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
 
-        filename = f"seed_{seed if seed else 'NaN'}.png"
+        filename = f"seed_{seed}.png" if seed is not None else f"seed_NaN_{index + 1}.png"
         output_dir = "output_images"
         os.makedirs(output_dir, exist_ok=True)
         with open(os.path.join(output_dir, filename), "wb") as f:
