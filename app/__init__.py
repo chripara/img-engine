@@ -1,14 +1,17 @@
 from flask import Flask
 import subprocess
-import atexit
+import atexit, os, shutil
 from config import DevelopmentConfig
 
 _ollama = None
 
+
+OLLAMA_PATH = os.getenv("OLLAMA_PATH") or shutil.which("ollama") or "ollama"
+
 def start_ollama():
         global _ollama
         if _ollama is None:
-                _ollama = subprocess.Popen([r"C:\Users\Chris\AppData\Local\Programs\Ollama\ollama.exe", "serve"])
+                _ollama = subprocess.Popen([OLLAMA_PATH, "serve"])
 
 def stop_ollama():
         if _ollama is not None:
