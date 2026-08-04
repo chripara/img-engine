@@ -9,7 +9,7 @@ _GATE_MESSAGES: dict[GateType, dict[GateStatus, str | None]] = {
     GateType.TILING: {
         GateStatus.PASS: None,
         GateStatus.WARNING: "Tiling pattern detected",
-        GateStatus.FAIL: "Severe tiling artifact — Image unusable",
+        GateStatus.FAIL: "Severe tiling artifact — image unusable",
     },
     GateType.HANDS: {
         GateStatus.PASS: None,
@@ -24,12 +24,12 @@ _GATE_MESSAGES: dict[GateType, dict[GateStatus, str | None]] = {
     GateType.CLIP: {
         GateStatus.PASS: None,
         GateStatus.WARNING: "Prompt alignment weak",
-        GateStatus.FAIL: "Image does not match prompt",
+        GateStatus.FAIL: "image does not match prompt",
     },
     GateType.IQA: {
         GateStatus.PASS: None,
         GateStatus.WARNING: "Low perceptual quality",
-        GateStatus.FAIL: "Image quality unacceptable",
+        GateStatus.FAIL: "image quality unacceptable",
     },
 }
 

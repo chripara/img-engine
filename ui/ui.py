@@ -200,25 +200,25 @@ def launch_ui():
             with gr.Group():
                 with gr.Row():
                     canny_en = gr.Checkbox(label="canny enable", value=False)
-                    canny_img = gr.Image(label="canny Image", type="pil")
+                    canny_img = gr.Image(label="canny image", type="pil")
                     canny_sel = gr.Number(label="selector", value=None, interactive=False)
                     canny_str = gr.Slider(0, 1, label="strength", value=0.5)
             with gr.Group():
                 with gr.Row():
                     depth_en = gr.Checkbox(label="depth enable", value=False)
-                    depth_img = gr.Image(label="depth Image", type="pil")
+                    depth_img = gr.Image(label="depth image", type="pil")
                     depth_sel = gr.Number(label="selector", value=None, interactive=False)
                     depth_str = gr.Slider(0, 1, label="strength", value=0.5)
             with gr.Group():
                 with gr.Row():
                     pose_en = gr.Checkbox(label="pose enable", value=False)
-                    pose_img = gr.Image(label="pose Image", type="pil")
+                    pose_img = gr.Image(label="pose image", type="pil")
                     pose_sel = gr.Number(label="selector", value=None, interactive=False)
                     pose_str = gr.Slider(0, 1, label="strength", value=0.5)
             with gr.Group():
                 with gr.Row():
                     scribble_en = gr.Checkbox(label="scribble enable", value=False)
-                    scribble_img = gr.Image(label="scribble Image", type="pil")
+                    scribble_img = gr.Image(label="scribble image", type="pil")
                     scribble_sel = gr.Number(label="selector", value=None, interactive=False)
                     scribble_str = gr.Slider(0, 1, label="strength", value=0.5)
             close_btn = gr.Button("Close")
@@ -299,7 +299,7 @@ def launch_ui():
             quality_data   = []
 
             for item in data["images"]:
-                img_bytes = base64.b64decode(item["Image"])
+                img_bytes = base64.b64decode(item["image"])
                 pil_img   = Image.open(io.BytesIO(img_bytes))
                 caption   = f"seed: {item['seed']}" if item.get("seed") else ""
                 gallery_images.append((pil_img, caption))

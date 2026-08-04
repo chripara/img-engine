@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from app.schemas.generate import GenerateRequest, GuidanceResult, GenerateResult, ImageResult
-from app.services.Image.img_service import generate_image
+from app.services.image.img_service import generate_image
 from utils.enums.upscale import UpscaleQuality
 from utils.enums.profile import Profile
 from utils.image_converter import ImageConverter
@@ -53,7 +53,7 @@ class PipelineService():
         #             validations = validate(images[i])
         #             encoded = base64.b64encode(converter(images[i])).decode()
         #             imageResults.append(ImageResult(
-        #                 Image = encoded,
+        #                 image = encoded,
         #                 seed=seeds[i],
         #                 quality=validations
         #             ))
@@ -65,7 +65,7 @@ class PipelineService():
         #             validations = validate(imgs[i])
         #             encoded = base64.b64encode(converter(imgs[i])).decode()
         #             imageResults.append(ImageResult(
-        #                 Image=encoded,
+        #                 image=encoded,
         #                 seed=seeds[i],
         #                 quality=validations
         #             ))
