@@ -46,37 +46,6 @@ class PipelineService():
                 quality=validations
             ))
         return GenerateResult(images = image_results, refined_prompt = refined)
-        # match req.upscale_quality:
-        #     case UpscaleQuality.NONE:
-        #         imageResults: list[ImageResult] = []
-        #         for i in range(len(images)):
-        #             validations = validate(images[i])
-        #             encoded = base64.b64encode(converter(images[i])).decode()
-        #             imageResults.append(ImageResult(
-        #                 image = encoded,
-        #                 seed=seeds[i],
-        #                 quality=validations
-        #             ))
-        #         return GenerateResult(images= imageResults, refined_prompt= refined)
-        #     case UpscaleQuality.ENHANCED | UpscaleQuality.GENERATIVE:
-        #         imgs = upscale_image(req,_PROFILES[req.profile],images)
-        #         imageResults: list[ImageResult] = []
-        #         for i in range(len(images)):
-        #             validations = validate(imgs[i])
-        #             encoded = base64.b64encode(converter(imgs[i])).decode()
-        #             imageResults.append(ImageResult(
-        #                 image=encoded,
-        #                 seed=seeds[i],
-        #                 quality=validations
-        #             ))
-        #         return GenerateResult(images= imageResults, refined_prompt= refined)
-            # case UpscaleQuality.GENERATIVE:
-            #     imgs = upscale_image(req, _PROFILES[req.profile], images)
-            #     imageResults: list[ImageResult] = []
-            #     for i in range(len(images)):
-            #
-            #     encoded = [base64.b64encode(converter(img)).decode() for img in imgs]
-            #     #return encoded
 
 def _refine_prompt(req: GenerateRequest) -> str:
     refined_prompt = req.prompt
@@ -98,8 +67,13 @@ def _refine_prompt(req: GenerateRequest) -> str:
 def _preprocess(req: GenerateRequest) -> list[GuidanceResult]:
     return generate_guidance(req)
 
+# def _get_strength(profile: Profile, controls: list[GuidanceResult]) -> None:
+#     for guidance_result in controls:
+#         if guidance_result.strength is None:
+#             guidance_result.model_copy(update={"strength": _GUIDANCE_DETAILS[_PROFILES[profile].model].defaults[guidance_result.type]})
 def _get_strength(profile: Profile, controls: list[GuidanceResult]) -> None:
-    for guidance_result in controls:
+    for i, guidance_result in enumerate(controls):
         if guidance_result.strength is None:
-            guidance_result.model_copy(update={"strength": _GUIDANCE_DETAILS[_PROFILES[profile].model].defaults[guidance_result.type]})
-
+            controls[i] = guidance_result.model_copy(
+                update={"strength": _GUIDANCE_DETAILS[_PROFILES[profile].model].defaults[guidance_result.type]}
+            )
