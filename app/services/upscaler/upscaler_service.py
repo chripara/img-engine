@@ -9,5 +9,5 @@ def upscale_image(
     imgs: list[Image.Image]
 ) -> list[Image.Image]:
     with UpscalerEngine(req, spec) as engine:
-        images = [engine.upscale_image(img,req) for img in imgs]
+        images = [engine.upscale_image(img,req) for index ,img in enumerate(imgs)]
     return images

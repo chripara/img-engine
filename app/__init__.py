@@ -9,9 +9,13 @@ _ollama = None
 OLLAMA_PATH = os.getenv("OLLAMA_PATH") or shutil.which("ollama") or "ollama"
 
 def start_ollama():
-        global _ollama
-        if _ollama is None:
-                _ollama = subprocess.Popen([OLLAMA_PATH, "serve"])
+    global _ollama
+    if _ollama is None:
+        try:
+            _ollama = subprocess.Popen([OLLAMA_PATH, "serve"])
+        except (FileNotFoundError, OSError) as e:
+            print(f"Ollama not available ({e}) — PRE will fall back to Groq only.")
+            _ollama = None
 
 def stop_ollama():
         if _ollama is not None:
