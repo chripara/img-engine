@@ -45,21 +45,18 @@ class BaseBackend(ABC):
         ]
 
     def _define_lora(self, style_preset: StylePreset | None, lora_weight: float | None):
-        if style_preset is not None:
-            if lora_weight is None:
-                strength=0.8
-            else:
-                strength=lora_weight
+        if style_preset is None:
+            return
+
+        strength = lora_weight if lora_weight is not None else 0.8
+
+        try:
             self._pipe.load_lora_weights(_STYLE_PRESET_REGISTRY[style_preset], adapter_name=style_preset.value)
-
-            self._pipe.set_adapters(
-                style_preset.value,
-                adapter_weights=strength,
-            )
-
-            print("lora stregth: ",strength)
+            self._pipe.set_adapters(style_preset.value, adapter_weights=strength)
+            print("lora stregth: ", strength)
             self._pipe.fuse_lora()
+        except Exception as e:
+            print(f"LoRA loading failed for preset '{style_preset.value}': {e}. Continuing without style preset.")
 
     def _define_scheduler(self, profile: Profile):
         self._pipe.scheduler = _PROFILES[profile].scheduler.from_config(self._pipe.scheduler.config)
-
