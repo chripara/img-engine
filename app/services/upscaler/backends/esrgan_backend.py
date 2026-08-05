@@ -23,7 +23,6 @@ class ESRGANBackend(BaseBackend):
         self._model = ModelLoader().load_from_file(self._model_path).cuda()
 
     def upscale(self, image: Image.Image, req: GenerateRequest, index: int = 0) -> Image.Image:
-        self.load()
         if self._model is None:
             raise RuntimeError("ESRGANBackend not loaded. Call load() first.")
         tensor = torch.from_numpy(np.array(image)).permute(2, 0, 1).float() / 255.0
@@ -53,10 +52,3 @@ class ESRGANBackend(BaseBackend):
         self._model = None
         torch.cuda.empty_cache()
         gc.collect()
-
-    def __enter__(self) -> ESRGANBackend:
-        self.load()
-        return self
-
-    def __exit__(self, *_) -> None:
-        self.unload()
