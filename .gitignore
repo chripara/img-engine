@@ -6,3 +6,4 @@ __pycache__/
 dist/
 output_images/
 local_models/
+.idea
