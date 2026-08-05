@@ -22,7 +22,7 @@ class ESRGANBackend(BaseBackend):
     def load(self) -> None:
         self._model = ModelLoader().load_from_file(self._model_path).cuda()
 
-    def upscale(self, image: Image.Image, req: GenerateRequest, index: int = 0) -> Image.Image:
+    def upscale(self, image: Image.Image, req: GenerateRequest, index: int = 0, seed: int | None = None) -> Image.Image:
         if self._model is None:
             raise RuntimeError("ESRGANBackend not loaded. Call load() first.")
         tensor = torch.from_numpy(np.array(image)).permute(2, 0, 1).float() / 255.0
@@ -38,7 +38,7 @@ class ESRGANBackend(BaseBackend):
         image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
 
-        filename = f"seed_{req.seed if req.seed else 'NaN'}_esrgan_{index + 1}.png"
+        filename = f"seed_{seed if seed is not None else f'NaN_{index + 1}'}_esrgan.png"
         output_dir = "output_images"
         os.makedirs(output_dir, exist_ok=True)
         with open(os.path.join(output_dir, filename), "wb") as f:
