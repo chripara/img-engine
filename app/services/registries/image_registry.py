@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from wcwidth import width
 
 from utils.enums.aspect_ratio import AspectRatio
 
