@@ -18,11 +18,7 @@ class ProfileSpec:
     default_negative: str  # "" μέχρι E08-S05
     esrgan_upscaler: Upscaler
     vae_id: str | None = None      # "madebyollin/sdxl-vae-fp16-fix" ή None
-    refiner: bool = False
     upscale: str = "none"  # none | 1440p | 4k
-    restore: bool = False
-    isolate: bool = False
-    variant: str | None = None
 
 _PROFILES: dict[Profile, ProfileSpec] = {
     Profile.CHARACTER: ProfileSpec(
@@ -36,11 +32,7 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         default_negative = "",
         esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
-        refiner = False,
         upscale = "none",
-        restore = False,
-        isolate = False,
-        variant = None,
     ),
     Profile.PRODUCT: ProfileSpec(
         name = Profile.PRODUCT.value,
@@ -53,11 +45,7 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         default_negative = "",
         esrgan_upscaler = Upscaler.ANIME_ESRGAN,
         vae_id = "madebyollin/sdxl-vae-fp16-fix",
-        refiner = False,
         upscale = "none",
-        restore = False,
-        isolate = True,
-        variant = None,
     ),
     Profile.SCENE_FRAME: ProfileSpec(
         name = Profile.SCENE_FRAME.value,
@@ -70,10 +58,6 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         default_negative = "",
         esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
-        refiner = False,
         upscale = "none",
-        restore = False,
-        isolate = False,
-        variant = "fp16",
     ),
 }
