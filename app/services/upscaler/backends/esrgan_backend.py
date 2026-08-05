@@ -48,7 +48,9 @@ class ESRGANBackend(BaseBackend):
         return image
 
     def unload(self) -> None:
-        self._upsampler = None
+        if self._model is not None:
+            self._model = self._model.cpu()
+        self._model = None
         torch.cuda.empty_cache()
         gc.collect()
 

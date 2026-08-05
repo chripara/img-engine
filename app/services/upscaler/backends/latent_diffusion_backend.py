@@ -64,10 +64,12 @@ class LatentDiffusionBackend(BaseBackend):
         return image
 
     def unload(self) -> None:
+        if self._pipe is not None:
+            self._pipe.to("cpu")
         self._pipe = None
         torch.cuda.empty_cache()
         gc.collect()
-
+        
     def __enter__(self) -> LatentDiffusionBackend:
         self.load()
         return self
