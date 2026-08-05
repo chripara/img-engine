@@ -38,12 +38,10 @@ class UpscalerEngine:
                     denoising_strength = DENOISINT_STRENGTH,
                 )
             
-    def upscale_image(self, img: Image.Image, req: GenerateRequest, index: int = 0) -> Image.Image:
+    def upscale_image(self, img: Image.Image, req: GenerateRequest, index: int = 0, seed: int | None = None) -> Image.Image:
         if self._upscaler is None:
             return img
 
-        self._upscaler.load()
-        result = self._upscaler.upscale(img, req, index)
+        result = self._upscaler.upscale(img, req, index, seed)
 
-        self._upscaler.unload()
         return result
