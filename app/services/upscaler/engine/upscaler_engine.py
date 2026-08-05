@@ -13,10 +13,13 @@ class UpscalerEngine:
         self._upscaler = self._get_backend(req,spec)    
 
     def __enter__(self):
+        if self._upscaler is not None:
+            self._upscaler.load()
         return self
 
     def __exit__(self, *args):
-        self._upscaler.unload()
+        if self._upscaler is not None:  # ← guard
+            self._upscaler.unload()
         del self._upscaler
         torch.cuda.empty_cache()
         gc.collect()
@@ -35,12 +38,12 @@ class UpscalerEngine:
                     denoising_strength = DENOISINT_STRENGTH,
                 )
             
-    def upscale_image(self, img: Image.Image, req: GenerateRequest) -> Image.Image:
+    def upscale_image(self, img: Image.Image, req: GenerateRequest, index: int = None) -> Image.Image:
         if self._upscaler is None:
             return img
 
         self._upscaler.load()
-        result = self._upscaler.upscale(img, req)
+        result = self._upscaler.upscale(img, req, index)
 
         self._upscaler.unload()
         return result

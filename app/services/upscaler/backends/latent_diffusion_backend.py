@@ -29,13 +29,11 @@ class LatentDiffusionBackend(BaseBackend):
 
         dimensions = _ASPECT_RATIOS[req.aspect_ratio] if req.aspect_ratio else _ASPECT_RATIOS[AspectRatio.SQUARE]
 
-        tile_size_x = dimensions.width // 2
-        tile_size_y = dimensions.height // 2
-
-        overlap_x = dimensions.width // 16
-        overlap_y = dimensions.height // 16
-
         w, h = image.size
+        tile_size_x = w // 2
+        tile_size_y = h // 2
+        overlap_x = w // 16
+        overlap_y = h // 16
         result = Image.new("RGB", (w * 4, h * 4))
 
         for y in range(0, h, tile_size_y - overlap_y):
@@ -69,10 +67,3 @@ class LatentDiffusionBackend(BaseBackend):
         self._pipe = None
         torch.cuda.empty_cache()
         gc.collect()
-        
-    def __enter__(self) -> LatentDiffusionBackend:
-        self.load()
-        return self
-
-    def __exit__(self, *_) -> None:
-        self.unload()
