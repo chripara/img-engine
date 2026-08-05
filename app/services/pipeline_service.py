@@ -34,7 +34,7 @@ class PipelineService():
 
         match req.upscale_quality:
             case UpscaleQuality.ENHANCED | UpscaleQuality.GENERATIVE:
-                images = upscale_image(req, _PROFILES[req.profile], images)
+                images = upscale_image(req, _PROFILES[req.profile], images, seeds)
 
         image_results: list[ImageResult] = []
         for i in range(len(images)):

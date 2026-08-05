@@ -6,8 +6,9 @@ from PIL import Image
 def upscale_image(
     req: GenerateRequest, 
     spec: ProfileSpec, 
-    imgs: list[Image.Image]
+    imgs: list[Image.Image],
+    seeds: list[int],
 ) -> list[Image.Image]:
     with UpscalerEngine(req, spec) as engine:
-        images = [engine.upscale_image(img, req, index) for index ,img in enumerate(imgs)]
+        images = [engine.upscale_image(img, req, index, seeds[index]) for index ,img in enumerate(imgs)]
     return images
