@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-import io, torch, hashlib, time, os, gc
+import io, torch, os, gc
 from PIL import Image
 from spandrel import ModelLoader
 from app.services.upscaler.registries.upscaler_registry import _UPSCALERS

@@ -1,7 +1,7 @@
 import io, torch, os, gc
 from PIL import Image
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
-from diffusers import StableDiffusionXLControlNetPipeline, ControlNetModel
+from diffusers import StableDiffusionXLControlNetPipeline
 from app.schemas.generate import GuidanceResult
 from app.services.image.backends.base_backend import BaseBackend
 from app.services.registries.image_registry import Dimensions, _SDXL_CONTROLNET_LIMIT

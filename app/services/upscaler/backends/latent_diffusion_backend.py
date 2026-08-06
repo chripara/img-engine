@@ -3,11 +3,9 @@ import io, torch, os, gc
 from PIL import Image
 from diffusers.pipelines.stable_diffusion import StableDiffusionUpscalePipeline
 from app.services.upscaler.registries.upscaler_registry import _UPSCALERS
-from app.services.registries.image_registry import _ASPECT_RATIOS
 from app.schemas.generate import GenerateRequest
 from app.services.upscaler.backends.base_backend import BaseBackend
 from utils.enums.upscale import Upscaler
-from utils.enums.aspect_ratio import AspectRatio
 
 
 class LatentDiffusionBackend(BaseBackend):
@@ -26,8 +24,6 @@ class LatentDiffusionBackend(BaseBackend):
     def upscale(self, image: Image.Image, req: GenerateRequest, index: int = 0, seed: int | None = None) -> Image.Image:
         if self._pipe is None:
             raise RuntimeError("LatentDiffusionBackend not loaded. Call load() first.")
-
-        dimensions = _ASPECT_RATIOS[req.aspect_ratio] if req.aspect_ratio else _ASPECT_RATIOS[AspectRatio.SQUARE]
 
         w, h = image.size
         tile_size_x = w // 2
