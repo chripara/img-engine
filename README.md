@@ -1,95 +1,219 @@
 # img-engine
 
-> Local, offline image generation engine with pluggable model backends, profile-based recipes, batch generation, prompt refinement, and VRAM-safe execution. Built for game asset pipelines and creative production workflows.
+**A local SDXL generation engine for game asset pipelines.** Each use case binds to a
+complete, pinned recipe — checkpoint, VAE, scheduler, CFG, steps — instead of one model
+with hand-tuned parameters per call. Built to produce card artwork at consistent quality
+without re-deriving settings every time.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
-![PyTorch](https://img.shields.io/badge/PyTorch-CUDA-ee4c2c?logo=pytorch)
+![PyTorch](https://img.shields.io/badge/PyTorch-CUDA%2012.8-ee4c2c?logo=pytorch)
 ![Diffusers](https://img.shields.io/badge/HuggingFace-Diffusers-yellow?logo=huggingface)
 ![Flask](https://img.shields.io/badge/Flask-REST%20API-black?logo=flask)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
----
-
-## What is img-engine?
-
-**img-engine** is a local-first image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend architecture. Swap diffusion models — SDXL-class, Flux, Stable Diffusion 3.5, or any future checkpoint — without changing the pipeline. It provides a structured interface for generating high-quality images from text prompts.
-
-Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. The optional Prompt Refinement Engine (PRE) is the one exception: see [Prompt Refinement Engine](#prompt-refinement-engine-pre) below for the full, honest picture.
-
-Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
+<!-- TODO: 30-second GIF of the Gradio UI generating a batch. This is the highest-value
+     thing you can add to this README — most readers decide in the first 15 seconds. -->
 
 ---
 
-## Features
+## The problem
 
-- **Local-first image generation** — the diffusion pipeline itself runs 100% locally, no API keys, no cloud inference
-- **SDXL-class quality** — runs DreamShaper XL, Juggernaut XL, AlbedoBase XL, and SDXL base
-- **Profile-based recipe registry** — each use case (Character, Product, Scene) binds to a complete generation recipe: checkpoint + VAE + scheduler + CFG + steps + native resolution
-- **Compel integration** — bypasses the CLIP 77-token limit for long, detailed prompts (~150 tokens)
-- **Batch generation** — generate 1–10 images per request (see [Seeds and batches](#seeds-and-batches) for current seed-distinctness caveats)
-- **Prompt Refinement Engine (PRE)** — optional, hybrid: tries Groq-hosted Llama 3.3 70B first, falls back to local Mistral 7B (via Ollama) — see below
-- **Pydantic validation** — request schema enforced at the API boundary (prompt max 600 chars, batch N ∈ [1,10])
-- **VRAM-safe execution** — context manager lifecycle: load → generate → unload + `torch.cuda.empty_cache()` per batch
-- **Seed reproducibility** — explicit `torch.Generator` seeding for deterministic output on a single image; batch-level behavior currently has known gaps (see [Seeds and batches](#seeds-and-batches))
-- **Gradio UI** — browser-based interface for local testing and exploration (dev-only, not part of the API contract)
-- **Flask REST API** — JSON contract for pipeline integration; the only conformant, validated interface
+Diffusion output quality depends less on the prompt than on the *combination* of
+checkpoint, VAE, scheduler, CFG, and step count. Those combinations aren't
+interchangeable: settings that produce clean character art produce mush on an isolated
+object. In practice you end up with a spreadsheet of settings and a lot of re-derivation.
+
+img-engine turns that spreadsheet into a registry. You pick a **profile** — the intent
+— and the engine applies the full recipe that intent was tuned for.
+
+---
+
+## What it does
+
+| | |
+|---|---|
+| **Profile-based recipes** | Three profiles, each bound to its own checkpoint, VAE, scheduler, CFG, and step count — as data, not branching code |
+| **Pluggable backends** | `BaseBackend` ABC. Adding a Flux or SD3.5 backend requires no pipeline changes |
+| **ControlNet guidance** | Canny, depth, pose, scribble — up to 3 simultaneous, with per-control strength |
+| **LoRA style presets** | 8 named presets, fused at load time |
+| **Batch generation** | 1–10 images per request, with seed control (see [Seeds and batches](#seeds-and-batches)) |
+| **Long prompts** | Compel chunking bypasses the CLIP 77-token limit (~150 tokens usable) |
+| **Upscaling** | ESRGAN (`enhanced`) or latent diffusion x4 (`generative`) |
+| **Quality gates** | Tiling detection via FFT autocorrelation — 1 of 5 planned gates, see [Limitations](#limitations) |
+| **Prompt refinement** | Optional. Groq Llama 3.3 70B → local Mistral 7B → passthrough |
+| **VRAM lifecycle** | Context managers: load → generate → unload → `empty_cache()` on every stage |
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────┐
-│         Gradio UI / CLI         │  ← dev-only, out of contract
-└────────────────┬────────────────┘
-                 │ HTTP POST /generate
-┌────────────────▼────────────────┐
-│       Flask REST Controller     │  ← Pydantic validation (GenerateRequest) — the actual contract
-└────────────────┬────────────────┘
-                 │
-┌────────────────▼────────────────┐
-│         Image Service           │  ← Batch orchestration, PRE hook
-└────────────────┬────────────────┘
-                 │
-┌────────────────▼────────────────┐
-│         Image Engine            │  ← Context manager (load / generate / unload)
-└────────────────┬────────────────┘
-                 │
-┌────────────────▼────────────────┐
-│        SDXL Backend             │  ← Diffusers pipeline, Compel, scheduler, VAE
-└────────────────┬────────────────┘
-                 │
-┌────────────────▼────────────────┐
-│      Profile Recipe Registry    │  ← ProfileSpec: checkpoint + VAE + scheduler + params
-└─────────────────────────────────┘
+  Gradio UI                                   dev-only, out of contract
+      │  HTTP POST /generate
+      ▼
+  Flask + Pydantic  ─────────────────────►    the contract surface
+      │                                       GenerateRequest is the single
+      ▼                                       source of truth for validation
+  PipelineService   ─────────────────────►    orchestration
+      │                                       ├─ prompt refinement  ┐ parallel
+      │                                       └─ ControlNet preproc ┘
+      ▼
+  ┌───────────────┬──────────────┬───────────────┐
+  │ Image         │ Guidance     │ Upscaler      │   each: service → engine → backend
+  │ SDXLBackend   │ ControlNet   │ ESRGAN/Latent │   each: context-managed lifecycle
+  └───────────────┴──────────────┴───────────────┘
+      │
+      ▼
+  Validator ────────────────────────────────►   quality gates, advisory
+      │
+      ▼
+  ProfileRegistry ──────────────────────────►   checkpoint + VAE + scheduler + CFG + steps
 ```
 
-**Note on the Gradio UI:** the UI builds its own request object from raw form values and sends it as JSON over HTTP to the Flask API — it does not duplicate or bypass validation. The Flask API's `GenerateRequest` schema is the single source of truth; the UI's local schema is intentionally looser since it exists to serialize dropdown/form values, not to enforce the contract.
+Every subsystem follows the same shape: **service → engine → backend → registry**. The
+service orchestrates, the engine owns the resource lifecycle, the backend does the work,
+the registry holds configuration as data.
 
 ---
 
 ## Profiles
 
-| Profile | Use Case | Default Checkpoint | Native Size |
-|---|---|---|---|
-| `CHARACTER` | Hero / character art | AlbedoBase XL | 1024×1024 |
-| `PRODUCT` | Equipment, weapons, relics, icons — isolated objects | DreamShaper XL | 1024×1024 |
-| `SCENE_FRAME` | Card frames, backgrounds, environments, logo | Juggernaut XL | 832×1216 (portrait)* |
+| Profile | Use case | Checkpoint | Scheduler | Steps | CFG |
+|---|---|---|---|---|---|
+| `CHARACTER` | Hero and character art | AlbedoBase XL | Euler Discrete | 30 | 7.0 |
+| `PRODUCT` | Weapons, relics, icons — isolated objects | DreamShaper XL | Euler Discrete | 30 | 7.0 |
+| `SCENE_FRAME` | Frames, backgrounds, environments | Juggernaut XL | DPM++ Multistep | 35 | 4.5 |
 
-Each profile carries its own VAE, scheduler, CFG, steps, default negative prompt, and optional refiner — defined as data in the registry, not branching code.
+`PRODUCT` additionally uses the `madebyollin/sdxl-vae-fp16-fix` VAE and the anime ESRGAN
+variant for upscaling; the others use their checkpoint's bundled VAE.
 
-\* *This reflects the current `native_size` value in `profile_registry.py`. Worth double-checking whether portrait is actually intended for a background/environment profile, or whether the registry values are swapped — flagging rather than silently picking one.*
+**Resolutions** are request-driven, not profile-driven: `square` 1024×1024 ·
+`landscape` 1344×768 · `portrait` 768×1344 · `card_portrait` 832×1216 · `card_large` 1152×896.
+
+---
+
+## Design decisions
+
+The non-obvious choices and what they cost.
+
+**Profile is the unit of selection — checkpoint is not exposed.**
+The API deliberately has no `checkpoint` field. Letting a caller pick Juggernaut while
+keeping AlbedoBase's scheduler and CFG would defeat the point: each model runs in the
+recipe it was tuned for, or not at all. Trade-off: using a checkpoint outside its
+profile requires a registry edit.
+
+**Full load/unload per request, no instance cache.**
+Optimizes for VRAM headroom over latency. A 16 GB card can then run SDXL + up to 3
+ControlNets + an upscaler without swapping. Cost: ~20–40 s of model loading on every
+request. An instance cache is the single largest available speedup and is planned.
+
+**LoRA is fused, not kept as a separate adapter.**
+`fuse_lora()` bakes the weights into the UNet — faster at inference, and irreversible.
+That's correct *because* of the decision above: the pipeline is destroyed after each
+request, so there is nothing to unfuse. **These two decisions are coupled** — adding an
+instance cache would require either `unfuse_lora()` or a cache key that includes the
+preset, meaning N pipelines resident in VRAM.
+
+**`spread` instead of `seed + i` for batches.**
+A batch is an exploration tool, not a reproduction tool. `spread` samples seeds from a
+window around a base seed, giving related-but-varied outputs. This is deliberately
+non-deterministic across calls — see [Seeds and batches](#seeds-and-batches).
+
+**The HTTP API is the contract; there is no CLI.**
+One conformant surface rather than two to keep in sync. The Gradio UI is a dev client
+with no guarantees, and its request schema is intentionally looser — it serializes
+dropdown values, it does not enforce the contract. Evaluation and tests call
+`PipelineService` directly rather than going over HTTP.
+
+**Invalid `aspect_ratio` coerces to square rather than rejecting.**
+Graceful degradation for a field where a sensible default exists. Note this is
+inconsistent with the over-length prompt path, which rejects — an explicit `warnings[]`
+field would reconcile the two and is planned.
+
+---
+
+## API
+
+### `POST /generate`
+
+```json
+{
+  "prompt": "tanzanite crystal orb held in an open palm, deep violet aura",
+  "profile": "product",
+  "num_images": 3,
+  "aspect_ratio": "card_portrait",
+  "negative_prompt": "blurry, watermark",
+  "seed": 1000,
+  "spread": 50,
+  "style_preset": "dark_fantasy",
+  "lora_strength": 0.8,
+  "upscale_quality": "enhanced",
+  "refine": false
+}
+```
+
+```json
+{
+  "images": [
+    { "image": "<base64 png>", "seed": 1043, "quality": [ { "gate": "tiling", "score": 0.04, "passed": true } ] }
+  ],
+  "refined_prompt": null
+}
+```
+
+| Field | Type | Notes |
+|---|---|---|
+| `profile` | enum | `character` · `product` · `scene_frame` — **required** |
+| `prompt` | string | ≤ 600 chars — **required** |
+| `num_images` | int | 1–10 — **required** |
+| `negative_prompt` | string? | ≤ 600 chars |
+| `subject` / `environment` / `feeling` | string? | Prompt-refinement context |
+| `refine` | bool | Default `false`. See [Prompt refinement](#prompt-refinement) |
+| `seed` / `spread` | int? | See [Seeds and batches](#seeds-and-batches) |
+| `aspect_ratio` | enum? | Default `square`. Invalid values coerce to `square` |
+| `controls` | object? | ControlNet images + per-control type and strength, max 3 |
+| `style_preset` | enum? | 8 LoRA presets |
+| `lora_strength` | float? | 0.0–1.0 |
+| `upscale_quality` | enum? | `none` · `enhanced` (ESRGAN) · `generative` (latent x4) |
+
+`GET /health` returns `{"status": "ok"}` — liveness only; it does not indicate that any
+model is loaded.
+
+### Seeds and batches
+
+Verified against the code. Three cases:
+
+| Request | Behaviour |
+|---|---|
+| **`seed` + `spread`** | Each image draws from `[seed-spread, seed+spread]`. Deliberately non-deterministic — the same request twice gives different seeds. Each seed **is** recorded in the response and the filename |
+| **`seed`, no `spread`** | ⚠️ Every image in the batch gets the *same* seed, and all write to the same `seed_<n>.png` — only the last survives on disk. The response still returns all N images. **Known open issue** |
+| **No `seed`** | Unseeded generator per image. Files get a positional suffix (`seed_NaN_1.png`) so they don't collide, but the actual value is not captured — `seed` is `null` in the response and these images cannot be reproduced |
+
+**Fully reproducible today:** a single image with an explicit `seed`.
+
+---
+
+## Prompt refinement
+
+With `refine: true`, the prompt is expanded into a detailed SDXL-oriented description
+before generation. The path is **hybrid, not purely local**:
+
+1. **Groq** `llama-3.3-70b-versatile` — cloud API, requires `GROQ_API_KEY`
+2. **Ollama** local Mistral 7B — if Groq fails or the key is unset
+3. **Passthrough** — the original prompt, unchanged, if both fail
+
+Setting `refine: true` with a Groq key configured **sends your prompt to a third-party
+cloud API.** For fully offline operation, leave `GROQ_API_KEY` unset (Ollama-only) or
+use `refine: false`. Generation itself — the diffusion pipeline — is always local.
 
 ---
 
 ## Requirements
 
 - Python 3.10+
-- CUDA-capable GPU (tested on RTX 5070 Ti, 16 GB VRAM, Blackwell/cu128)
-- [Ollama](https://ollama.com/) (optional — local fallback for prompt refinement; app starts fine without it)
-- A [Groq](https://groq.com/) API key (optional — only needed if you want the default, higher-quality PRE path; see below)
-
----
+- CUDA GPU — developed and tested on RTX 5070 Ti, 16 GB, Blackwell / cu128
+- [Ollama](https://ollama.com/) — optional, local refinement fallback
+- [Groq](https://groq.com/) API key — optional, primary refinement path
 
 ## Installation
 
@@ -97,115 +221,76 @@ Each profile carries its own VAE, scheduler, CFG, steps, default negative prompt
 git clone https://github.com/chripara/img-engine.git
 cd img-engine
 python -m venv venv
-venv\Scripts\activate      # Windows
+venv\Scripts\activate          # Windows
+source venv/bin/activate       # Linux / macOS
 pip install -r requirements.txt
-```
-
-Download your preferred SDXL checkpoint (`.safetensors`) and set the path via the profile registry.
-
-### Environment variables
-
-| Variable | Required? | Purpose |
-|---|---|---|
-| `GROQ_API_KEY` | Optional | Enables the primary (cloud) PRE path. Without it, PRE falls back to local Ollama/Mistral, or passes the prompt through unrefined if neither is available. |
-| `OLLAMA_PATH` | Optional | Overrides auto-detection of the Ollama executable. If unset, the app tries `shutil.which("ollama")`, then falls back to assuming `ollama` is on PATH. |
-
----
-
-## Usage
-
-### Start the server
-
-```bash
 python run.py
 ```
 
-### Gradio UI
+Gradio UI at `http://127.0.0.1:7860`, API at `http://127.0.0.1:5000`.
 
-Open `http://127.0.0.1:7860` in your browser. Dev/testing convenience only — not part of the API contract.
+Checkpoints, ControlNets, and LoRAs are pulled from HuggingFace on first use. ESRGAN
+weights go in `local_models/`.
 
-### REST API
-
-```bash
-POST /generate
-Content-Type: application/json
-
-{
-  "prompt": "tanzanite crystal orb held in an open palm, deep violet aura, fantasy game item",
-  "profile": "PRODUCT",
-  "feeling": "Mystical & Ethereal",
-  "environment": "Dark Dungeon",
-  "num_images": 3,
-  "refine": false
-}
-```
-
-Response: `{ "images": ["<base64>", ...] }`
-
-### Seeds and batches
-
-Current, verified-against-code behavior for `batch_count > 1` (three distinct cases):
-
-- **No `seed` given** → each image is generated with an unseeded (fully random) generator. Output filenames get a positional suffix (`seed_NaN_1.png`, `seed_NaN_2.png`, ...) so files don't collide. However, the actual random value used internally is **not** captured anywhere — the response's `seed` field for these images is `null`, so these specific images cannot be deterministically reproduced later from the response alone.
-- **`seed` given, no `spread`** — ⚠️ **known bug, not yet fixed:** every image in the batch currently receives the *exact same* seed value (not `seed`, `seed+1`, `seed+2`, ...). Since the seed is not `null`, the filename-collision workaround above doesn't kick in either — all images in the batch write to the same `seed_<seed>.png` file and overwrite each other. Only the last-generated image survives on disk. Tracked as an open fix.
-- **`seed` and `spread` both given** → intentionally *non-deterministic*: each image gets a random value in `[seed - spread, spread]`, freshly randomized on every call via Python's unseeded global `random.randint`. This is a deliberate exploration feature (get variations near a seed) — running the same request twice will **not** produce the same images or the same per-image seed values. Not part of the core SRS contract; a project-specific extension.
-
-**Bottom line:** only single-image requests (`num_images = 1`) with an explicit `seed` are currently fully reproducible end-to-end. Batch reproducibility for `seed`-without-`spread` is a known open issue.
+| Env var | Purpose |
+|---|---|
+| `GROQ_API_KEY` | Enables the cloud refinement path. Optional |
+| `OLLAMA_PATH` | Overrides Ollama auto-detection. Optional — the app starts fine without Ollama |
 
 ---
 
-## Prompt Refinement Engine (PRE)
+## Limitations
 
-When `refine: true`, the engine expands short prompts into detailed image descriptions optimized for SDXL, before generation. This path is **hybrid**, not purely local:
+Real and current, not aspirational.
 
-1. **First attempt:** [Groq](https://groq.com/)-hosted `llama-3.3-70b-versatile` (cloud API call, requires `GROQ_API_KEY`).
-2. **Fallback:** local **Mistral 7B** via Ollama, if Groq fails or `GROQ_API_KEY` isn't set.
-3. **Last resort:** the original, unrefined prompt is passed through unchanged if both fail.
-
-This means `refine: true` is **not** a purely local operation by default — it sends your prompt to Groq's cloud API unless you don't have a `GROQ_API_KEY` configured, in which case it's local-only via Ollama. If full-offline operation matters to you, either don't set `GROQ_API_KEY` (Ollama-only fallback) or set `refine: false`.
-
-Ollama itself is managed automatically when available — started on app launch, stopped on exit — but the app no longer fails to start if Ollama isn't installed.
-
----
-
-## Known issues
-
-Verified against the current codebase — not aspirational, these are real, open gaps:
-
-- **Batch seed collision** (`seed` given, no `spread`, `num_images > 1`) — see [Seeds and batches](#seeds-and-batches). All images in the batch overwrite the same file.
-- **Upscaler output filenames can also collide.** The per-image `index` used to disambiguate SDXL-stage filenames is not currently threaded through to the upscaler stage (`ENHANCED`/`GENERATIVE` quality) — upscaled outputs from a seedless batch may overwrite each other the same way.
-- **`ESRGANBackend` loads its model twice per upscale call** (once explicitly by the caller, once again inside `upscale()`) — wasted load time, not a correctness bug.
+- **No automated tests.** Every issue below was found by reading code, not by a failing
+  test. This is the top priority.
+- **No performance numbers.** Latency, peak VRAM per backend combination, and steps-vs-quality
+  are unmeasured. Settings in the profile registry are informed defaults, not benchmark results.
+- **Quality gates are 1 of 5.** Tiling detection works; `hands`, `face`, `clip`, and `iqa`
+  are declared in the enum with thresholds but have no implementation. Existing thresholds
+  are unvalidated against labelled data, and gate results are advisory — nothing acts on them.
+- **Batch seed collision** when `seed` is given without `spread` — see above.
+- **No concurrency control.** Two simultaneous requests instantiate two pipelines and
+  can exhaust VRAM. Effectively single-user.
+- **Synchronous base64 responses.** A batch of 10 at 1024² is ~15–20 MB in one JSON body,
+  with the request blocking for minutes. Fine for local use, wrong shape for a service.
+- **Weights are unpinned.** HuggingFace repo IDs without revisions — upstream updates can
+  change output for the same inputs.
+- **No Docker, no CI, no deployment.** Runs from source.
 
 ---
 
 ## Roadmap
 
-- [x] E01 — Local SDXL-class generation
-- [x] E02 — Inputs & batching *(long-prompt chunking implemented; remaining stories in progress)*
-- [ ] E03 — Outputs (ControlNet, aspect ratios, negatives)
-- [ ] E04 — Non-functional (VRAM, reproducibility)
-- [ ] E05 — Constraints & interface
-- [x] E06 — LoRA & style presets
-- [ ] E07 — Contract unification
-- [ ] E08 — Quality & acceptance
-- [ ] E09 — Output pipeline & quality stages
+- [x] **E01** — Local SDXL-class generation
+- [x] **E02** — Inputs, batching, long-prompt chunking
+- [x] **E03** — ControlNet, aspect ratios, negatives
+- [x] **E04** — Non-functional requirements
+- [ ] **E05** — Constraints & interface
+- [x] **E06** — LoRA and style presets
+- [ ] **E07** — Contract unification
+- [ ] **E08** — Quality gates and profile benchmarking
+- [ ] **E09** — Output pipeline stages
+
+**Next up:** a labelled evaluation set, the four missing gates with thresholds calibrated
+against it, and a checkpoint × profile benchmark to replace the current registry defaults
+with measured ones.
 
 ---
 
-## Tech Stack
+## Stack
 
-| Layer | Technology |
-|---|---|
-| Inference | Stable Diffusion XL (Diffusers) |
-| Token handling | Compel |
-| Prompt refinement | Groq (Llama 3.3 70B) primary, Mistral 7B via Ollama fallback |
-| API | Flask |
-| UI | Gradio (dev-only) |
-| Validation | Pydantic v2 |
-| GPU | PyTorch + CUDA |
+Diffusers · Compel · PyTorch/CUDA · Flask · Pydantic v2 · Gradio · spandrel (ESRGAN) ·
+Groq + Ollama (optional refinement)
 
 ---
 
 ## License
 
-MIT — *(license text to be added; this repository does not yet include a `LICENSE` file)*
+MIT — see [LICENSE](LICENSE).
+
+Model weights are **not** covered by this license. Checkpoints, ControlNets, LoRAs, and
+upscaler weights are downloaded at runtime and carry their own terms — SDXL checkpoints
+ship under CreativeML Open RAIL++-M, which imposes use restrictions. Review the license
+of any model before using generated output commercially.
