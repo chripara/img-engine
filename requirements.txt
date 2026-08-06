@@ -19,4 +19,3 @@ spandrel==0.4.2
 torch==2.7.0+cu128
 torchvision==0.22.0+cu128
 transformers==4.47.1
-wcwidth==0.8.2

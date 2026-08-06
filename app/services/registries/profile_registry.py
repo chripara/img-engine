@@ -9,55 +9,43 @@ from diffusers.schedulers.scheduling_dpmsolver_multistep import DPMSolverMultist
 @dataclass
 class ProfileSpec:
     name: str
-    description: str | None
     model: Checkpoint
     scheduler: Type        # class reference
     steps: int
     cfg: float
     native_size: tuple     # (width, height)
-    default_negative: str  # "" μέχρι E08-S05
     esrgan_upscaler: Upscaler
     vae_id: str | None = None      # "madebyollin/sdxl-vae-fp16-fix" ή None
-    upscale: str = "none"  # none | 1440p | 4k
 
 _PROFILES: dict[Profile, ProfileSpec] = {
     Profile.CHARACTER: ProfileSpec(
         name = Profile.CHARACTER.value,
-        description = Profile.CHARACTER.value,
         model = Checkpoint.ALBEDO_BASE,
         scheduler = EulerDiscreteScheduler,
         steps = 30,
         cfg = 7.0,
         native_size = (1024, 1024),
-        default_negative = "",
         esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
-        upscale = "none",
     ),
     Profile.PRODUCT: ProfileSpec(
         name = Profile.PRODUCT.value,
-        description = "Equipment, weapons, relics, icons — isolated objects",
         model = Checkpoint.DREAMSHAPER_XL,
         scheduler = EulerDiscreteScheduler,
         steps = 30,
         cfg = 7.0,
         native_size = (1024, 1024),
-        default_negative = "",
         esrgan_upscaler = Upscaler.ANIME_ESRGAN,
         vae_id = "madebyollin/sdxl-vae-fp16-fix",
-        upscale = "none",
     ),
     Profile.SCENE_FRAME: ProfileSpec(
         name = Profile.SCENE_FRAME.value,
-        description = "Card frames, backgrounds, environments, logo",
         model = Checkpoint.JUGGERNAUT_XL,
         scheduler = DPMSolverMultistepScheduler,
         steps = 35,
         cfg = 4.5,
         native_size = (832, 1216),
-        default_negative = "",
         esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
-        upscale = "none",
     ),
 }
