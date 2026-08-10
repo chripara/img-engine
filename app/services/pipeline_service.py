@@ -14,11 +14,17 @@ import base64, random
 class PipelineService():
     def generation_pipeline(req: GenerateRequest) -> GenerateResult:
         if req.seed is not None:
-            seeds = [random.randint(req.seed - req.spread,
-                req.seed + req.spread) if req.seed is not None and req.spread is not None else req.seed for _ in range(req.num_images)]
+            if req.spread is not None:
+                population = range(req.seed - req.spread, req.seed + req.spread + 1)
+                if len(population) >= req.num_images:
+                    seeds = random.sample(population, req.num_images)
+                else:
+                    seeds = [random.randint(req.seed - req.spread, req.seed + req.spread)
+                             for _ in range(req.num_images)]
+            else:
+                seeds = [req.seed for _ in range(req.num_images)]
         else:
             seeds = [req.seed for _ in range(req.num_images)]
-
         with ThreadPoolExecutor() as executor:
             future_a = executor.submit(_refine_prompt,req)
             future_b = executor.submit(_preprocess, req)
@@ -38,7 +44,7 @@ class PipelineService():
 
         image_results: list[ImageResult] = []
         for i in range(len(images)):
-            validations = validate(images[i])
+            validations = validate(images[i], refined)
             encoded = base64.b64encode(converter(images[i])).decode()
             image_results.append(ImageResult(
                 image=encoded,
