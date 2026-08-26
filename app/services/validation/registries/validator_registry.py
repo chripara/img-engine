@@ -21,6 +21,7 @@ _GATE_MESSAGES: dict[GateType, dict[GateStatus, str | None]] = {
         GateStatus.PASS: None,
         GateStatus.WARNING: "Face quality degraded",
         GateStatus.FAIL: "Face unrecognizable",
+        GateStatus.NOT_APPLICABLE: "No face detected in image",
     },
     GateType.CLIP: {
         GateStatus.PASS: None,

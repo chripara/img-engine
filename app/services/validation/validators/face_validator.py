@@ -21,7 +21,12 @@ def face_validator(image: Image.Image) -> GateResult:
     result = detector.process(arr)
 
     if not result.detections:
-        score = 0.0
+        return GateResult(
+            gate = GateType.FACE,
+            score = None,
+            passed = None,
+            suggested = _GATE_MESSAGES[GateType.FACE][GateStatus.NOT_APPLICABLE],
+        )
     else:
         score = max(d.score[0] for d in result.detections)
 
