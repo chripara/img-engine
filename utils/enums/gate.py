@@ -8,6 +8,7 @@ class GateType(str, Enum):
     IQA    = "iqa"
 
 class GateStatus(str, Enum):
+    NOT_APPLICABLE = "not applicable"
     PASS = "pass"
     FAIL = "fail"
     WARNING = "warning"
