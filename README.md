@@ -221,7 +221,7 @@ Verified against the current codebase — not aspirational, these are real, open
 
 - **Batch seed collision** (`seed` given, no `spread`, `num_images > 1`) — see [Seeds and batches](#seeds-and-batches). All images in the batch overwrite the same file. Still open.
 - See [Quality Gates → Known limitations](#quality-gates) for gate-specific gaps (IQA threshold scale, HANDS heuristic limits, HANDS/FACE zero-score ambiguity).
-
+- **Hands gate.** Uses a pretrained anatomy classifier (angusleung100) whose results are inconclusive/unreliable for this art style — treat the score as experimental, not a trustworthy signal. 
 ---
 
 ## Roadmap

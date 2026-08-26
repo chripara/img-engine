@@ -15,6 +15,7 @@ _GATE_MESSAGES: dict[GateType, dict[GateStatus, str | None]] = {
         GateStatus.PASS: None,
         GateStatus.WARNING: "Hand anatomy issues detected",
         GateStatus.FAIL: "Severe hand deformation",
+        GateStatus.NOT_APPLICABLE: "No hands detected in image",
     },
     GateType.FACE: {
         GateStatus.PASS: None,
