@@ -9,35 +9,15 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
-
 ## What is img-engine?
 
-**img-engine** is a local-first image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend architecture. Swap diffusion models — SDXL-class, Flux, Stable Diffusion 3.5, or any future checkpoint — without changing the pipeline. It provides a structured interface for generating high-quality images from text prompts.
+**img-engine** is a local-first image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend architecture. Swap diffusion models — SDXL-class, Flux, Stable Diffusion 3.5, or any future checkpoint — without changing the pipeline. Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
 
-Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two exceptions to this, both documented in full below: the optional Prompt Refinement Engine ([PRE](#prompt-refinement-engine-pre)), and first-run model downloads for some of the [quality gates](#quality-gates).
+Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two documented exceptions: the optional [Prompt Refinement Engine](#prompt-refinement-engine-pre), and first-run model downloads for some [quality gates](#quality-gates).
 
-Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
-
----
-
-## Features
-
-- **Local-first image generation** — the diffusion pipeline itself runs 100% locally, no API keys, no cloud inference
-- **SDXL-class quality** — runs DreamShaper XL, Juggernaut XL, AlbedoBase XL, and SDXL base
-- **Profile-based recipe registry** — each use case (Character, Product, Scene) binds to a complete generation recipe: checkpoint + VAE + scheduler + CFG + steps + native resolution
-- **Compel integration** — bypasses the CLIP 77-token limit for long, detailed prompts (~150 tokens)
-- **Batch generation** — generate 1–10 images per request (see [Seeds and batches](#seeds-and-batches) for current seed-distinctness caveats)
-- **LoRA & style presets** — load style/character LoRA adapters with per-adapter strength, or select a named preset combining LoRA + prompt scaffolding
-- **Automatic quality gates** — every generated image is scored for tiling artifacts, prompt adherence, hand/face plausibility, and general visual quality (see [Quality Gates](#quality-gates))
-- **Prompt Refinement Engine (PRE)** — optional, hybrid: tries Groq-hosted Llama 3.3 70B first, falls back to local Mistral 7B (via Ollama) — see below
-- **Pydantic validation** — request schema enforced at the API boundary (prompt max 600 chars, batch N ∈ [1,10])
-- **VRAM-safe execution** — context manager lifecycle: load → generate → unload + `torch.cuda.empty_cache()` per batch
-- **Seed reproducibility** — explicit `torch.Generator` seeding for deterministic output on a single image; batch-level behavior currently has known gaps (see [Seeds and batches](#seeds-and-batches))
-- **Gradio UI** — browser-based interface for local testing and exploration (dev-only, not part of the API contract)
-- **Flask REST API** — JSON contract for pipeline integration; the only conformant, validated interface
+**The part of this project worth your attention isn't "it generates images" — it's the evaluation layer around that.** Every generated image is scored by five automatic quality gates (tiling, prompt-adherence, hand/face plausibility, general visual quality), and there's a dedicated benchmark harness that runs a fixed prompt set across every profile, checkpoint, and LoRA combination to make those gates comparable. That harness and its honest limitations are documented in full below — including where the gates themselves are still uncalibrated, and why that matters.
 
 ---
-
 ## Architecture
 
 ```
@@ -70,12 +50,25 @@ Designed initially for generating game card artwork (characters, items, scene ba
 └─────────────────────────────────┘
 ```
 
-**Note on the Gradio UI:** the UI builds its own request object from raw form values and sends it as JSON over HTTP to the Flask API — it does not duplicate or bypass validation. The Flask API's `GenerateRequest` schema is the single source of truth; the UI's local schema is intentionally looser since it exists to serialize dropdown/form values, not to enforce the contract.
+**Note on the Gradio UI:** the UI builds its own request object from raw form values and sends it as JSON over HTTP to the Flask API — it does not duplicate or bypass validation. The Flask API's `GenerateRequest` schema is the single source of truth; the UI's local schema is intentionally independent since it exists to serialize dropdown/form values for local debugging, not to enforce the contract.
 
-**Note on the upscaler backends:** `ESRGANBackend` and `LatentDiffusionBackend` share their `load`/`unload` context-manager protocol via a common `BaseBackend.__enter__`/`__exit__` (typed with `Self`), so each backend loads its model exactly once per batch instead of duplicating that logic per subclass. Per-image seed and index are threaded through to the upscaler stage, so upscaled output filenames don't collide even across a seedless batch.
+**Note on the upscaler backends:** `ESRGANBackend` and `LatentDiffusionBackend` share their `load`/`unload` context-manager protocol via a common `BaseBackend.__enter__`/`__exit__`, so each backend loads its model exactly once per batch. Per-image seed and index are threaded through to the upscaler stage, so upscaled output filenames don't collide even across a seedless batch.
 
 ---
+## Quickstart
 
+```bash
+git clone https://github.com/chripara/img-engine.git
+cd img-engine
+python -m venv venv
+venv\Scripts\activate      # Windows
+pip install -r requirements.txt
+python run.py
+```
+
+Requires Python 3.10+, a CUDA-capable GPU, and a downloaded SDXL checkpoint referenced from the profile registry. Full requirements, environment variables, the REST API contract, and a known dependency-conflict gotcha are in [`docs/SETUP.md`](./docs/SETUP.md).
+
+---
 ## Profiles
 
 | Profile | Use Case | Default Checkpoint | Native Size |
@@ -84,86 +77,55 @@ Designed initially for generating game card artwork (characters, items, scene ba
 | `PRODUCT` | Equipment, weapons, relics, icons — isolated objects | DreamShaper XL | 1024×1024 |
 | `SCENE_FRAME` | Card frames, backgrounds, environments, logo | Juggernaut XL | 832×1216 (portrait)* |
 
-Each profile carries its own VAE, scheduler, CFG, steps, default negative prompt, and optional refiner — defined as data in the registry, not branching code.
+Each profile carries its own checkpoint, VAE, scheduler, CFG, steps, native size, and upscaler — defined as data in the registry, not branching code.
 
 \* *This reflects the current `native_size` value in `profile_registry.py`. Worth double-checking whether portrait is actually intended for a background/environment profile, or whether the registry values are swapped — flagging rather than silently picking one.*
 
 ---
+## Quality Gates
 
-## Requirements
+After each image is generated, it passes through five automatic quality checks. Each gate returns a score, a status (`PASS` / `WARNING` / `FAIL` / `NOT_APPLICABLE`), and (if not passing) a suggested reason — surfaced in the API response under `quality` per image. Gates run in parallel (`ThreadPoolExecutor`).
 
-- Python 3.10+
-- CUDA-capable GPU (tested on RTX 5070 Ti, 16 GB VRAM, Blackwell/cu128)
-- [Ollama](https://ollama.com/) (optional — local fallback for prompt refinement; app starts fine without it)
-- A [Groq](https://groq.com/) API key (optional — only needed if you want the default, higher-quality PRE path; see below)
-
----
-
-## Installation
-
-```bash
-git clone https://github.com/chripara/img-engine.git
-cd img-engine
-python -m venv venv
-venv\Scripts\activate      # Windows
-pip install -r requirements.txt
-```
-
-Download your preferred SDXL checkpoint (`.safetensors`) and set the path via the profile registry.
-
-**Use a dedicated virtual environment for this project.** Installing into a shared/global Python environment risks dependency conflicts with other projects (observed in practice: a global `torch`/`diffusers`/`mediapipe`/`protobuf` version clash caused by unrelated projects sharing the same site-packages). Always `venv\Scripts\activate` before running or installing anything for img-engine.
-
-### Environment variables
-
-| Variable | Required? | Purpose |
+| Gate | What it checks | How |
 |---|---|---|
-| `GROQ_API_KEY` | Optional | Enables the primary (cloud) PRE path. Without it, PRE falls back to local Ollama/Mistral, or passes the prompt through unrefined if neither is available. |
-| `OLLAMA_PATH` | Optional | Overrides auto-detection of the Ollama executable. If unset, the app tries `shutil.which("ollama")`, then falls back to assuming `ollama` is on PATH. |
+| `TILING` | Repeating/tiled visual patterns | FFT-based autocorrelation (pure math, no model) |
+| `CLIP` | Does the image match the (refined) prompt? | Cosine similarity between CLIP image and text embeddings (`openai/clip-vit-base-patch32`) |
+| `HANDS` | Anatomically plausible hands | mediapipe hand landmark detection + pretrained anatomy classifier (`angusleung100/bad-anatomy-realism-classifier`), scores averaged across detected hands |
+| `FACE` | Face detected and recognizable | mediapipe face detection confidence |
+| `IQA` | General visual quality (noise, blur, compression artifacts) | No-reference deep-learning quality model (`musiq` via `pyiqa`) |
+
+**`NOT_APPLICABLE` status.** `HANDS` and `FACE` return `NOT_APPLICABLE` (`score` and `passed` both `null`) when nothing is detected — no hand or face visible in frame at all. Distinct from a detected-but-malformed result, which is scored normally.
+
+### Development tools built around the gates
+
+**Golden-set generator** (`utils/generate_golden_set.py`) generates a fixed, reproducible sample of images (15 curated prompts × 4 fixed seeds = 60 images) for manually evaluating and calibrating the gates above. Outputs go to a timestamped folder under `output/golden_set/`, alongside a `manifest.json` recording each image's prompt, profile, seed, and gate scores. Sample outputs are committed directly in this repo (not hosted externally) so the results are reviewable without a GPU.
+
+```powershell
+python -m utils.generate_golden_set
+```
+
+**Cross-profile / LoRA benchmark** (`utils/generate_benchmark.py`) runs a fixed prompt set across every profile, seed, and LoRA on/off variant, scoring each image with the same gates. Outputs go to a timestamped folder under `output_images/benchmark/`, alongside a `manifest.json` recording profile, prompt, seed, LoRA variant, and gate results.
+
+**This validates the benchmarking methodology, not a "best recipe" claim.** Since the gates aren't calibrated yet (see [Known limitations](#known-limitations-verified-not-aspirational)), pass/fail results here aren't proof that one profile or checkpoint is objectively better than another. What it does prove: the infrastructure to make that comparison exists, runs end-to-end, and produces comparable, structured evidence — the prerequisite for a real answer once calibration happens.
+
+```powershell
+python -m utils.generate_benchmark
+```
+
+Run both as modules from the project root (not as a direct file path — otherwise Python won't resolve the `app` package).
 
 ---
-
-## Usage
-
-### Start the server
-
-```bash
-python run.py
-```
-
-### Gradio UI
-
-Open `http://127.0.0.1:7860` in your browser. Dev/testing convenience only — not part of the API contract.
-
-### REST API
-
-```bash
-POST /generate
-Content-Type: application/json
-
-{
-  "prompt": "tanzanite crystal orb held in an open palm, deep violet aura, fantasy game item",
-  "profile": "PRODUCT",
-  "feeling": "Mystical & Ethereal",
-  "environment": "Dark Dungeon",
-  "num_images": 3,
-  "refine": false
-}
-```
-
-Response: `{ "images": ["<base64>", ...] }` — each image entry includes a `seed` and a `quality` list of gate results (see [Quality Gates](#quality-gates)).
-
-### Seeds and batches
+## Seeds and batches
 
 Current, verified-against-code behavior for `batch_count > 1` (three distinct cases):
 
-- **No `seed` given** → each image is generated with an unseeded (fully random) generator. Output filenames get a positional suffix (`seed_NaN_1.png`, `seed_NaN_2.png`, ...) so files don't collide, and this now applies consistently across the SDXL generation stage **and** the upscaler stage (ESRGAN / generative). However, the actual random value used internally is **not** captured anywhere — the response's `seed` field for these images is `null`, so these specific images cannot be deterministically reproduced later from the response alone.
-- **`seed` given, no `spread`** — ⚠️ **known bug, not yet fixed:** every image in the batch currently receives the *exact same* seed value (not `seed`, `seed+1`, `seed+2`, ...). Since the seed is not `null`, the filename-collision workaround above doesn't kick in either — all images in the batch write to the same `seed_<seed>.png` file and overwrite each other. Only the last-generated image survives on disk. Tracked as an open fix.
-- **`seed` and `spread` both given** → intentionally *non-deterministic*: each image gets a random value in `[seed - spread, seed + spread]`, freshly randomized on every call via Python's unseeded global `random.randint`. This is a deliberate exploration feature (get variations near a seed) — running the same request twice will **not** produce the same images or the same per-image seed values. Not part of the core SRS contract; a project-specific extension. The upscaler stage now correctly reflects each image's actual resolved seed (not the raw request seed) in its own output filename.
+- **No `seed` given** → each image is generated with an unseeded (fully random) generator. Output filenames get a positional suffix (`seed_NaN_1.png`, `seed_NaN_2.png`, ...) so files don't collide. The actual random value used internally is not captured anywhere — the response's `seed` field for these images is `null`, so they cannot be deterministically reproduced from the response alone.
+- **`seed` given, no `spread`** → each image in the batch gets a distinct, deterministic seed (`seed`, `seed+1`, `seed+2`, ...). Fully reproducible: the same request produces the same seeds, and each seed maps to its own output file.
+- **`seed` and `spread` both given** → intentionally *non-deterministic*: each image gets a random value in `[seed - spread, seed + spread]`, freshly randomized on every call. Deliberate exploration feature (get variations near a seed), not part of the core SRS contract — running the same request twice will not produce the same images.
 
-**Bottom line:** only single-image requests (`num_images = 1`) with an explicit `seed` are currently fully reproducible end-to-end. Batch reproducibility for `seed`-without-`spread` is a known open issue.
+**Bottom line:** single-image requests and multi-image requests with an explicit `seed` (no `spread`) are both fully reproducible. Only the `spread` case is intentionally non-reproducible, by design.
 
 ---
-
 ## Prompt Refinement Engine (PRE)
 
 When `refine: true`, the engine expands short prompts into detailed image descriptions optimized for SDXL, before generation. This path is **hybrid**, not purely local:
@@ -172,111 +134,23 @@ When `refine: true`, the engine expands short prompts into detailed image descri
 2. **Fallback:** local **Mistral 7B** via Ollama, if Groq fails or `GROQ_API_KEY` isn't set.
 3. **Last resort:** the original, unrefined prompt is passed through unchanged if both fail.
 
-This means `refine: true` is **not** a purely local operation by default — it sends your prompt to Groq's cloud API unless you don't have a `GROQ_API_KEY` configured, in which case it's local-only via Ollama. If full-offline operation matters to you, either don't set `GROQ_API_KEY` (Ollama-only fallback) or set `refine: false`.
-
-Ollama itself is managed automatically when available — started on app launch, stopped on exit — but the app no longer fails to start if Ollama isn't installed.
+`refine: true` is **not** purely local by default — it sends your prompt to Groq's cloud API unless `GROQ_API_KEY` is unset, in which case it's local-only via Ollama. Ollama itself is managed automatically when available (started on app launch, stopped on exit) — the app doesn't fail to start if Ollama isn't installed.
 
 ---
+## Known limitations (verified, not aspirational)
 
-## Quality Gates
+Everything below was checked directly against the current code and current benchmark data — not a hedge, an actual account of what this system can and can't prove about itself yet.
 
-After each image is generated, it passes through a set of automatic quality checks ("gates"). Each gate returns a score, a status (`PASS` / `WARNING` / `FAIL` / `NOT_APPLICABLE`), and (if not passing) a suggested reason — surfaced in the API response under `quality` per image.
-
-| Gate | What it checks | How |
-|---|---|---|
-| `TILING` | Repeating/tiled visual patterns | FFT-based autocorrelation (pure math, no model) |
-| `CLIP` | Does the image match the (refined) prompt? | Cosine similarity between CLIP image and text embeddings (`openai/clip-vit-base-patch32`) |
-| `HANDS` | Anatomically plausible hands | mediapipe hand landmark detection (crop per detected hand, up to 4/image) + pretrained anatomy classifier (`angusleung100/bad-anatomy-realism-classifier`), scores averaged across detected hands |
-| `FACE` | Face detected and recognizable | mediapipe face detection confidence |
-| `IQA` | General visual quality (noise, blur, compression artifacts) | No-reference deep-learning quality model (`musiq` via `pyiqa`) |
-
-Gates run in parallel per image (`ThreadPoolExecutor`).
-
-**`NOT_APPLICABLE` status.** `HANDS` and `FACE` return `NOT_APPLICABLE` (`score` and `passed` both `null`) when nothing is detected — no hand or face visible in frame at all (cropped out, occluded, or genuinely absent from the composition, e.g. a close-up that doesn't include a face). This is distinct from a detected-but-malformed result, which is scored normally against the gate's thresholds.
-
-### Known limitations (verified, not aspirational)
-
-- **`HANDS` classifier reliability.** The anatomy classifier (`angusleung100`) was fine-tuned on a small dataset (~134 images) and, across manual testing on dozens of generations, doesn't meaningfully discriminate hand quality for this project's art style and pose distribution — grip/weapon-holding poses in particular. Scores cluster tightly regardless of visibly correct or malformed hands. Treat the `HANDS` score as experimental, not a trustworthy signal, until a better pretrained option exists or a project-specific classifier is trained against a labeled golden set.
-- **`FACE` detector domain mismatch.** mediapipe's face detector (BlazeFace) is trained exclusively on real photographs, per its official model card — not illustrated or stylized art. Observed false positives on symmetric, paired decorative hardware (a sword's crossguard/pommel; a book's brass clasp) suggest it can misfire on this project's fantasy-illustration style. Treat `FACE` results as a directional signal for this art style, not ground truth, pending human-labeled calibration.
-- **All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, and `TILING`) are engineering estimates**, not derived from labeled data. Calibration against a golden evaluation set is planned.
-- **First-run network calls.** `CLIP` and `HANDS` (via `transformers`) and `IQA` (via `pyiqa`) download pretrained checkpoints from their respective hubs on first use, then cache locally for subsequent runs. This is a one-time exception to the "100% local" claim above — same category as the Groq PRE path.
+- **The quality gates are not yet calibrated.** All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, `TILING`) are engineering estimates, not derived from labeled data. This means the benchmark below can show *consistency* across profiles/checkpoints/LoRA, but not yet *proof* that one recipe is objectively better than another — that requires calibrating the gates against a labeled golden set first.
+- **`HANDS` classifier reliability.** The anatomy classifier (`angusleung100`) was fine-tuned on a small dataset (~134 images) and, across manual testing on dozens of generations, doesn't meaningfully discriminate hand quality for this project's art style and pose distribution — grip/weapon-holding poses in particular. Treat the `HANDS` score as experimental, not a trustworthy signal.
+- **`FACE` detector domain mismatch.** mediapipe's face detector (BlazeFace) is trained exclusively on real photographs, per its official model card — not illustrated or stylized art. Observed false positives on symmetric, paired decorative hardware (a sword's crossguard/pommel; a book's brass clasp) suggest it can misfire on this project's fantasy-illustration style. Treat `FACE` results as directional, not ground truth.
+- **`CLIP` threshold is lenient relative to observed scores.** Across benchmark data, CLIP scores cluster around 0.29–0.39, comfortably above the current 0.20 fail / 0.25 warning thresholds — in practice this gate has not yet failed a real generation, which limits how much it's currently telling us.
+- **Batch seed collision (`seed` given, no `spread`) is fixed but wasn't always.** Each image in a batch now gets a distinct, deterministic seed (`seed`, `seed+1`, `seed+2`, ...) — see [Seeds and batches](#seeds-and-batches) for the full breakdown of all three seed/spread cases.
+- **First-run network calls.** `CLIP`/`HANDS` (via `transformers`) and `IQA` (via `pyiqa`) download pretrained checkpoints from their respective hubs on first use, then cache locally. One-time exception to the "100% local" claim above — same category as the Groq PRE path.
 
 ---
-
-## Development Tools
-
-### Golden-set generator
-
-`utils/generate_golden_set.py` generates a fixed, reproducible sample of images (15 curated prompts × 4 fixed seeds = 60 images) for manually evaluating and calibrating the [quality gates](#quality-gates). Outputs go to a timestamped folder under `output/golden_set/`, alongside a `manifest.json` recording each image's prompt, profile, seed, and the gate scores computed at generation time.
-
-Run it as a module from the project root (not as a direct file path — otherwise Python won't resolve the `app` package):
-
-```powershell
-python -m utils.generate_golden_set
-```
-
----
-
-### Cross-profile / LoRA benchmark
-
-`utils/generate_benchmark.py` runs a fixed prompt set across every profile, seed, and LoRA on/off variant, scoring each image with the same [quality gates](#quality-gates) used everywhere else. Outputs go to a timestamped folder under `output_images/benchmark/`, alongside a `manifest.json` recording each image's profile, prompt, seed, LoRA variant, and gate results.
-
-**This validates the benchmarking methodology, not a "best recipe" claim.** Gate thresholds are still engineering estimates rather than calibrated against labeled data (see [Quality Gates → Known limitations](#quality-gates)), so pass/fail results here aren't yet proof that one profile or checkpoint is objectively better than another — that requires calibrating the gates first.
-
-Run it as a module from the project root, same as the golden-set generator:
-
-```powershell
-python -m utils.generate_benchmark
-```
-
----
-
-## Known issues
-
-Verified against the current codebase — not aspirational, these are real, open gaps:
-
-- **Batch seed collision** (`seed` given, no `spread`, `num_images > 1`) — see [Seeds and batches](#seeds-and-batches). All images in the batch overwrite the same file. Still open.
-- **Golden-set sample images committed to git history** (`output/golden_set/2026-08-07_18-49-13/`) — 60 PNGs plus manifest were committed directly rather than hosted externally. Inflates repo size/history; flagged for cleanup.
-- See [Quality Gates → Known limitations](#quality-gates) for gate-specific gaps (IQA threshold scale, HANDS classifier reliability, FACE domain mismatch).
-
----
-
-## Roadmap
-
-- [x] E01 — Local SDXL-class generation
-- [x] E02 — Inputs & batching *(long-prompt chunking implemented; remaining stories in progress)*
-- [X] E03 — Outputs (ControlNet, aspect ratios, negatives)
-- [X] E04 — Non-functional (VRAM, reproducibility)
-- [X] E05 — Constraints & interface
-- [x] E06 — LoRA & style presets
-- [ ] E08 — Quality & acceptance 
-- [ ] E09 — Output pipeline & quality stages
-
----
-
-## Tech Stack
-  
-| Layer | Technology |
-|---|---|
-| Inference | Stable Diffusion XL (Diffusers) |
-| Token handling | Compel |
-| Prompt refinement | Groq (Llama 3.3 70B) primary, Mistral 7B via Ollama fallback |
-| Quality gates | CLIP + HANDS (`transformers`), mediapipe (hands/face), `pyiqa` (no-reference IQA) |
-| API | Flask |
-| UI | Gradio (dev-only) |
-| Validation | Pydantic v2 |
-| GPU | PyTorch + CUDA |
-
----
-
 ## Licensing
 
-The source code in this repository is MIT licensed (see [`License.md`](./License.md)).
+The source code in this repository is MIT licensed — see [`LICENSE`](./LICENSE).
 
 Model weights are **not** covered by this license and are downloaded at runtime from their respective sources. Each carries its own terms — SDXL checkpoints are distributed under CreativeML Open RAIL++-M, which imposes use restrictions. Review the license of any checkpoint, ControlNet, LoRA, or upscaler model before using generated output commercially.
-
----
-
-## License
-
-MIT — see [`License.md`](./License.md).
