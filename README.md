@@ -14,7 +14,7 @@
 
 **img-engine** is a local-first image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend architecture. Swap diffusion models — SDXL-class, Flux, Stable Diffusion 3.5, or any future checkpoint — without changing the pipeline. It provides a structured interface for generating high-quality images from text prompts.
 
-Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two exceptions to this, both documented in full below: the optional Prompt Refinement Engine ([PRE](#prompt-refinement-engine-pre)), and first-run model downloads for two of the [quality gates](#quality-gates).
+Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two exceptions to this, both documented in full below: the optional Prompt Refinement Engine ([PRE](#prompt-refinement-engine-pre)), and first-run model downloads for some of the [quality gates](#quality-gates).
 
 Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
 
@@ -180,24 +180,26 @@ Ollama itself is managed automatically when available — started on app launch,
 
 ## Quality Gates
 
-After each image is generated, it passes through a set of automatic quality checks ("gates"). Each gate returns a score, a pass/fail status, and (if not passing) a suggested reason — surfaced in the API response under `quality` per image.
+After each image is generated, it passes through a set of automatic quality checks ("gates"). Each gate returns a score, a status (`PASS` / `WARNING` / `FAIL` / `NOT_APPLICABLE`), and (if not passing) a suggested reason — surfaced in the API response under `quality` per image.
 
 | Gate | What it checks | How |
 |---|---|---|
 | `TILING` | Repeating/tiled visual patterns | FFT-based autocorrelation (pure math, no model) |
 | `CLIP` | Does the image match the (refined) prompt? | Cosine similarity between CLIP image and text embeddings (`openai/clip-vit-base-patch32`) |
-| `HANDS` | Anatomically plausible hands | mediapipe hand landmark detection, combined with geometric plausibility checks (finger segment length ratios, fingertip-to-fingertip fusion distance) |
+| `HANDS` | Anatomically plausible hands | mediapipe hand landmark detection (crop per detected hand, up to 4/image) + pretrained anatomy classifier (`angusleung100/bad-anatomy-realism-classifier`), scores averaged across detected hands |
 | `FACE` | Face detected and recognizable | mediapipe face detection confidence |
 | `IQA` | General visual quality (noise, blur, compression artifacts) | No-reference deep-learning quality model (`musiq` via `pyiqa`) |
 
 Gates run in parallel per image (`ThreadPoolExecutor`).
 
+**`NOT_APPLICABLE` status.** `HANDS` and `FACE` return `NOT_APPLICABLE` (`score` and `passed` both `null`) when nothing is detected — no hand or face visible in frame at all (cropped out, occluded, or genuinely absent from the composition, e.g. a close-up that doesn't include a face). This is distinct from a detected-but-malformed result, which is scored normally against the gate's thresholds.
+
 ### Known limitations (verified, not aspirational)
 
-- **`HANDS` is a heuristic, not a trained classifier.** Raw mediapipe detection confidence alone was found (via manual testing across ~20 generated images) to pass hands with clearly visible finger-count/fusion defects roughly 90% of the time — confidence measures "does this look like a hand-shaped region," not "are the fingers anatomically correct." The current implementation adds geometric plausibility checks on top of detection confidence to catch more of these cases, but the rule thresholds are engineering estimates, not calibrated against labeled data. A trained classifier over labeled hand-quality examples is the natural upgrade path once a golden evaluation set exists (see Roadmap, E08-S05).
-- **`HANDS` / `FACE` score of `0` means "nothing detected," not necessarily "detected and deformed."** If a hand or face isn't visible in frame at all (cropped out, occluded, or genuinely absent from the composition — e.g. a close-up shot that doesn't include a face), the gate currently reports the same score/message as a detected-but-malformed case. These two situations aren't yet distinguished in the response.
+- **`HANDS` classifier reliability.** The anatomy classifier (`angusleung100`) was fine-tuned on a small dataset (~134 images) and, across manual testing on dozens of generations, doesn't meaningfully discriminate hand quality for this project's art style and pose distribution — grip/weapon-holding poses in particular. Scores cluster tightly regardless of visibly correct or malformed hands. Treat the `HANDS` score as experimental, not a trustworthy signal, until a better pretrained option exists or a project-specific classifier is trained against a labeled golden set.
+- **`FACE` detector domain mismatch.** mediapipe's face detector (BlazeFace) is trained exclusively on real photographs, per its official model card — not illustrated or stylized art. Observed false positives on symmetric, paired decorative hardware (a sword's crossguard/pommel; a book's brass clasp) suggest it can misfire on this project's fantasy-illustration style. Treat `FACE` results as a directional signal for this art style, not ground truth, pending human-labeled calibration.
 - **All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, and `TILING`) are engineering estimates**, not derived from labeled data. Calibration against a golden evaluation set is planned.
-- **First-run network calls.** `CLIP` (via `transformers`) and `IQA` (via `pyiqa`) download pretrained checkpoints from their respective hubs on first use, then cache locally for subsequent runs. This is a one-time exception to the "100% local" claim above — same category as the Groq PRE path.
+- **First-run network calls.** `CLIP` and `HANDS` (via `transformers`) and `IQA` (via `pyiqa`) download pretrained checkpoints from their respective hubs on first use, then cache locally for subsequent runs. This is a one-time exception to the "100% local" claim above — same category as the Groq PRE path.
 
 ---
 
@@ -220,32 +222,32 @@ python -m utils.generate_golden_set
 Verified against the current codebase — not aspirational, these are real, open gaps:
 
 - **Batch seed collision** (`seed` given, no `spread`, `num_images > 1`) — see [Seeds and batches](#seeds-and-batches). All images in the batch overwrite the same file. Still open.
-- See [Quality Gates → Known limitations](#quality-gates) for gate-specific gaps (IQA threshold scale, HANDS heuristic limits, HANDS/FACE zero-score ambiguity).
-- **Hands gate.** Uses a pretrained anatomy classifier (angusleung100) whose results are inconclusive/unreliable for this art style — treat the score as experimental, not a trustworthy signal. 
+- **Golden-set sample images committed to git history** (`output/golden_set/2026-08-07_18-49-13/`) — 60 PNGs plus manifest were committed directly rather than hosted externally. Inflates repo size/history; flagged for cleanup.
+- See [Quality Gates → Known limitations](#quality-gates) for gate-specific gaps (IQA threshold scale, HANDS classifier reliability, FACE domain mismatch).
+
 ---
 
 ## Roadmap
 
 - [x] E01 — Local SDXL-class generation
 - [x] E02 — Inputs & batching *(long-prompt chunking implemented; remaining stories in progress)*
-- [ ] E03 — Outputs (ControlNet, aspect ratios, negatives)
-- [ ] E04 — Non-functional (VRAM, reproducibility)
-- [ ] E05 — Constraints & interface
+- [X] E03 — Outputs (ControlNet, aspect ratios, negatives)
+- [X] E04 — Non-functional (VRAM, reproducibility)
+- [X] E05 — Constraints & interface
 - [x] E06 — LoRA & style presets
-- [ ] E07 — Contract unification
-- [ ] E08 — Quality & acceptance *(quality gates in progress: TILING/CLIP/HANDS/FACE/IQA implemented, threshold calibration and golden-set benchmark — E08-S05 — still pending)*
+- [ ] E08 — Quality & acceptance 
 - [ ] E09 — Output pipeline & quality stages
 
 ---
 
 ## Tech Stack
-
+  
 | Layer | Technology |
 |---|---|
 | Inference | Stable Diffusion XL (Diffusers) |
 | Token handling | Compel |
 | Prompt refinement | Groq (Llama 3.3 70B) primary, Mistral 7B via Ollama fallback |
-| Quality gates | CLIP (`transformers`), mediapipe (hands/face), `pyiqa` (no-reference IQA) |
+| Quality gates | CLIP + HANDS (`transformers`), mediapipe (hands/face), `pyiqa` (no-reference IQA) |
 | API | Flask |
 | UI | Gradio (dev-only) |
 | Validation | Pydantic v2 |
