@@ -51,7 +51,10 @@ def main():
     # Each run gets its own timestamped output folder, so old runs are
     # never overwritten and can be compared side by side later.
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    out_dir = Path("output") / "golden_set" / timestamp
+
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent  # utils/generate_golden_set.py → root
+    
+    out_dir = PROJECT_ROOT / "output_images" / "golden_set" / timestamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = []
@@ -103,3 +106,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
