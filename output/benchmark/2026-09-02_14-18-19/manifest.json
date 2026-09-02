@@ -1,0 +1,1478 @@
+[
+  {
+    "profile": "character",
+    "prompt_native_profile": "character",
+    "is_native_pairing": true,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "character_native-character_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.15388469582302255,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3832792639732361,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.5112363621592522,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.31)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9307722449302673,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7665447235107422,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "character",
+    "is_native_pairing": true,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "character_native-character_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1657953562885358,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3777562379837036,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4924481362104416,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.36)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9411742687225342,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7663172912597657,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "character",
+    "is_native_pairing": true,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "character_native-character_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.159509970593135,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.38932499289512634,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.49594175815582275,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.31)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9651848673820496,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7697200775146484,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "character",
+    "is_native_pairing": true,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "character_native-character_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.15874245977625623,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.38771721720695496,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.49888987839221954,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.28)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9685622453689575,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7616436004638671,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "product_native-character_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.13937606545336811,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.37678754329681396,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.9344953894615173,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7673944854736328,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "product_native-character_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.14055296818709484,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.37948983907699585,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.9353424906730652,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7772049713134765,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "product_native-character_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.12143729131412195,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.38226425647735596,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4869031608104706,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.30)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9540639519691467,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7580355072021484,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "product_native-character_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11772728010671052,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.382478266954422,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.48285147547721863,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.33)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9467763304710388,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7682677459716797,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "scene_frame_native-character_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.18968451161778999,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.39084190130233765,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.5169118419289589,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.28)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9583353400230408,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7794040679931641,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "scene_frame_native-character_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.19655097505487185,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3866686522960663,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.5111459046602249,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.27)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9534246921539307,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7826500701904296,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "scene_frame_native-character_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.15911752922791944,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3786398470401764,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.48066236078739166,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.27)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9641828536987305,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7490040588378907,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "character",
+    "is_native_pairing": false,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "scene_frame_native-character_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.19471465889475648,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3749983012676239,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.5204349011182785,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Good_Anatomy', p=0.29)"
+      },
+      {
+        "gate": "face",
+        "score": 0.933346152305603,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7571611785888672,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "character_native-product_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.28183577697211204,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.36232155561447144,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6692848968505859,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "character_native-product_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.2734141831932364,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3544057011604309,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6841216278076172,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "character_native-product_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1830655807065017,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3683079481124878,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7138424682617187,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "character_native-product_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1944536955535947,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3425517976284027,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7273502349853516,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "product",
+    "is_native_pairing": true,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "product_native-product_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.18330578909986472,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.34105435013771057,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6959042358398437,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "product",
+    "is_native_pairing": true,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "product_native-product_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.19360259959083015,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.33757659792900085,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7088614654541016,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "product",
+    "is_native_pairing": true,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "product_native-product_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1644939033146311,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.36430469155311584,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7336721801757813,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "product",
+    "is_native_pairing": true,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "product_native-product_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.17341824585205456,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.35715144872665405,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7075727081298828,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "scene_frame_native-product_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3576397824632186,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3740937113761902,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.6037931442260742,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6678643798828126,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "scene_frame_native-product_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3537569474306377,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3678373098373413,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.5457819104194641,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6630872344970703,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "scene_frame_native-product_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.38970465179761127,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3198447525501251,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7225394439697266,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "product",
+    "is_native_pairing": false,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "scene_frame_native-product_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.38370404998482244,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3275147080421448,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7316501617431641,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "character_native-scene_frame_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.15430741353852706,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3150186538696289,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6055118179321289,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "character_native-scene_frame_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.16262638244663796,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.31485164165496826,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6037194061279297,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "character_native-scene_frame_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.18035784731957594,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.31094005703926086,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5980117416381836,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "profile": "character",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "character_native-scene_frame_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.18228359316316878,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3096827268600464,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6001319122314454,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "product_native-scene_frame_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.07312602629274134,
+        "passed": false,
+        "suggested": "Tiling pattern detected"
+      },
+      {
+        "gate": "clip",
+        "score": 0.3202162981033325,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6131740570068359,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "product_native-scene_frame_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.06926896878003119,
+        "passed": false,
+        "suggested": "Tiling pattern detected"
+      },
+      {
+        "gate": "clip",
+        "score": 0.31907525658607483,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.608544692993164,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "product_native-scene_frame_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11351246454704245,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3096308708190918,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5811531829833985,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "profile": "product",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": false,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "product_native-scene_frame_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11016014832114684,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.30933186411857605,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5770124435424805,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": true,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 1000,
+    "lora_variant": "with_lora",
+    "filename": "scene_frame_native-scene_frame_seed1000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3907451837779593,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.2950778007507324,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.638193359375,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": true,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 1000,
+    "lora_variant": "no_lora",
+    "filename": "scene_frame_native-scene_frame_seed1000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3910985306591743,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.29013314843177795,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6315263366699219,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": true,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 2000,
+    "lora_variant": "with_lora",
+    "filename": "scene_frame_native-scene_frame_seed2000_with_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.30872521688924826,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3052404522895813,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5680132293701172,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "profile": "scene_frame",
+    "prompt_native_profile": "scene_frame",
+    "is_native_pairing": true,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "seed": 2000,
+    "lora_variant": "no_lora",
+    "filename": "scene_frame_native-scene_frame_seed2000_no_lora.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.30069076755962165,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3090934753417969,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5755801391601563,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  }
+]
