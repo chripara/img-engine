@@ -1,0 +1,2342 @@
+[
+  {
+    "prompt_id": 1,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "profile": "character",
+    "seed": 1000,
+    "filename": "p01_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1657953562885358,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3777562379837036,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4924481362104416,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.36)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9411742687225342,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7663172912597657,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 1,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "profile": "character",
+    "seed": 2000,
+    "filename": "p01_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.15874245977625623,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.38771721720695496,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.49888987839221954,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.28)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9685622453689575,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7616436004638671,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 1,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "profile": "character",
+    "seed": 3000,
+    "filename": "p01_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1886923080729339,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.38341590762138367,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.46723174303770065,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.34)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9181101322174072,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7646770477294922,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 1,
+    "prompt": "elven ranger holding a longbow, both hands gripping the string, detailed face",
+    "profile": "character",
+    "seed": 4000,
+    "filename": "p01_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1577866633858872,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.391422301530838,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.49252311140298843,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.31)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9483429193496704,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7760533905029297,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 2,
+    "prompt": "photorealistic chef chopping vegetables, close-up on hands and knife",
+    "profile": "character",
+    "seed": 1000,
+    "filename": "p02_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.14910336816406744,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3440190255641937,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.48040948063135147,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.31)"
+      },
+      {
+        "gate": "face",
+        "score": 0.7228055596351624,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7600028228759765,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 2,
+    "prompt": "photorealistic chef chopping vegetables, close-up on hands and knife",
+    "profile": "character",
+    "seed": 2000,
+    "filename": "p02_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.14617025700954445,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.33833077549934387,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.5120837986469269,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.31)"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7579343414306641,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 2,
+    "prompt": "photorealistic chef chopping vegetables, close-up on hands and knife",
+    "profile": "character",
+    "seed": 3000,
+    "filename": "p02_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11955326794107157,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3384415805339813,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.48837612569332123,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.30)"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7273911285400391,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 2,
+    "prompt": "photorealistic chef chopping vegetables, close-up on hands and knife",
+    "profile": "character",
+    "seed": 4000,
+    "filename": "p02_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.16049077665775968,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3337836265563965,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4904518127441406,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.31)"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7406897735595703,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 3,
+    "prompt": "knight in full plate armor raising a sword with both hands, helmet visor up showing face",
+    "profile": "character",
+    "seed": 1000,
+    "filename": "p03_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.17293713603645633,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.30582576990127563,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7505387115478516,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 3,
+    "prompt": "knight in full plate armor raising a sword with both hands, helmet visor up showing face",
+    "profile": "character",
+    "seed": 2000,
+    "filename": "p03_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.17880471837118017,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3145836591720581,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7250802612304688,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 3,
+    "prompt": "knight in full plate armor raising a sword with both hands, helmet visor up showing face",
+    "profile": "character",
+    "seed": 3000,
+    "filename": "p03_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.2523545887534495,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3095588982105255,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.72171875,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 3,
+    "prompt": "knight in full plate armor raising a sword with both hands, helmet visor up showing face",
+    "profile": "character",
+    "seed": 4000,
+    "filename": "p03_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.23366722346549818,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.2986717224121094,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7328292083740234,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 4,
+    "prompt": "blacksmith hammering a blade on an anvil, muscular forearms and hands gripping hammer",
+    "profile": "character",
+    "seed": 1000,
+    "filename": "p04_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.14897050827662828,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3615226447582245,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4992405027151108,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.30)"
+      },
+      {
+        "gate": "face",
+        "score": 0.6857648491859436,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7505632781982422,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 4,
+    "prompt": "blacksmith hammering a blade on an anvil, muscular forearms and hands gripping hammer",
+    "profile": "character",
+    "seed": 2000,
+    "filename": "p04_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.10691727597625156,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3268035054206848,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4857736676931381,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.30)"
+      },
+      {
+        "gate": "face",
+        "score": 0.7665829062461853,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7301504516601562,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 4,
+    "prompt": "blacksmith hammering a blade on an anvil, muscular forearms and hands gripping hammer",
+    "profile": "character",
+    "seed": 3000,
+    "filename": "p04_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.14164474467916777,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3650185465812683,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4891926646232605,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.28)"
+      },
+      {
+        "gate": "face",
+        "score": 0.7761483192443848,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7140338134765625,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 4,
+    "prompt": "blacksmith hammering a blade on an anvil, muscular forearms and hands gripping hammer",
+    "profile": "character",
+    "seed": 4000,
+    "filename": "p04_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11982400870844545,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3539985716342926,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.49330805242061615,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.31)"
+      },
+      {
+        "gate": "face",
+        "score": 0.6257920861244202,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7101248931884766,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 5,
+    "prompt": "wizard casting a spell, hands raised with glowing magic energy between fingers",
+    "profile": "character",
+    "seed": 1000,
+    "filename": "p05_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.07187601549836531,
+        "passed": false,
+        "suggested": "Tiling pattern detected"
+      },
+      {
+        "gate": "clip",
+        "score": 0.3390483856201172,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.47469362616539,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.36)"
+      },
+      {
+        "gate": "face",
+        "score": 0.7805929183959961,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7377345275878906,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 5,
+    "prompt": "wizard casting a spell, hands raised with glowing magic energy between fingers",
+    "profile": "character",
+    "seed": 2000,
+    "filename": "p05_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11799617657261718,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3187260925769806,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.43813667446374893,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.42)"
+      },
+      {
+        "gate": "face",
+        "score": 0.8758942484855652,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6823507690429688,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 5,
+    "prompt": "wizard casting a spell, hands raised with glowing magic energy between fingers",
+    "profile": "character",
+    "seed": 3000,
+    "filename": "p05_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.09925744923376523,
+        "passed": false,
+        "suggested": "Tiling pattern detected"
+      },
+      {
+        "gate": "clip",
+        "score": 0.33112165331840515,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4866660237312317,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.35)"
+      },
+      {
+        "gate": "face",
+        "score": 0.8377364873886108,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7261424255371094,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 5,
+    "prompt": "wizard casting a spell, hands raised with glowing magic energy between fingers",
+    "profile": "character",
+    "seed": 4000,
+    "filename": "p05_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.07998264152228207,
+        "passed": false,
+        "suggested": "Tiling pattern detected"
+      },
+      {
+        "gate": "clip",
+        "score": 0.3273698389530182,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4993618503212929,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.32)"
+      },
+      {
+        "gate": "face",
+        "score": 0.8755772709846497,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6872276306152344,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 6,
+    "prompt": "portrait of an old sailor, weathered face, hands resting on a ship's wheel",
+    "profile": "character",
+    "seed": 1000,
+    "filename": "p06_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11951406532081554,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3565621078014374,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.880725085735321,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7666168975830078,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 6,
+    "prompt": "portrait of an old sailor, weathered face, hands resting on a ship's wheel",
+    "profile": "character",
+    "seed": 2000,
+    "filename": "p06_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.15319651503818776,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3450460731983185,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.5064941644668579,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Good_Anatomy', p=0.28)"
+      },
+      {
+        "gate": "face",
+        "score": 0.9049816727638245,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7661030578613282,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 6,
+    "prompt": "portrait of an old sailor, weathered face, hands resting on a ship's wheel",
+    "profile": "character",
+    "seed": 3000,
+    "filename": "p06_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.15857839827673958,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3282625377178192,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.49864572286605835,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.34)"
+      },
+      {
+        "gate": "face",
+        "score": 0.8918792605400085,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7752819061279297,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 6,
+    "prompt": "portrait of an old sailor, weathered face, hands resting on a ship's wheel",
+    "profile": "character",
+    "seed": 4000,
+    "filename": "p06_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.16862515661513144,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3725486993789673,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.4875740706920624,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.28)"
+      },
+      {
+        "gate": "face",
+        "score": 0.8947691917419434,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7771979522705078,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 7,
+    "prompt": "assassin holding twin daggers crossed in front of chest, face partially covered by hood",
+    "profile": "character",
+    "seed": 1000,
+    "filename": "p07_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.2313614268313865,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.35038191080093384,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": 0.47279976308345795,
+        "passed": false,
+        "suggested": "Hand anatomy issues detected (model: 'Unrealistic_Bad_Anatomy', p=0.32)"
+      },
+      {
+        "gate": "face",
+        "score": 0.5898234248161316,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7276110076904296,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 7,
+    "prompt": "assassin holding twin daggers crossed in front of chest, face partially covered by hood",
+    "profile": "character",
+    "seed": 2000,
+    "filename": "p07_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.14720599660860012,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.32666701078414917,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.6759329438209534,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6545549011230469,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 7,
+    "prompt": "assassin holding twin daggers crossed in front of chest, face partially covered by hood",
+    "profile": "character",
+    "seed": 3000,
+    "filename": "p07_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3087431498237788,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.335580974817276,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.5985942482948303,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6838793182373046,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 7,
+    "prompt": "assassin holding twin daggers crossed in front of chest, face partially covered by hood",
+    "profile": "character",
+    "seed": 4000,
+    "filename": "p07_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.2428713725139332,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.34532442688941956,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.7154768109321594,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6912406158447265,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 8,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "profile": "product",
+    "seed": 1000,
+    "filename": "p08_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.19360259959083015,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.33757659792900085,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7088614654541016,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 8,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "profile": "product",
+    "seed": 2000,
+    "filename": "p08_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.17341824585205456,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.35715144872665405,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7075727081298828,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 8,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "profile": "product",
+    "seed": 3000,
+    "filename": "p08_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.2035839433553469,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.32914498448371887,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7427659606933594,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 8,
+    "prompt": "ornate golden crown on a velvet cushion, studio lighting, isolated background",
+    "profile": "product",
+    "seed": 4000,
+    "filename": "p08_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.20313107575819778,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.32662177085876465,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.708731689453125,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 9,
+    "prompt": "enchanted health potion bottle glowing red, sitting on a wooden table",
+    "profile": "product",
+    "seed": 1000,
+    "filename": "p09_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.07965776900399368,
+        "passed": false,
+        "suggested": "Tiling pattern detected"
+      },
+      {
+        "gate": "clip",
+        "score": 0.387035071849823,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6489929962158203,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 9,
+    "prompt": "enchanted health potion bottle glowing red, sitting on a wooden table",
+    "profile": "product",
+    "seed": 2000,
+    "filename": "p09_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.10055671369462671,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3608125150203705,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.5194408893585205,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6707662200927734,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 9,
+    "prompt": "enchanted health potion bottle glowing red, sitting on a wooden table",
+    "profile": "product",
+    "seed": 3000,
+    "filename": "p09_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.12002445942508944,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.37610575556755066,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.5469805002212524,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6773566436767579,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 9,
+    "prompt": "enchanted health potion bottle glowing red, sitting on a wooden table",
+    "profile": "product",
+    "seed": 4000,
+    "filename": "p09_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.12728310630378736,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3569602370262146,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.578178882598877,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6511269378662109,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 10,
+    "prompt": "steel battle axe, isolated on plain background, product photography style",
+    "profile": "product",
+    "seed": 1000,
+    "filename": "p10_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1175402178182815,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.34288498759269714,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7628247833251953,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 10,
+    "prompt": "steel battle axe, isolated on plain background, product photography style",
+    "profile": "product",
+    "seed": 2000,
+    "filename": "p10_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.18858870621853507,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3270890414714813,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7007398223876953,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 10,
+    "prompt": "steel battle axe, isolated on plain background, product photography style",
+    "profile": "product",
+    "seed": 3000,
+    "filename": "p10_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.13458902878311674,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3492717146873474,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7529779052734376,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 10,
+    "prompt": "steel battle axe, isolated on plain background, product photography style",
+    "profile": "product",
+    "seed": 4000,
+    "filename": "p10_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.1075650889105837,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3284863531589508,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7528173828125,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 11,
+    "prompt": "ancient leather-bound spellbook closed with a metal clasp, isolated",
+    "profile": "product",
+    "seed": 1000,
+    "filename": "p11_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.11809036795916883,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.33383238315582275,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": 0.6303256750106812,
+        "passed": false,
+        "suggested": "Face quality degraded"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7286115264892579,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 11,
+    "prompt": "ancient leather-bound spellbook closed with a metal clasp, isolated",
+    "profile": "product",
+    "seed": 2000,
+    "filename": "p11_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.4150144220472344,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3203714191913605,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6486064910888671,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 11,
+    "prompt": "ancient leather-bound spellbook closed with a metal clasp, isolated",
+    "profile": "product",
+    "seed": 3000,
+    "filename": "p11_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.34266454619797604,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.31519845128059387,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7357239532470703,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 11,
+    "prompt": "ancient leather-bound spellbook closed with a metal clasp, isolated",
+    "profile": "product",
+    "seed": 4000,
+    "filename": "p11_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.14787756008177577,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.32617175579071045,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.7176961517333984,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 12,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "profile": "scene_frame",
+    "seed": 1000,
+    "filename": "p12_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3910985306591743,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.29013314843177795,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6315263366699219,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 12,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "profile": "scene_frame",
+    "seed": 2000,
+    "filename": "p12_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.30069076755962165,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3090934753417969,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5755801391601563,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 12,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "profile": "scene_frame",
+    "seed": 3000,
+    "filename": "p12_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.4182219691776634,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3080511689186096,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6307666397094727,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 12,
+    "prompt": "dense mystical forest background, dappled sunlight through leaves, no characters",
+    "profile": "scene_frame",
+    "seed": 4000,
+    "filename": "p12_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3413406510939567,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.2973032593727112,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5898745727539062,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 13,
+    "prompt": "stone dungeon wall texture, moss and cracks, torch-lit",
+    "profile": "scene_frame",
+    "seed": 1000,
+    "filename": "p13_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.43090219994741186,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.32251685857772827,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6134999084472657,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 13,
+    "prompt": "stone dungeon wall texture, moss and cracks, torch-lit",
+    "profile": "scene_frame",
+    "seed": 2000,
+    "filename": "p13_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.32637093054694355,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3375150263309479,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5412853622436523,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 13,
+    "prompt": "stone dungeon wall texture, moss and cracks, torch-lit",
+    "profile": "scene_frame",
+    "seed": 3000,
+    "filename": "p13_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.4077048502016464,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3332747220993042,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5670618057250977,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 13,
+    "prompt": "stone dungeon wall texture, moss and cracks, torch-lit",
+    "profile": "scene_frame",
+    "seed": 4000,
+    "filename": "p13_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.3750410510403861,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3296743929386139,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5925986862182617,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 14,
+    "prompt": "abstract magical energy gradient background, purple and blue swirls",
+    "profile": "scene_frame",
+    "seed": 1000,
+    "filename": "p14_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.055903464134948844,
+        "passed": false,
+        "suggested": "Tiling pattern detected"
+      },
+      {
+        "gate": "clip",
+        "score": 0.3583189845085144,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.40671974182128906,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 14,
+    "prompt": "abstract magical energy gradient background, purple and blue swirls",
+    "profile": "scene_frame",
+    "seed": 2000,
+    "filename": "p14_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.10437845886465302,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.3524610996246338,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5042559051513672,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 14,
+    "prompt": "abstract magical energy gradient background, purple and blue swirls",
+    "profile": "scene_frame",
+    "seed": 3000,
+    "filename": "p14_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.31542205013624924,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.34780120849609375,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6092026901245117,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 14,
+    "prompt": "abstract magical energy gradient background, purple and blue swirls",
+    "profile": "scene_frame",
+    "seed": 4000,
+    "filename": "p14_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.16183018999058219,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "clip",
+        "score": 0.35509204864501953,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.5855512237548828,
+        "passed": false,
+        "suggested": "Low perceptual quality"
+      }
+    ]
+  },
+  {
+    "prompt_id": 15,
+    "prompt": "desert dune landscape at sunset, wide gradient sky",
+    "profile": "scene_frame",
+    "seed": 1000,
+    "filename": "p15_seed1000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.04713041933310258,
+        "passed": false,
+        "suggested": "Severe tiling artifact \u2014 image unusable"
+      },
+      {
+        "gate": "clip",
+        "score": 0.3177540898323059,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6644462585449219,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 15,
+    "prompt": "desert dune landscape at sunset, wide gradient sky",
+    "profile": "scene_frame",
+    "seed": 2000,
+    "filename": "p15_seed2000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.03856964690716991,
+        "passed": false,
+        "suggested": "Severe tiling artifact \u2014 image unusable"
+      },
+      {
+        "gate": "clip",
+        "score": 0.3213179111480713,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6393878555297852,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 15,
+    "prompt": "desert dune landscape at sunset, wide gradient sky",
+    "profile": "scene_frame",
+    "seed": 3000,
+    "filename": "p15_seed3000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.023279762007018534,
+        "passed": false,
+        "suggested": "Severe tiling artifact \u2014 image unusable"
+      },
+      {
+        "gate": "clip",
+        "score": 0.3235633075237274,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6425334930419921,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  },
+  {
+    "prompt_id": 15,
+    "prompt": "desert dune landscape at sunset, wide gradient sky",
+    "profile": "scene_frame",
+    "seed": 4000,
+    "filename": "p15_seed4000.png",
+    "gates": [
+      {
+        "gate": "tiling",
+        "score": 0.0410745638302239,
+        "passed": false,
+        "suggested": "Severe tiling artifact \u2014 image unusable"
+      },
+      {
+        "gate": "clip",
+        "score": 0.32061317563056946,
+        "passed": true,
+        "suggested": null
+      },
+      {
+        "gate": "hands",
+        "score": null,
+        "passed": null,
+        "suggested": "No hands detected in image"
+      },
+      {
+        "gate": "face",
+        "score": null,
+        "passed": null,
+        "suggested": "No face detected in image"
+      },
+      {
+        "gate": "iqa",
+        "score": 0.6978555297851563,
+        "passed": true,
+        "suggested": null
+      }
+    ]
+  }
+]

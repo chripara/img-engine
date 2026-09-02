@@ -54,7 +54,7 @@ def main():
 
     PROJECT_ROOT = Path(__file__).resolve().parent.parent  # utils/generate_golden_set.py → root
     
-    out_dir = PROJECT_ROOT / "output_images" / "golden_set" / timestamp
+    out_dir = PROJECT_ROOT / "output" / "golden_set" / timestamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = []
