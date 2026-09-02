@@ -9,8 +9,6 @@ from utils.enums.gate import GateStatus, GateType
 from app.services.validation.registries.validator_registry import _GATE_THRESHOLDS, _GATE_MESSAGES
 from pathlib import Path
 
-_DEBUG_SAVE_CROPS = True # os.getenv("HANDS_DEBUG_SAVE_CROPS", "0") == "1"
-_DEBUG_CROPS_DIR = Path("output_images") / "crops"
 _MAX_NUM_HANDS = 4  # documented limit — see README: hand validation covers up to 4 hands/image
 _HAND_CROP_PADDING_RATIO = 0.5
 _GOOD_ANATOMY_LABELS = {"Realistic_Good_Anatomy", "Unrealistic_Good_Anatomy"}
@@ -63,15 +61,6 @@ class HandsValidator:
             bottom = min(height, int((y_max + pad_y) * height))
 
             crops.append(image.crop((left, top, right, bottom)))
-
-        print(_DEBUG_CROPS_DIR)
-        print("cwd:", os.getcwd())
-        print("num crops:", len(crops))
-        os.makedirs(_DEBUG_CROPS_DIR, exist_ok=True)
-        os.makedirs(_DEBUG_CROPS_DIR, exist_ok=True)
-        run_id = uuid.uuid4().hex[:8]
-        for i, crop in enumerate(crops):
-            crop.save(os.path.join(_DEBUG_CROPS_DIR, f"{run_id}_hand{i}.png"))
 
         return crops
 
