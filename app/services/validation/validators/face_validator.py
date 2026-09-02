@@ -37,9 +37,9 @@ def face_validator(image: Image.Image) -> GateResult:
         else GateStatus.PASS
 
     return GateResult(
-        gate=GateType.FACE,
-        score=score,
-        passed=status == GateStatus.PASS,
-        suggested=_GATE_MESSAGES[GateType.FACE][status],
+        gate = GateType.FACE,
+        score = score,
+        passed = status == GateStatus.PASS,
+        suggested = _GATE_MESSAGES[GateType.FACE][status],
     )
 
