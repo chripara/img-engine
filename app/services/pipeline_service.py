@@ -22,7 +22,7 @@ class PipelineService():
                     seeds = [random.randint(req.seed - req.spread, req.seed + req.spread)
                              for _ in range(req.num_images)]
             else:
-                seeds = [req.seed for _ in range(req.num_images)]
+                seeds = [req.seed + i for i in range(req.num_images)]
         else:
             seeds = [req.seed for _ in range(req.num_images)]
         with ThreadPoolExecutor() as executor:
