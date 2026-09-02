@@ -217,6 +217,20 @@ python -m utils.generate_golden_set
 
 ---
 
+### Cross-profile / LoRA benchmark
+
+`utils/generate_benchmark.py` runs a fixed prompt set across every profile, seed, and LoRA on/off variant, scoring each image with the same [quality gates](#quality-gates) used everywhere else. Outputs go to a timestamped folder under `output_images/benchmark/`, alongside a `manifest.json` recording each image's profile, prompt, seed, LoRA variant, and gate results.
+
+**This validates the benchmarking methodology, not a "best recipe" claim.** Gate thresholds are still engineering estimates rather than calibrated against labeled data (see [Quality Gates → Known limitations](#quality-gates)), so pass/fail results here aren't yet proof that one profile or checkpoint is objectively better than another — that requires calibrating the gates first.
+
+Run it as a module from the project root, same as the golden-set generator:
+
+```powershell
+python -m utils.generate_benchmark
+```
+
+---
+
 ## Known issues
 
 Verified against the current codebase — not aspirational, these are real, open gaps:
