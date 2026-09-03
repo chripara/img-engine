@@ -9,7 +9,9 @@ from app.services.registries.profile_registry import _PROFILES
 from app.services.registries.guidance_registry import  _GUIDANCE_DETAILS
 from app.services.guidance.guidance_service import generate_guidance
 from app.services.validation.validator import validate
-import base64, random
+import base64, random, logging
+
+logger = logging.getLogger(__name__)
 
 class PipelineService():
     def generation_pipeline(req: GenerateRequest) -> GenerateResult:
@@ -60,14 +62,14 @@ def _refine_prompt(req: GenerateRequest) -> str:
         try:
             refined_prompt = refine_prompt_with_llama(req)
         except Exception as e_llama:
-            print("llama broke ", e_llama)
+            logger.warning("Llama refinement failed: %s", e_llama)
             try:
-                print("Trying now with fallback Ollama")
+                logger.info("Trying fallback: Ollama")
                 refined_prompt = refine_prompt_with_ollama(req)
-                print("Ollama Successful")
+                logger.info("Ollama refinement succeeded")
             except Exception as e_ollama:
-                print("ollama broke ", e_ollama)
-                print("No refinement engine is supported. passing propmpt as is!")
+                logger.error("Ollama refinement also failed: %s", e_ollama, exc_info=True)
+                logger.warning("No refinement engine available — passing prompt through unrefined.")
     return refined_prompt
 
 def _preprocess(req: GenerateRequest) -> list[GuidanceResult]:
