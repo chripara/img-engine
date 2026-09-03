@@ -22,7 +22,7 @@ Image generation itself is 100% local — no cloud inference, no data leaving yo
 
 ```
 ┌─────────────────────────────────┐
-│         Gradio UI / CLI         │  ← dev-only, out of contract
+│            Gradio UI            │  ← dev-only, out of contract
 └────────────────┬────────────────┘
                  │ HTTP POST /generate
 ┌────────────────▼────────────────┐
