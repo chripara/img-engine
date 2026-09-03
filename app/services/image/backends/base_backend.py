@@ -10,10 +10,11 @@ from utils.enums.guidance import GuidanceType
 
 from app.services.image.registries.stype_presets import _STYLE_PRESET_REGISTRY
 from app.services.image.registries.guidance_registry import _GUIDANCE_MODELS, _SDXL_CONTROLNET_MODELS
-import torch
+import torch, logging
 
 from utils.enums.style_presets import StylePreset
 
+logger = logging.getLogger(__name__)
 
 class BaseBackend(ABC):
     def __init__(self):
@@ -53,10 +54,10 @@ class BaseBackend(ABC):
         try:
             self._pipe.load_lora_weights(_STYLE_PRESET_REGISTRY[style_preset], adapter_name=style_preset.value)
             self._pipe.set_adapters(style_preset.value, adapter_weights=strength)
-            print("lora stregth: ", strength)
+            logger.info("LoRA strength: %s", strength)
             self._pipe.fuse_lora()
         except Exception as e:
-            print(f"LoRA loading failed for preset '{style_preset.value}': {e}. Continuing without style preset.")
+            logger.warning("LoRA loading failed for preset '%s': %s. Continuing without style preset.", style_preset.value, e, exc_info=True)
 
     def _define_scheduler(self, profile: Profile):
         self._pipe.scheduler = _PROFILES[profile].scheduler.from_config(self._pipe.scheduler.config)

@@ -3,6 +3,7 @@ from pydantic import ValidationError
 from app.services.pipeline_service import PipelineService
 from app.schemas.generate import GenerateRequest
 from flask_pydantic_spec import FlaskPydanticSpec, Request,  Response as SpecResponse
+from app.services.gpu_lock import get_gpu_lock
 
 bp = Blueprint('routes', __name__)
 
@@ -24,6 +25,7 @@ def generate():
     if not req.prompt or not req.profile:
         return Response(status=400)
 
-    response = PipelineService.generation_pipeline(req)
+    with get_gpu_lock():
+        response = PipelineService.generation_pipeline(req)
 
     return jsonify(response.model_dump())

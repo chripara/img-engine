@@ -3,8 +3,14 @@ import subprocess
 import atexit, os, shutil
 from config import DevelopmentConfig
 
-_ollama = None
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+
+_ollama = None
 
 OLLAMA_PATH = os.getenv("OLLAMA_PATH") or shutil.which("ollama") or "ollama"
 
@@ -14,7 +20,7 @@ def start_ollama():
         try:
             _ollama = subprocess.Popen([OLLAMA_PATH, "serve"])
         except (FileNotFoundError, OSError) as e:
-            print(f"Ollama not available ({e}) — PRE will fall back to Groq only.")
+            logger.warning("Ollama not available (%s) — PRE will fall back to Groq only.", e)
             _ollama = None
 
 def stop_ollama():
