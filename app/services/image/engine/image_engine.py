@@ -7,8 +7,9 @@ from app.services.image.registries.backend_registry import _BACKENDS
 from app.services.registries.profile_registry import _PROFILES
 from app.services.registries.image_registry import _ASPECT_RATIOS
 from app.services.image.backends.base_backend import BaseBackend
-import gc, torch
+import gc, torch, logging
 
+logger = logging.getLogger(__name__)
 
 class ImageEngine:
     def __init__(self, req: GenerateRequest, guidance_types: list[GuidanceType]):
@@ -50,7 +51,7 @@ class ImageEngine:
 
         dimensions = _ASPECT_RATIOS[req.aspect_ratio] if req.aspect_ratio else _ASPECT_RATIOS[AspectRatio.SQUARE]
 
-        print("Prompt:", req.prompt)
+        logger.info("Prompt: %s", req.prompt)
         result = self._backend.generate(req.prompt, req.negative_prompt, dimensions, seed, controls, index)
 
         return  result
