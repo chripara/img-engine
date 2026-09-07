@@ -8,8 +8,7 @@ nothing mutated -- once with the FANTASY style LoRA applied and once
 without, to compare its effect on gate scores with actual evidence.
 """
 
-import base64
-import json
+import base64, json, time, torch
 from datetime import datetime
 from pathlib import Path
 
@@ -37,9 +36,8 @@ LORA_VARIANTS = [
 
 
 def main():
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     PROJECT_ROOT = Path(__file__).resolve().parent.parent
-    out_dir = PROJECT_ROOT / "output" / "benchmark" / timestamp
+    out_dir = PROJECT_ROOT / "output" / "benchmark"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = []
@@ -64,9 +62,16 @@ def main():
                         style_preset=variant["style_preset"],
                         lora_strength=variant["lora_strength"],
                     )
-                    result = PipelineService.generation_pipeline(req)
-                    image_result = result.images[0]
 
+                    torch.cuda.reset_peak_memory_stats()
+                    start = time.perf_counter()
+
+                    result = PipelineService.generation_pipeline(req)
+
+                    elapsed_sec = time.perf_counter() - start
+                    peak_vram_gb = torch.cuda.max_memory_allocated() / (1024 ** 3)
+
+                    image_result = result.images[0]
                     filename = f"{profile.value}_native-{prompt_def['native_profile'].value}_seed{seed}_{variant['label']}.png"
                     image_bytes = base64.b64decode(image_result.image)
                     (out_dir / filename).write_bytes(image_bytes)
@@ -79,6 +84,8 @@ def main():
                         "seed": seed,
                         "lora_variant": variant["label"],
                         "filename": filename,
+                        "generation_seconds": round(elapsed_sec, 2),
+                        "peak_vram_gb": round(peak_vram_gb, 2),
                         "gates": [g.model_dump() for g in image_result.quality] if image_result.quality else [],
                     })
                     count += 1
