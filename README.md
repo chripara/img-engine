@@ -72,6 +72,7 @@ Requires Python 3.10+, a CUDA-capable GPU, and a downloaded SDXL checkpoint refe
 
 ---
 ## Profiles
+## Profiles
 
 | Profile | Use Case | Default Checkpoint | Native Size |
 |---|---|---|---|
@@ -83,6 +84,16 @@ Each profile carries its own checkpoint, VAE, scheduler, CFG, steps, native size
 
 \* *This reflects the current `native_size` value in `profile_registry.py`. Worth double-checking whether portrait is actually intended for a background/environment profile, or whether the registry values are swapped — flagging rather than silently picking one.*
 
+**Performance** (avg. per image, from `utils/generate_benchmark.py`, 36-image run):
+
+| Profile | Avg sec/image | Avg peak VRAM |
+|---|---|---|
+| `CHARACTER` | 16.45s | 10.90 GB |
+| `PRODUCT` | 18.80s | 9.41 GB |
+| `SCENE_FRAME` | 16.79s | 10.94 GB |
+
+---
+## Quality Gates
 ---
 ## Quality Gates
 
