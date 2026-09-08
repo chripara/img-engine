@@ -1,7 +1,7 @@
 from PIL import Image
 from transformers import CLIPModel, CLIPProcessor
 from app.schemas.generate import GateResult
-from app.services.validation.registries.validator_registry import _GATE_THRESHOLDS, _GATE_MESSAGES
+from app.services.validation.registries.validator_registry import _GATE_MESSAGES, resolve_gate_status
 from utils.enums.gate import GateStatus, GateType
 import torch
 
@@ -15,20 +15,18 @@ def _load_clip():
         _clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
     return _clip_model, _clip_processor
 
-def clip_validator(image: Image.Image, prompt: str) -> GateResult:
+def _compute_clip_score(image: Image.Image, prompt: str) -> float:
     model, processor = _load_clip()
     inputs = processor(text=[prompt], images=image, return_tensors="pt", padding=True)
     with torch.no_grad():
         outputs = model(**inputs)
-    score = torch.nn.functional.cosine_similarity(
+    return torch.nn.functional.cosine_similarity(
         outputs.image_embeds, outputs.text_embeds
     ).item()
 
-    status = GateStatus.FAIL \
-        if score < _GATE_THRESHOLDS[GateType.CLIP][GateStatus.FAIL] \
-        else GateStatus.WARNING \
-        if score < _GATE_THRESHOLDS[GateType.CLIP][GateStatus.WARNING] \
-        else GateStatus.PASS
+def clip_validator(image: Image.Image, prompt: str) -> GateResult:
+    score = _compute_clip_score(image, prompt)
+    status = resolve_gate_status(GateType.CLIP, score)
 
     return GateResult(
         gate=GateType.CLIP,
