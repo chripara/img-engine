@@ -57,3 +57,12 @@ _GATE_THRESHOLDS: dict[GateType, dict[GateStatus, float]]= {
         GateStatus.FAIL:  0.40
     },
 }
+
+def resolve_gate_status(gate: GateType, score: float) -> GateStatus:
+
+    thresholds = _GATE_THRESHOLDS[gate]
+    if score < thresholds[GateStatus.FAIL]:
+        return GateStatus.FAIL
+    if score < thresholds[GateStatus.WARNING]:
+        return GateStatus.WARNING
+    return GateStatus.PASS

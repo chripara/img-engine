@@ -1,24 +1,33 @@
 from PIL import Image
 import numpy as np
-import uuid
-import os
 import mediapipe as mp
 from transformers import AutoModelForImageClassification, AutoImageProcessor, pipeline
 from app.schemas.generate import GateResult
 from utils.enums.gate import GateStatus, GateType
-from app.services.validation.registries.validator_registry import _GATE_THRESHOLDS, _GATE_MESSAGES
-from pathlib import Path
+from app.services.validation.registries.validator_registry import _GATE_MESSAGES, resolve_gate_status
 
-_MAX_NUM_HANDS = 4  # documented limit — see README: hand validation covers up to 4 hands/image
+_MAX_NUM_HANDS = 4
 _HAND_CROP_PADDING_RATIO = 0.5
 _GOOD_ANATOMY_LABELS = {"Realistic_Good_Anatomy", "Unrealistic_Good_Anatomy"}
 
-_model = AutoModelForImageClassification.from_pretrained(
-    "angusleung100/bad-anatomy-realism-classifier"
-)
-_image_processor = AutoImageProcessor.from_pretrained(
-    "google/vit-base-patch16-224-in21k"
-)
+_anatomy_classifier = None
+
+def _load_anatomy_classifier():
+    global _anatomy_classifier
+    if _anatomy_classifier is None:
+        model = AutoModelForImageClassification.from_pretrained(
+            "angusleung100/bad-anatomy-realism-classifier"
+        )
+        image_processor = AutoImageProcessor.from_pretrained(
+            "google/vit-base-patch16-224-in21k"
+        )
+        _anatomy_classifier = pipeline(
+            "image-classification",
+            model=model,
+            image_processor=image_processor,
+        )
+    return _anatomy_classifier
+
 
 class HandsValidator:
     def __init__(self):
@@ -27,16 +36,14 @@ class HandsValidator:
             max_num_hands=_MAX_NUM_HANDS,
             min_detection_confidence=0.5,
         )
-        self._classifier = pipeline(
-            "image-classification",
-            model=_model,
-            image_processor=_image_processor,
-        )
+        self._classifier = None
+
+    def _get_classifier(self):
+        if self._classifier is None:
+            self._classifier = _load_anatomy_classifier()
+        return self._classifier
 
     def _detect_hands(self, image: Image.Image) -> list[Image.Image]:
-
-        """Runs mediapipe hand detection and returns padded crops, one per detected hand."""
-
         arr = np.array(image.convert("RGB"))
         result = self._detector.process(arr)
 
@@ -65,11 +72,7 @@ class HandsValidator:
         return crops
 
     def _classify_hand(self, crop: Image.Image) -> tuple[float, str, float]:
-
-        """Runs the anatomy classifier on one hand crop.
-        Returns (marginalized_good_anatomy_score, top_predicted_label, top_predicted_prob)."""
-
-        predictions = self._classifier(crop)
+        predictions = self._get_classifier()(crop)
         scores_by_label = {p["label"]: p["score"] for p in predictions}
 
         good_score = sum(scores_by_label.get(label, 0.0) for label in _GOOD_ANATOMY_LABELS)
@@ -77,10 +80,14 @@ class HandsValidator:
 
         return good_score, top["label"], top["score"]
 
-    def validate(self, image: Image.Image) -> GateResult:
+    def _raw_hand_scores(self, image: Image.Image) -> list[tuple[float, str, float]]:
         crops = self._detect_hands(image)
+        return [self._classify_hand(c) for c in crops]
 
-        if not crops:
+    def validate(self, image: Image.Image) -> GateResult:
+        per_hand = self._raw_hand_scores(image)
+
+        if not per_hand:
             return GateResult(
                 gate=GateType.HANDS,
                 score=None,
@@ -88,16 +95,10 @@ class HandsValidator:
                 suggested=_GATE_MESSAGES[GateType.HANDS][GateStatus.NOT_APPLICABLE],
             )
 
-        per_hand = [self._classify_hand(c) for c in crops]
         score = sum(r[0] for r in per_hand) / len(per_hand)
         worst = min(per_hand, key=lambda r: r[0])
 
-        status = GateStatus.FAIL \
-            if score < _GATE_THRESHOLDS[GateType.HANDS][GateStatus.FAIL] \
-            else GateStatus.WARNING \
-            if score < _GATE_THRESHOLDS[GateType.HANDS][GateStatus.WARNING] \
-            else GateStatus.PASS
-
+        status = resolve_gate_status(GateType.HANDS, score)
         base_message = _GATE_MESSAGES[GateType.HANDS][status]
         suggested = f"{base_message} (model: '{worst[1]}', p={worst[2]:.2f})" if base_message else None
 
@@ -120,8 +121,4 @@ def _get_validator() -> HandsValidator:
 
 
 def hands_validator(image: Image.Image) -> GateResult:
-
-    """Thin module-level wrapper — keeps validator.py's existing
-    `executor.submit(hands_validator, image)` call site unchanged."""
-
     return _get_validator().validate(image)
