@@ -5,6 +5,14 @@ from typing import Self
 
 class BaseBackend(ABC):
     @abstractmethod
+    def load(self) -> None:
+        pass
+
+    @abstractmethod
+    def unload(self) -> None:
+        pass
+
+    @abstractmethod
     def upscale(self, image: Image.Image, req: GenerateRequest, index: int = 0, seed: int | None = None) -> Image.Image:
         pass
 
