@@ -1,26 +1,24 @@
 from PIL import Image
 from app.services.guidance.backends.base_guidance_backend import BaseGuidanceBackend
-from app.services.guidance.registries.guidance_registry import _SDXL_PREPROCESSORS
+from app.services.guidance.backends.preprocessor_runner import GuidancePreprocessorRunner
+from app.services.guidance.backends.sdxl_preprocessor_runner import SDXLPreprocessorRunner
 from utils.enums.guidance import GuidanceType
-from typing import Callable
 
-import torch, gc
 
 class SDXLGuidanceBackend(BaseGuidanceBackend):
-
-    def __init__(self):
-        self._detector: Callable | None = None
+    def __init__(self, runner: GuidancePreprocessorRunner | None = None) -> None:
+        self._runner: GuidancePreprocessorRunner = runner if runner is not None else SDXLPreprocessorRunner()
+        self._loaded = False
 
     def load(self, guidance_type: GuidanceType) -> None:
-        self._detector = _SDXL_PREPROCESSORS[guidance_type]()
+        self._runner.load(guidance_type)
+        self._loaded = True
 
     def unload(self):
-        self._detector = None
-        torch.cuda.empty_cache()
-        gc.collect()
+        self._runner.unload()
+        self._loaded = False
 
     def preprocess(self, image: Image.Image) -> Image.Image | None:
-        if self._detector is None:
+        if not self._loaded:
             return None
-
-        return self._detector(image)
+        return self._runner.run(image)

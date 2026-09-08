@@ -1,7 +1,7 @@
 from PIL import Image
 from app.schemas.generate import GateResult
 from utils.enums.gate import GateType, GateStatus
-from app.services.validation.registries.validator_registry import _GATE_THRESHOLDS, _GATE_MESSAGES
+from app.services.validation.registries.validator_registry import _GATE_MESSAGES, resolve_gate_status
 import torch, pyiqa
 import numpy as np
 
@@ -13,19 +13,17 @@ def _load_iqa():
         _iqa_metric = pyiqa.create_metric("musiq")
     return _iqa_metric
 
-def iqa_validator(image: Image.Image) -> GateResult:
+def _compute_iqa_score(image: Image.Image) -> float:
     metric = _load_iqa()
     arr = np.array(image.convert("RGB")).transpose(2, 0, 1)
     tensor = torch.from_numpy(arr).float().unsqueeze(0) / 255.0
 
     with torch.no_grad():
-        score = metric(tensor).item()/100
+        return metric(tensor).item() / 100
 
-    status = GateStatus.FAIL \
-        if score < _GATE_THRESHOLDS[GateType.IQA][GateStatus.FAIL] \
-        else GateStatus.WARNING \
-        if score < _GATE_THRESHOLDS[GateType.IQA][GateStatus.WARNING] \
-        else GateStatus.PASS
+def iqa_validator(image: Image.Image) -> GateResult:
+    score = _compute_iqa_score(image)
+    status = resolve_gate_status(GateType.IQA, score)
 
     return GateResult(
         gate=GateType.IQA,

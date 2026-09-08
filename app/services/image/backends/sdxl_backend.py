@@ -1,87 +1,74 @@
-import io, torch, os, gc
+import io, os
 from PIL import Image
-from diffusers.pipelines.pipeline_utils import DiffusionPipeline
-from diffusers import StableDiffusionXLControlNetPipeline
+
 from app.schemas.generate import GuidanceResult
 from app.services.image.backends.base_backend import BaseBackend
+from app.services.image.backends.model_runner import ImageModelRunner
+from app.services.image.backends.sdxl_model_runner import SDXLModelRunner
+from app.services.image.registries.checkpoint_registry import _CHECKPOINT
+from app.services.image.registries.guidance_registry import _GUIDANCE_MODELS, _SDXL_CONTROLNET_MODELS
+from app.services.image.registries.stype_presets import _STYLE_PRESET_REGISTRY
 from app.services.registries.image_registry import Dimensions, _SDXL_CONTROLNET_LIMIT
 from app.services.registries.profile_registry import _PROFILES
-from app.services.image.registries.checkpoint_registry import _CHECKPOINT
-from utils.enums.profile import Profile
 from utils.enums.guidance import GuidanceType
-from compel import Compel, ReturnedEmbeddingsType
-
+from utils.enums.profile import Profile
 from utils.enums.style_presets import StylePreset
 
 
 class SDXLBackend(BaseBackend):
-    pipe: DiffusionPipeline
-
-    def __init__ (self, profile: Profile):
-        super().__init__()
+    def __init__(self, profile: Profile, runner: ImageModelRunner | None = None) -> None:
         self._steps = _PROFILES[profile].steps
         self._cfg = _PROFILES[profile].cfg
-
+        self._runner: ImageModelRunner = runner if runner is not None else SDXLModelRunner()
 
     def load(self, profile: Profile, style_preset: StylePreset, lora_weight: float | None, use_controlnet: bool, guidance_types: list[GuidanceType]) -> None:
-        self._define_vae(profile)
-
+        controlnet_model_cls = None
+        controlnet_repo_ids: list[str] = []
         if use_controlnet:
-            self._define_guidance(profile, guidance_types)
+            controlnet_model_cls = _GUIDANCE_MODELS[profile]
+            controlnet_repo_ids = [_SDXL_CONTROLNET_MODELS[gt] for gt in guidance_types]
 
-            self._pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
-                _CHECKPOINT[_PROFILES[profile].model],
-                controlnet=self._controlnets,
-                torch_dtype=torch.float16,
-                use_safetensors=True,
-                **({"vae": self._vae} if self._vae else {}),
-            )
-        else:
-            self._pipe = DiffusionPipeline.from_pretrained(
-                _CHECKPOINT[_PROFILES[profile].model],
-                torch_dtype=torch.float16,
-                use_safetensors=True,
-                **({"vae": self._vae} if self._vae else {}),
-            )
-
-        self._define_lora(style_preset, lora_weight)
-
-        self._define_scheduler(profile)
-
-        if len(guidance_types) < _SDXL_CONTROLNET_LIMIT:
-            self._pipe.to("cuda")
-        else:
-            self._pipe.enable_model_cpu_offload()
-
-        self.compel = Compel(
-            tokenizer=[self._pipe.tokenizer, self._pipe.tokenizer_2],
-            text_encoder=[self._pipe.text_encoder, self._pipe.text_encoder_2],
-            returned_embeddings_type=ReturnedEmbeddingsType.PENULTIMATE_HIDDEN_STATES_NON_NORMALIZED,
-            requires_pooled=[False, True]
+        self._runner.load(
+            checkpoint_id=_CHECKPOINT[_PROFILES[profile].model],
+            vae_id=_PROFILES[profile].vae_id,
+            controlnet_model_cls=controlnet_model_cls,
+            controlnet_repo_ids=controlnet_repo_ids,
+            use_cpu_offload=len(guidance_types) >= _SDXL_CONTROLNET_LIMIT,
         )
 
-    def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult], index: int = 0) -> Image.Image:
+        if style_preset is not None:
+            strength = lora_weight if lora_weight is not None else 0.8
+            try:
+                self._runner.apply_lora(_STYLE_PRESET_REGISTRY[style_preset], style_preset.value, strength)
+            except Exception as e:
+                print(f"LoRA loading failed for preset '{style_preset.value}': {e}. Continuing without style preset.")
 
-        conditioning, pooled = self.compel(prompt)
-        negative_conditioning, negative_pooled = self.compel(negative_prompt) if negative_prompt is not None else (None, None)
+        self._runner.bind_scheduler(_PROFILES[profile].scheduler)
 
-        generator = torch.Generator(device="cuda").manual_seed(seed) if seed is not None else None
+    def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult] | None, index: int = 0) -> Image.Image:
+        control_images = [c.image for c in controls] if controls is not None else None
+        control_strengths = [c.strength for c in controls if c.strength is not None] if controls is not None else None
 
-        result = self._pipe(
-            prompt_embeds = conditioning,
-            pooled_prompt_embeds = pooled,
-            negative_prompt_embeds = negative_conditioning,
-            negative_pooled_prompt_embeds = negative_pooled,
-            width = dimensions.width,
-            height = dimensions.height,
-            num_inference_steps = self._steps,
-            guidance_scale = self._cfg,
-            **({"image":[ctr.image for ctr in controls]} if controls is not None else {}),
-            **({"controlnet_conditioning_scale": [ctr.strength for ctr in controls if ctr.strength is not None]} if controls is not None else {}),
-            generator = generator,)
+        image = self._runner.run(
+            prompt=prompt,
+            negative_prompt=negative_prompt,
+            width=dimensions.width,
+            height=dimensions.height,
+            steps=self._steps,
+            cfg=self._cfg,
+            seed=seed,
+            control_images=control_images,
+            control_strengths=control_strengths,
+            index=index,
+        )
 
-        image = result.images[0]
-        
+        self._write_debug_png(image, seed, index)
+        return image
+
+    def unload(self) -> None:
+        self._runner.unload()
+
+    def _write_debug_png(self, image: Image.Image, seed: int | None, index: int) -> None:
         buffer = io.BytesIO()
         image.save(buffer, format="PNG", quality=95, dpi=(300, 300))
         png_bytes = buffer.getvalue()
@@ -91,12 +78,3 @@ class SDXLBackend(BaseBackend):
         os.makedirs(output_dir, exist_ok=True)
         with open(os.path.join(output_dir, filename), "wb") as f:
             f.write(png_bytes)
-
-        return image
-
-    def unload(self) -> None:
-        if self._pipe is not None:
-            self._pipe.to("cpu")
-        del self._pipe
-        torch.cuda.empty_cache()
-        gc.collect()
