@@ -10,11 +10,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
+  fast-check:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -26,5 +28,33 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements_for_tests.txt
 
-      - name: Run tests
-        run: pytest -m "not gpu"
+      - name: Run tests for changed files + contract tests
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "New branch, no previous commit to diff against — running full suite."
+            pytest -m "not gpu"
+          else
+            CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'app/*.py')
+            TEST_FILES=""
+            for f in $CHANGED; do
+              rel="${f#app/}"
+              candidate="tests/$(dirname "$rel")/test_$(basename "$rel")"
+              [ -f "$candidate" ] && TEST_FILES="$TEST_FILES $candidate"
+            done
+            [ -n "$TEST_FILES" ] && pytest -m "not gpu" $TEST_FILES
+            pytest -m contract
+          fi
+
+  full-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements_for_tests.txt
+      - run: pip install -r requirements_for_tests.txt
+      - run: pytest -m "not gpu"

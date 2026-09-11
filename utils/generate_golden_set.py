@@ -53,7 +53,7 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     PROJECT_ROOT = Path(__file__).resolve().parent.parent  # utils/generate_golden_set.py → root
-    
+
     out_dir = PROJECT_ROOT / "output" / "golden_set" / timestamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -106,4 +106,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
