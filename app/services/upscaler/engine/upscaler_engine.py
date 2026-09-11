@@ -10,7 +10,7 @@ DENOISINT_STRENGTH = 0.3
 
 class UpscalerEngine:
     def __init__(self, req: GenerateRequest, spec: ProfileSpec):
-        self._upscaler = self._get_backend(req,spec)    
+        self._upscaler = self._get_backend(req,spec)
 
     def __enter__(self):
         if self._upscaler is not None:
@@ -24,7 +24,7 @@ class UpscalerEngine:
         torch.cuda.empty_cache()
         gc.collect()
 
-    def _get_backend(self, 
+    def _get_backend(self,
         req: GenerateRequest,
         spec: ProfileSpec,
     ) -> ESRGANBackend | LatentDiffusionBackend | None:
@@ -37,7 +37,7 @@ class UpscalerEngine:
                 return LatentDiffusionBackend(
                     denoising_strength = DENOISINT_STRENGTH,
                 )
-            
+
     def upscale_image(self, img: Image.Image, req: GenerateRequest, index: int = 0, seed: int | None = None) -> Image.Image:
         if self._upscaler is None:
             return img

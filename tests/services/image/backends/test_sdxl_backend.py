@@ -51,7 +51,7 @@ def _backend() -> tuple[SDXLBackend, _RecordingRunner]:
         ([], False),
         ([GuidanceType.CANNY], False),
         ([GuidanceType.CANNY, GuidanceType.DEPTH], False),
-        ([GuidanceType.CANNY, GuidanceType.DEPTH, GuidanceType.POSE], True),  
+        ([GuidanceType.CANNY, GuidanceType.DEPTH, GuidanceType.POSE], True),
         ([GuidanceType.CANNY, GuidanceType.DEPTH, GuidanceType.POSE, GuidanceType.SCRIBBLE], True),
     ],
 )

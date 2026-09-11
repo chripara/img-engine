@@ -8,7 +8,7 @@ from utils.enums.profile import Profile
 
 
 class _DumbFakeImageModelRunner(ImageModelRunner):
-    
+
     def load(self, **kwargs) -> None:
         pass
 

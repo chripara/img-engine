@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        stages: [pre-commit]
+      - id: end-of-file-fixer
+        stages: [pre-commit]
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run tests for changed files + contract tests (pre-push)
+        entry: >-
+          bash -c '
+          BASE=$(git merge-base main HEAD);
+          CHANGED=$(git diff --name-only "$BASE" HEAD -- "app/*.py");
+          TEST_FILES="";
+          for f in $CHANGED; do
+            rel="${f#app/}";
+            candidate="tests/$(dirname "$rel")/test_$(basename "$rel")";
+            [ -f "$candidate" ] && TEST_FILES="$TEST_FILES $candidate";
+          done;
+          [ -n "$TEST_FILES" ] && pytest -m "not gpu" $TEST_FILES;
+          pytest -m contract
+          '
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+        verbose: true
