@@ -28,7 +28,6 @@ def _load_anatomy_classifier():
         )
     return _anatomy_classifier
 
-
 class HandsValidator:
     def __init__(self):
         self._detector = mp.solutions.hands.Hands(
@@ -89,7 +88,7 @@ class HandsValidator:
 
         if not per_hand:
             return GateResult(
-                gate=GateType.HANDS,
+                gate=GateType.HANDS, 
                 score=None,
                 passed=None,
                 suggested=_GATE_MESSAGES[GateType.HANDS][GateStatus.NOT_APPLICABLE],
@@ -109,16 +108,13 @@ class HandsValidator:
             suggested=suggested,
         )
 
-
 _validator: HandsValidator | None = None
-
 
 def _get_validator() -> HandsValidator:
     global _validator
     if _validator is None:
         _validator = HandsValidator()
     return _validator
-
 
 def hands_validator(image: Image.Image) -> GateResult:
     return _get_validator().validate(image)

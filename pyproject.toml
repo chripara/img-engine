@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = [
+    "gpu: marks tests that need a real GPU/model download — excluded by default (run with `pytest -m gpu` to include, `-m \"not gpu\"` is the default CI selection)",
+]
