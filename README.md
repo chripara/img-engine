@@ -72,7 +72,6 @@ Requires Python 3.10+, a CUDA-capable GPU, and a downloaded SDXL checkpoint refe
 
 ---
 ## Profiles
-## Profiles
 
 | Profile | Use Case | Default Checkpoint | Native Size |
 |---|---|---|---|
@@ -93,7 +92,7 @@ Each profile carries its own checkpoint, VAE, scheduler, CFG, steps, native size
 | `SCENE_FRAME` | 16.79s | 10.94 GB |
 
 ---
-## Quality Gates
+
 ---
 ## Quality Gates
 
@@ -128,6 +127,25 @@ python -m utils.generate_benchmark
 Run both as modules from the project root (not as a direct file path — otherwise Python won't resolve the `app` package).
 
 ---
+## Running the tests
+
+Install the dev dependencies once (`requirements-dev.txt` pulls in `requirements.txt` plus `pytest`):
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Then run the suite from the repo root:
+
+```bash
+pytest -m "not gpu"
+```
+
+Tests are organized per family under `tests/services/<image|guidance|upscaler|validation>/`, mirroring the `app/` structure (backends → engine → service). The `-m "not gpu"` filter skips anything marked with the `gpu` marker; drop the filter to run everything on a machine with a GPU available.
+
+---
+
+
 ## Seeds and batches
 
 Current, verified-against-code behavior for `batch_count > 1` (three distinct cases):
