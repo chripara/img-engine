@@ -56,11 +56,11 @@ def refine_prompt_with_ollama(generate_request: GenerateRequest) -> str:
     return response.json()["response"].strip()
 
 def _generate_message(generate_request: GenerateRequest) -> str:
-    return f"""Generate a comma-separated SDXL tag list only. No sentences. No story.    
+    return f"""Generate a comma-separated SDXL tag list only. No sentences. No story.
         Subject: {generate_request.subject}
         Feeling: {generate_request.feeling}
         Environment: {generate_request.environment}
-        Prompt: {generate_request.prompt}    
+        Prompt: {generate_request.prompt}
         Output only tags separated by commas:"""
 
 if __name__ == "__main__":

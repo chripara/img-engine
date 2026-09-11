@@ -21,7 +21,7 @@ def generate():
         req = GenerateRequest(**request.json)
     except ValidationError as e:
         return jsonify({"error": e.errors()}), 422
-    
+
     if not req.prompt or not req.profile:
         return Response(status=400)
 

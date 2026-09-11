@@ -88,7 +88,7 @@ class HandsValidator:
 
         if not per_hand:
             return GateResult(
-                gate=GateType.HANDS, 
+                gate=GateType.HANDS,
                 score=None,
                 passed=None,
                 suggested=_GATE_MESSAGES[GateType.HANDS][GateStatus.NOT_APPLICABLE],

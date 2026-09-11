@@ -5,6 +5,7 @@ from app.services.upscaler.backends.base_backend import BaseBackend
 from tests.support.contract import assert_every_concrete_class_has_a_rig
 from tests.services.upscaler.backends.rigs import BACKEND_RIGS, _minimal_request
 
+pytestmark = pytest.mark.contract
 
 def test_every_concrete_upscaler_backend_has_a_registered_rig():
     assert_every_concrete_class_has_a_rig(BaseBackend, BACKEND_RIGS)

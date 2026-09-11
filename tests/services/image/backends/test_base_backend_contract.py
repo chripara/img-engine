@@ -6,6 +6,7 @@ from app.services.registries.image_registry import Dimensions
 from tests.support.contract import assert_every_concrete_class_has_a_rig
 from tests.services.image.backends.rigs import BACKEND_RIGS
 
+pytestmark = pytest.mark.contract
 
 def test_every_concrete_image_backend_has_a_registered_rig():
     assert_every_concrete_class_has_a_rig(BaseBackend, BACKEND_RIGS)

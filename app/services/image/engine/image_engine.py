@@ -32,16 +32,16 @@ class ImageEngine:
         torch.cuda.empty_cache()
         gc.collect()
 
-    def _get_backend(self, req: GenerateRequest) -> BaseBackend: 
+    def _get_backend(self, req: GenerateRequest) -> BaseBackend:
         match self._model:
             case (
                 Checkpoint.SDXL_BASE |
                 Checkpoint.ALBEDO_BASE |
-                Checkpoint.JUGGERNAUT_XL | 
+                Checkpoint.JUGGERNAUT_XL |
                 Checkpoint.DREAMSHAPER_XL
             ):
                 return _BACKENDS[self._model]["backend"](profile=req.profile)
-                
+
     def generate_image(self, req: GenerateRequest, seed: int | None = None, controls: list[GuidanceResult] | None = None, index: int = 0) -> Image.Image:
         if not req.prompt:
             raise ValueError("prompt is required")

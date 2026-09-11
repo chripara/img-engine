@@ -6,6 +6,6 @@ class ImgBackend(Enum):
     API  = "api"
 
 class ModelSource(Enum):
-    DIFFUSERS = "diffusers"        
-    SINGLE_FILE = "single_file"    
+    DIFFUSERS = "diffusers"
+    SINGLE_FILE = "single_file"
     GGUF = "gguf"
