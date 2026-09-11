@@ -18,7 +18,11 @@ repos:
             echo "On main — running full suite.";
             pytest -m "not gpu";
           else
-            BASE=$(git merge-base main HEAD);
+            if git rev-parse "@{u}" >/dev/null 2>&1; then
+              BASE=$(git rev-parse "@{u}");
+            else
+              BASE=$(git merge-base main HEAD);
+            fi;
             CHANGED=$(git diff --name-only "$BASE" HEAD -- "app/*.py");
             TEST_FILES="";
             for f in $CHANGED; do
