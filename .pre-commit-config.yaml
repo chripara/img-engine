@@ -13,16 +13,22 @@ repos:
         name: Run tests for changed files + contract tests (pre-push)
         entry: >-
           bash -c '
-          BASE=$(git merge-base main HEAD);
-          CHANGED=$(git diff --name-only "$BASE" HEAD -- "app/*.py");
-          TEST_FILES="";
-          for f in $CHANGED; do
-            rel="${f#app/}";
-            candidate="tests/$(dirname "$rel")/test_$(basename "$rel")";
-            [ -f "$candidate" ] && TEST_FILES="$TEST_FILES $candidate";
-          done;
-          [ -n "$TEST_FILES" ] && pytest -m "not gpu" $TEST_FILES;
-          pytest -m contract
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD);
+          if [ "$CURRENT_BRANCH" = "main" ]; then
+            echo "On main — running full suite.";
+            pytest -m "not gpu";
+          else
+            BASE=$(git merge-base main HEAD);
+            CHANGED=$(git diff --name-only "$BASE" HEAD -- "app/*.py");
+            TEST_FILES="";
+            for f in $CHANGED; do
+              rel="${f#app/}";
+              candidate="tests/$(dirname "$rel")/test_$(basename "$rel")";
+              [ -f "$candidate" ] && TEST_FILES="$TEST_FILES $candidate";
+            done;
+            [ -n "$TEST_FILES" ] && pytest -m "not gpu" $TEST_FILES;
+            pytest -m contract;
+          fi
           '
         language: system
         pass_filenames: false

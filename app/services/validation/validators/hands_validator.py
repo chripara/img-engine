@@ -28,6 +28,7 @@ def _load_anatomy_classifier():
         )
     return _anatomy_classifier
 
+
 class HandsValidator:
     def __init__(self):
         self._detector = mp.solutions.hands.Hands(
