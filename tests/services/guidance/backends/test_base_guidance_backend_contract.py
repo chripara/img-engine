@@ -5,6 +5,7 @@ from app.services.guidance.backends.base_guidance_backend import BaseGuidanceBac
 from tests.support.contract import assert_every_concrete_class_has_a_rig
 from tests.services.guidance.backends.rigs import BACKEND_RIGS
 
+pytestmark = pytest.mark.contract
 
 def test_every_concrete_guidance_backend_has_a_registered_rig():
     assert_every_concrete_class_has_a_rig(BaseGuidanceBackend, BACKEND_RIGS)
@@ -12,7 +13,7 @@ def test_every_concrete_guidance_backend_has_a_registered_rig():
 
 @pytest.mark.parametrize("rig", BACKEND_RIGS.values(), ids=lambda r: r.backend_cls.__name__)
 class TestGuidanceBackendLifecycleContract:
-    
+
     def test_construct_unloaded_does_not_raise(self, rig):
         rig.make_unloaded()
 

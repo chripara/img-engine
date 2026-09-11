@@ -4,8 +4,8 @@ from app.services.registries.profile_registry import ProfileSpec
 from PIL import Image
 
 def upscale_image(
-    req: GenerateRequest, 
-    spec: ProfileSpec, 
+    req: GenerateRequest,
+    spec: ProfileSpec,
     imgs: list[Image.Image],
     seeds: list[int],
 ) -> list[Image.Image]:

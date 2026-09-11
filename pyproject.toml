@@ -2,4 +2,5 @@
 pythonpath = ["."]
 markers = [
     "gpu: marks tests that need a real GPU/model download — excluded by default (run with `pytest -m gpu` to include, `-m \"not gpu\"` is the default CI selection)",
+     "contract: reflection-based guard tests that must always run, regardless of which files changed",
 ]
