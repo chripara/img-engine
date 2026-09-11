@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run tests for changed files + contract tests (pre-push)
+        entry: bash -c "pytest --picked --mode=branch --parent-branch=main -m 'not gpu' && pytest -m contract"
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
