@@ -45,7 +45,6 @@ class SDXLBackend(BaseBackend):
 
         self._runner.bind_scheduler(_PROFILES[profile].scheduler)
 
-
     def generate(self, prompt: str, negative_prompt: str | None, dimensions: Dimensions, seed: int | None, controls: list[GuidanceResult] | None, index: int = 0) -> Image.Image:
         control_images = [c.image for c in controls] if controls is not None else None
         control_strengths = [c.strength for c in controls if c.strength is not None] if controls is not None else None
