@@ -30,20 +30,25 @@ jobs:
 
       - name: Run tests for changed files + contract tests
         run: |
-          BEFORE="${{ github.event.before }}"
-          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            echo "New branch, no previous commit to diff against — running full suite."
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "Direct push to main — running full suite."
             pytest -m "not gpu"
           else
-            CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'app/*.py')
-            TEST_FILES=""
-            for f in $CHANGED; do
-              rel="${f#app/}"
-              candidate="tests/$(dirname "$rel")/test_$(basename "$rel")"
-              [ -f "$candidate" ] && TEST_FILES="$TEST_FILES $candidate"
-            done
-            [ -n "$TEST_FILES" ] && pytest -m "not gpu" $TEST_FILES
-            pytest -m contract
+            BEFORE="${{ github.event.before }}"
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              echo "New branch, no previous commit to diff against — running full suite."
+              pytest -m "not gpu"
+            else
+              CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'app/*.py')
+              TEST_FILES=""
+              for f in $CHANGED; do
+                rel="${f#app/}"
+                candidate="tests/$(dirname "$rel")/test_$(basename "$rel")"
+                [ -f "$candidate" ] && TEST_FILES="$TEST_FILES $candidate"
+              done
+              [ -n "$TEST_FILES" ] && pytest -m "not gpu" $TEST_FILES
+              pytest -m contract
+            fi
           fi
 
   full-check:

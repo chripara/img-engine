@@ -9,7 +9,6 @@ bp = Blueprint('routes', __name__)
 
 api = FlaskPydanticSpec("flask", title="img-engine API", version="1.0", path="docs")
 
-
 @bp.route('/health', methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
