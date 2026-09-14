@@ -129,10 +129,10 @@ Run both as modules from the project root (not as a direct file path — otherwi
 ---
 ## Running the tests
 
-Install the dev dependencies once (`requirements-dev.txt` pulls in `requirements.txt` plus `pytest`):
+Install the test dependencies once (`requirements_for_tests.txt` mirrors `requirements.txt` but pulls the CPU-only build of `torch`/`torchvision`, so it installs fast and works without a GPU):
 
 ```bash
-pip install -r requirements-dev.txt
+pip install -r requirements_for_tests.txt
 ```
 
 Then run the suite from the repo root:
@@ -141,8 +141,22 @@ Then run the suite from the repo root:
 pytest -m "not gpu"
 ```
 
-Tests are organized per family under `tests/services/<image|guidance|upscaler|validation>/`, mirroring the `app/` structure (backends → engine → service). The `-m "not gpu"` filter skips anything marked with the `gpu` marker; drop the filter to run everything on a machine with a GPU available.
+Tests are organized per family under `tests/services/<image|guidance|upscaler|validation>/`, mirroring the `app/` structure (backends → engine → service). The `-m "not gpu"` filter skips anything marked with the `gpu` marker; drop the filter to run everything on a machine with a GPU available. The `contract` marker (`pytest -m contract`) covers reflection-based guard tests — e.g. "every concrete backend has a registered Rig" — that always run regardless of which files changed.
 
+---
+## Continuous Integration & local hooks
+
+Every push runs a fast GitHub Actions check (`.github/workflows/tests.yml`): tests scoped to the files that actually changed, plus the `contract` suite as a safety net. Every pull request into `main` runs the full suite. A direct push to `main` always runs everything, never just a subset.
+
+Locally, [`pre-commit`](https://pre-commit.com/) mirrors the same idea before code ever reaches GitHub:
+
+```bash
+pip install pre-commit
+pre-commit install --hook-type pre-commit --hook-type pre-push
+```
+
+- **On commit:** fast hygiene checks (trailing whitespace, end-of-file fixer).
+- **On push:** the same selective test + contract-test logic as CI, so breakage shows up before you open a PR, not after.
 ---
 
 
