@@ -3,6 +3,9 @@ from flask import Flask
 import requests, os
 from app.schemas.generate import GenerateRequest
 from groq import Groq
+import os
+
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 
 app = Flask(__name__)
 
@@ -42,7 +45,7 @@ def refine_prompt_with_llama(generate_request: GenerateRequest) -> str | None:
 
 def refine_prompt_with_ollama(generate_request: GenerateRequest) -> str:
 
-    response = requests.post("http://localhost:11434/api/generate", json={
+    response = requests.post(f"{OLLAMA_URL}/api/generate", json={
         "model": "mistral",
         "system": SYSTEM_PROMPT,
         "prompt": _generate_message(generate_request),
