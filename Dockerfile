@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+﻿# syntax=docker/dockerfile:1
 FROM python:3.11
 
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements.txt
 
 COPY . .
-RUN chmod +x docker-entrypoint.sh
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
 
 ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then pytest tests/ -v; fi
@@ -21,4 +21,4 @@ ENV OLLAMA_URL=http://localhost:11434
 
 EXPOSE 5000 7860
 
-ENTRYPOINT ["./docker-entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "./docker-entrypoint.sh"]

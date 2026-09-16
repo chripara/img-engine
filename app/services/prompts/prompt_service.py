@@ -30,7 +30,7 @@ def refine_prompt_with_llama(generate_request: GenerateRequest) -> str | None:
     )
 
     chat_completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="qwen/qwen3.6-27b",
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": _generate_message(generate_request)},
