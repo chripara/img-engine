@@ -1,0 +1,10 @@
+.git
+__pycache__/
+*.pyc
+venv/
+docs/
+output/
+.pytest_cache
+.github/
+.pre-commit-config.yaml
+local_models/
