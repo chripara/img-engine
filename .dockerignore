@@ -2,9 +2,9 @@
 __pycache__/
 *.pyc
 venv/
-tests/
 docs/
 output/
 .pytest_cache
 .github/
 .pre-commit-config.yaml
+local_models/
