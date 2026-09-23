@@ -68,7 +68,7 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Requires Python 3.10+, a CUDA-capable GPU, and a downloaded SDXL checkpoint referenced from the profile registry. Full requirements, environment variables, the REST API contract, and a known dependency-conflict gotcha are in [`docs/SETUP.md`](./docs/SETUP.md).
+Requires Python 3.11, a CUDA-capable GPU, and a downloaded SDXL checkpoint referenced from the profile registry.
 
 ---
 ## Profiles
@@ -175,7 +175,7 @@ Current, verified-against-code behavior for `batch_count > 1` (three distinct ca
 
 When `refine: true`, the engine expands short prompts into detailed image descriptions optimized for SDXL, before generation. This path is **hybrid**, not purely local:
 
-1. **First attempt:** [Groq](https://groq.com/)-hosted `llama-3.3-70b-versatile` (cloud API call, requires `GROQ_API_KEY`).
+1. **First attempt:** [Groq](https://groq.com/)-hosted `qwen/qwen3.6-27b` (cloud API call, requires `GROQ_API_KEY`).
 2. **Fallback:** local **Mistral 7B** via Ollama, if Groq fails or `GROQ_API_KEY` isn't set.
 3. **Last resort:** the original, unrefined prompt is passed through unchanged if both fail.
 
