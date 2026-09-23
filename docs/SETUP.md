@@ -67,9 +67,11 @@ Content-Type: application/json
 ```
 
 Response:
+```json
 {
   "images": [
     {"image": "<base64>", "seed": 12345, "quality": [ {"gate": "CLIP", "score": 0.34, "passed": true, "suggested": null}, ... ]}
   ],
   "refined_prompt": "..."
 }
+```

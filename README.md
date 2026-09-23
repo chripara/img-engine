@@ -69,7 +69,7 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Requires Python 3.11, a CUDA-capable GPU, and a downloaded SDXL checkpoint referenced from the profile registry.
+Requires Python 3.11, a CUDA-capable GPU, and a downloaded SDXL checkpoint referenced from the profile registry. Full requirements, environment variables, the REST API contract, and a known dependency-conflict gotcha are in [`docs/SETUP.md`](./docs/SETUP.md).
 
 ---
 ## Profiles
@@ -111,13 +111,13 @@ After each image is generated, it passes through five automatic quality checks. 
 
 ### Development tools built around the gates
 
-**Golden-set generator** (`utils/generate_golden_set.py`) generates a fixed, reproducible sample of images (15 curated prompts × 4 fixed seeds = 60 images) for manually evaluating and calibrating the gates above. Outputs go to a timestamped folder under `output/golden_set/`, alongside a `manifest.json` recording each image's prompt, profile, seed, and gate scores. Sample outputs are committed directly in this repo (not hosted externally) so the results are reviewable without a GPU.
+**Golden-set generator** (`utils/generate_golden_set.py`) generates a fixed, reproducible sample of images (15 curated prompts × 4 fixed seeds = 60 images) for manually evaluating and calibrating the gates above. Outputs go to a timestamped folder under `output/golden_set/`, alongside a `manifest.json` recording each image's prompt, profile, seed, and gate scores. Sample outputs (images + manifests) are hosted as downloadable assets on the [GitHub Releases page](https://github.com/chripara/img-engine/releases/tag/assets-v1) rather than committed in this repo, keeping the clone lightweight while still making results reviewable without a GPU.
 
 ```powershell
 python -m utils.generate_golden_set
 ```
 
-**Cross-profile / LoRA benchmark** (`utils/generate_benchmark.py`) runs a fixed prompt set across every profile, seed, and LoRA on/off variant, scoring each image with the same gates. Outputs go to a timestamped folder under `output_images/benchmark/`, alongside a `manifest.json` recording profile, prompt, seed, LoRA variant, and gate results.
+**Cross-profile / LoRA benchmark** (`utils/generate_benchmark.py`) runs a fixed prompt set across every profile, seed, and LoRA on/off variant, scoring each image with the same gates. Outputs go to a timestamped folder under `output/benchmark/`, alongside a `manifest.json` recording profile, prompt, seed, LoRA variant, and gate results.
 
 **This validates the benchmarking methodology, not a "best recipe" claim.** Since the gates aren't calibrated yet (see [Known limitations](#known-limitations-verified-not-aspirational)), pass/fail results here aren't proof that one profile or checkpoint is objectively better than another. What it does prove: the infrastructure to make that comparison exists, runs end-to-end, and produces comparable, structured evidence — the prerequisite for a real answer once calibration happens.
 

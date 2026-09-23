@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from flask import Flask
 import requests, os
 from app.schemas.generate import GenerateRequest
 from groq import Groq
@@ -51,7 +50,7 @@ def refine_prompt(generate_request: GenerateRequest) -> str:
             "seed": generate_request.seed,
             "temperature" : 0
         }
-    })
+    }, timeout=60)
 
     return response.json()["response"].strip()
 
