@@ -5,7 +5,7 @@ from app.services.image.backends.model_runner import ImageModelRunner
 from app.services.image.backends.sdxl_model_runner import SDXLModelRunner
 from app.services.image.registries.checkpoint_registry import _CHECKPOINT
 from app.services.image.registries.guidance_registry import _GUIDANCE_MODELS, _SDXL_CONTROLNET_MODELS
-from app.services.image.registries.stype_presets import _STYLE_PRESET_REGISTRY
+from app.services.image.registries.style_presets import _STYLE_PRESET_REGISTRY
 from app.services.registries.image_registry import Dimensions, _SDXL_CONTROLNET_LIMIT
 from app.services.registries.profile_registry import _PROFILES
 from utils.enums.guidance import GuidanceType

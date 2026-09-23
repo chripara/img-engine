@@ -60,14 +60,14 @@ class PipelineService():
 def _refine_prompt(req: GenerateRequest) -> str:
     refined_prompt = req.prompt
     if req.refine:
-        from app.services.prompts.prompt_service import refine_prompt, refine_prompt_with_groq
+        from app.services.prompts.prompt_service import refine_prompt_with_ollama, refine_prompt_with_groq
         try:
             refined_prompt = refine_prompt_with_groq(req)
-        except Exception as e_llama:
-            logger.warning("Llama refinement failed: %s", e_llama)
+        except Exception as e_groq:
+            logger.warning("Groq refinement failed: %s", e_groq)
             try:
                 logger.info("Trying fallback: Ollama")
-                refined_prompt = refine_prompt(req)
+                refined_prompt = refine_prompt_with_ollama(req)
                 logger.info("Ollama refinement succeeded")
             except Exception as e_ollama:
                 logger.error("Ollama refinement also failed: %s", e_ollama, exc_info=True)
