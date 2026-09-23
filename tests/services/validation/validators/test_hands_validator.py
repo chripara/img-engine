@@ -67,5 +67,5 @@ def test_module_level_wrapper_uses_lazy_singleton_and_delegates_to_validate():
         result1 = hands_validator(Image.new("RGB", (2, 2)))
         result2 = hands_validator(Image.new("RGB", (2, 2)))
 
-    fake_cls.assert_called_once()  # singleton — μόνο 1 φορά constructed
+    fake_cls.assert_called_once()
     assert result1 == "the-result" and result2 == "the-result"

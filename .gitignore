@@ -7,3 +7,5 @@ dist/
 output_images/
 local_models/
 .idea
+
+output/**/*.png

@@ -28,9 +28,9 @@ class GenerateRequest(BaseModel):
     num_images: int = Field(..., ge=1, le=10)
     prompt: str = Field(..., max_length=600)
     negative_prompt: str | None = Field(default=None, max_length=600)
-    subject: str | None
-    environment: str | None
-    feeling: str | None
+    subject: str | None = None
+    environment: str | None = None
+    feeling: str | None = None
     refine: bool = False
     seed: int | None = Field(default=None, le=2**32 - 1)
     spread: int | None = Field(default=None, ge=0)

@@ -7,7 +7,7 @@ from utils.enums.guidance import GuidanceType
 
 @dataclass
 class GuidanceDetails:
-    backend: type[BaseGuidanceBackend]      # πάντα SDXLGuidanceBackend για SDXL
+    backend: type[BaseGuidanceBackend]
     defaults: dict[GuidanceType, float]
 
 _GUIDANCE_DETAILS: dict[Checkpoint, GuidanceDetails] = {
