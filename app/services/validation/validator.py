@@ -6,15 +6,23 @@ from app.services.validation.validators.face_validator import face_validator
 from app.services.validation.validators.iqa_validator import iqa_validator
 from app.services.validation.validators.clip_validator import clip_validator
 from app.services.validation.validators.hands_validator import hands_validator
+from utils.enums.gate import GateType
+
 
 def validate(image: Image.Image, prompt: str) -> list[GateResult]:
     with ThreadPoolExecutor() as executor:
-        futures = [
-            executor.submit(tiling_validator, image),
-            executor.submit(clip_validator, image, prompt),
-            executor.submit(hands_validator, image),
-            executor.submit(face_validator, image),
-            executor.submit(iqa_validator, image),
+        submissions = [
+            (GateType.TILING, executor.submit(tiling_validator, image)),
+            (GateType.CLIP, executor.submit(clip_validator, image, prompt)),
+            (GateType.HANDS, executor.submit(hands_validator, image)),
+            (GateType.FACE, executor.submit(face_validator, image)),
+            (GateType.IQA, executor.submit(iqa_validator, image)),
         ]
 
-        return [f.result() for f in futures]
+        results: list[GateResult] = []
+        for gate, future in submissions:
+            try:
+                results.append(future.result())
+            except Exception as e:
+                results.append(GateResult(gate=gate, passed=None, suggested=f"gate error: {e}"))
+        return results

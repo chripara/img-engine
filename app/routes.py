@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, Response, request
+from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 from app.services.pipeline_service import PipelineService
 from app.schemas.generate import GenerateRequest
