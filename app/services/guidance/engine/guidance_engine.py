@@ -7,7 +7,7 @@ import torch, gc
 
 class GuidanceEngine:
     def __init__(self, req: GenerateRequest):
-        self._backend: BaseGuidanceBackend = _GUIDANCE_BACKEND[_PROFILES[req.profile].model]()   # χωρίς ["backend"]
+        self._backend: BaseGuidanceBackend = _GUIDANCE_BACKEND[_PROFILES[req.profile].model]()
 
     def __enter__(self) -> "GuidanceEngine":
         return self

@@ -6,7 +6,7 @@ Full reference for running img-engine locally and calling its API. See the [main
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - CUDA-capable GPU (tested on RTX 5070 Ti, 16 GB VRAM, Blackwell/cu128)
 - [Ollama](https://ollama.com/) (optional — local fallback for prompt refinement; app starts fine without it)
 - A [Groq](https://groq.com/) API key (optional — only needed for the default, higher-quality PRE path; see [Prompt Refinement Engine](../README.md#prompt-refinement-engine-pre))
@@ -66,4 +66,10 @@ Content-Type: application/json
 }
 ```
 
-Response: `{ "images": ["<base64>", ...] }` — each image entry includes a `seed` and a `quality` list of gate results (see [Quality Gates](../README.md#quality-gates)).
+Response:
+{
+  "images": [
+    {"image": "<base64>", "seed": 12345, "quality": [ {"gate": "CLIP", "score": 0.34, "passed": true, "suggested": null}, ... ]}
+  ],
+  "refined_prompt": "..."
+}

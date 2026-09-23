@@ -14,6 +14,8 @@ import base64, random, logging
 logger = logging.getLogger(__name__)
 
 class PipelineService():
+
+    @staticmethod
     def generation_pipeline(req: GenerateRequest) -> GenerateResult:
         if req.seed is not None:
             if req.spread is not None:
@@ -58,14 +60,14 @@ class PipelineService():
 def _refine_prompt(req: GenerateRequest) -> str:
     refined_prompt = req.prompt
     if req.refine:
-        from app.services.prompts.prompt_service import refine_prompt_with_ollama, refine_prompt_with_llama
+        from app.services.prompts.prompt_service import refine_prompt, refine_prompt_with_groq
         try:
-            refined_prompt = refine_prompt_with_llama(req)
+            refined_prompt = refine_prompt_with_groq(req)
         except Exception as e_llama:
             logger.warning("Llama refinement failed: %s", e_llama)
             try:
                 logger.info("Trying fallback: Ollama")
-                refined_prompt = refine_prompt_with_ollama(req)
+                refined_prompt = refine_prompt(req)
                 logger.info("Ollama refinement succeeded")
             except Exception as e_ollama:
                 logger.error("Ollama refinement also failed: %s", e_ollama, exc_info=True)

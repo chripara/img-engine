@@ -85,8 +85,6 @@ def test_context_manager_loads_when_backend_present(fake_backends):
 
 
 def test_context_manager_is_safe_when_backend_is_none(fake_backends):
-    """Το ρητό `if self._upscaler is not None:` guard στο __exit__ υπήρχε
-    ήδη στον κώδικα — αυτό το test το κλειδώνει."""
     with UpscalerEngine(_make_request(UpscaleQuality.NONE), _PROFILES[Profile.CHARACTER]):
         pass
 

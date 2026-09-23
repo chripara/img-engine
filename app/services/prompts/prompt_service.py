@@ -3,11 +3,8 @@ from flask import Flask
 import requests, os
 from app.schemas.generate import GenerateRequest
 from groq import Groq
-import os
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-
-app = Flask(__name__)
 
 SYSTEM_PROMPT = """You are an SDXL prompt engineer. Your output is ONLY a comma-separated tag list — no sentences, no narrative, no explanations, no quotes.
 
@@ -23,10 +20,11 @@ Rules:
 - Avoid generic words like "epic", "heroic", "intense" — describe HOW it looks visually
 - No filler words, no punctuation except commas"""
 
-def refine_prompt_with_llama(generate_request: GenerateRequest) -> str | None:
+def refine_prompt_with_groq(generate_request: GenerateRequest) -> str | None:
     load_dotenv()
     client = Groq(
         api_key=os.getenv("GROQ_API_KEY"),
+        timeout=30,
     )
 
     chat_completion = client.chat.completions.create(
@@ -43,8 +41,7 @@ def refine_prompt_with_llama(generate_request: GenerateRequest) -> str | None:
     return answer
 
 
-def refine_prompt_with_ollama(generate_request: GenerateRequest) -> str:
-
+def refine_prompt(generate_request: GenerateRequest) -> str:
     response = requests.post(f"{OLLAMA_URL}/api/generate", json={
         "model": "mistral",
         "system": SYSTEM_PROMPT,
@@ -65,6 +62,3 @@ def _generate_message(generate_request: GenerateRequest) -> str:
         Environment: {generate_request.environment}
         Prompt: {generate_request.prompt}
         Output only tags separated by commas:"""
-
-if __name__ == "__main__":
-    app.run(port=5001)

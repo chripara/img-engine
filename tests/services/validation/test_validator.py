@@ -35,8 +35,6 @@ def test_validate_calls_all_five_validators_and_returns_their_results_in_order()
 
 
 def test_validate_propagates_exception_from_any_single_validator():
-    """Τεκμηριωμένο ΤΡΕΧΟΝ design — όχι διορθωμένο εδώ. Αν ΕΝΑΣ validator
-    σκάσει, ολόκληρο το validate() σκάει (κανένα graceful degradation)."""
     with patch.object(module, "tiling_validator", return_value=_fake_result(GateType.TILING)), \
          patch.object(module, "clip_validator", side_effect=RuntimeError("model failed")), \
          patch.object(module, "hands_validator", return_value=_fake_result(GateType.HANDS)), \

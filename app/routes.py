@@ -21,9 +21,6 @@ def generate():
     except ValidationError as e:
         return jsonify({"error": e.errors()}), 422
 
-    if not req.prompt or not req.profile:
-        return Response(status=400)
-
     with get_gpu_lock():
         response = PipelineService.generation_pipeline(req)
 

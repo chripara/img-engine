@@ -22,7 +22,7 @@ def start_ollama():
         try:
             _ollama = subprocess.Popen([OLLAMA_PATH, "serve"])
         except (FileNotFoundError, OSError) as e:
-            logger.warning("Ollama not available (%s) — PRE will fall back to Groq only.", e)
+            logger.warning("Ollama not available (%s) — PRE will rely on Groq only, with no local fallback.", e)
             _ollama = None
 
 def stop_ollama():

@@ -1,6 +1,4 @@
-import io, os
 from PIL import Image
-
 from app.schemas.generate import GuidanceResult
 from app.services.image.backends.base_backend import BaseBackend
 from app.services.image.backends.model_runner import ImageModelRunner
@@ -13,7 +11,9 @@ from app.services.registries.profile_registry import _PROFILES
 from utils.enums.guidance import GuidanceType
 from utils.enums.profile import Profile
 from utils.enums.style_presets import StylePreset
+import io, os, logging
 
+logger = logging.getLogger(__name__)
 
 class SDXLBackend(BaseBackend):
     def __init__(self, profile: Profile, runner: ImageModelRunner | None = None) -> None:
@@ -41,7 +41,8 @@ class SDXLBackend(BaseBackend):
             try:
                 self._runner.apply_lora(_STYLE_PRESET_REGISTRY[style_preset], style_preset.value, strength)
             except Exception as e:
-                print(f"LoRA loading failed for preset '{style_preset.value}': {e}. Continuing without style preset.")
+                logger.warning("LoRA loading failed for preset '%s': %s. Continuing without style preset.",
+                               style_preset.value, e)
 
         self._runner.bind_scheduler(_PROFILES[profile].scheduler)
 
