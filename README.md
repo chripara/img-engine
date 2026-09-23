@@ -7,6 +7,7 @@
 ![Diffusers](https://img.shields.io/badge/HuggingFace-Diffusers-yellow?logo=huggingface)
 ![Flask](https://img.shields.io/badge/Flask-REST%20API-black?logo=flask)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Tests](https://github.com/chripara/img-engine/actions/workflows/tests.yml/badge.svg)](https://github.com/chripara/img-engine/actions/workflows/tests.yml)
 
 ---
 ## What is img-engine?
@@ -159,6 +160,18 @@ pre-commit install --hook-type pre-commit --hook-type pre-push
 - **On push:** the same selective test + contract-test logic as CI, so breakage shows up before you open a PR, not after.
 ---
 
+## Guidance, style, and upscaling
+
+### ControlNet guidance
+Pass `controls` in the request body to condition generation on reference images: a list of base64 `images`, plus a `controls` list where each entry has a `selector` (index into `images`), a `type` (`canny` / `depth` / `pose` / `scribble`), and an optional per-control `strength`. Each control image is run through the matching preprocessor (Canny edge detection, MiDaS depth, OpenPose, HED scribble) before being fed to a type-specific SDXL ControlNet checkpoint. Omitted `strength` falls back to a per-checkpoint default tuned in the profile registry (defaults vary — e.g. Canny is 0.70 on the base SDXL checkpoint, 0.65 on Albedo/Juggernaut, 0.85 on DreamShaper). Requesting more than 3 simultaneous controls automatically switches to CPU offload to manage VRAM.
+
+### LoRA style presets
+`style_preset` selects one of 8 curated style LoRAs (`fantasy`, `dark_fantasy`, `cartoonish_fantasy`, `cyberpunk`, `realism_cartoonish`, `scifi_fantasy`, `medieval_fantasy`, `anime_aesthetic`), each mapped to a specific HuggingFace LoRA. `lora_strength` (0–1, default 0.8) controls blend weight. If the LoRA fails to load, generation continues without it rather than failing the request — logged as a warning, not silently dropped.
+
+### Upscaling
+`upscale_quality` controls post-generation upscaling: `none` (default, no upscaling), `enhanced` (ESRGAN — the specific checkpoint is chosen per profile, e.g. anime-tuned for `PRODUCT`, standard for `CHARACTER`/`SCENE_FRAME`), or `generative` (latent diffusion upscaler via `stabilityai/stable-diffusion-x4-upscaler`, fixed denoising strength 0.3 — slower, but can add detail rather than just sharpening).
+
+---
 
 ## Seeds and batches
 

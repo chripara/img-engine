@@ -10,12 +10,12 @@ from diffusers.schedulers.scheduling_dpmsolver_multistep import DPMSolverMultist
 class ProfileSpec:
     name: str
     model: Checkpoint
-    scheduler: Type        # class reference
+    scheduler: Type
     steps: int
     cfg: float
-    native_size: tuple     # (width, height)
+    native_size: tuple
     esrgan_upscaler: Upscaler
-    vae_id: str | None = None      # "madebyollin/sdxl-vae-fp16-fix" ή None
+    vae_id: str | None = None
 
 _PROFILES: dict[Profile, ProfileSpec] = {
     Profile.CHARACTER: ProfileSpec(
