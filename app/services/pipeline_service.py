@@ -67,7 +67,7 @@ def _refine_prompt(req: GenerateRequest) -> str:
             logger.warning("Groq refinement failed: %s", e_groq)
             try:
                 logger.info("Trying fallback: Ollama")
-                refined_prompt = refine_prompt_with_ollama(req)
+                refined_prompt = refine_prompt(req)
                 logger.info("Ollama refinement succeeded")
             except Exception as e_ollama:
                 logger.error("Ollama refinement also failed: %s", e_ollama, exc_info=True)
