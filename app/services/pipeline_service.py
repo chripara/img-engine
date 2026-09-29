@@ -9,6 +9,8 @@ from app.services.registries.profile_registry import _PROFILES
 from app.services.registries.guidance_registry import  _GUIDANCE_DETAILS
 from app.services.guidance.guidance_service import generate_guidance
 from app.services.validation.validator import validate
+from app.services.prompts.prompt_service import refine_prompt
+
 import base64, random, logging
 
 logger = logging.getLogger(__name__)
@@ -38,7 +40,9 @@ class PipelineService():
             control_maps = future_b.result()
             _get_strength(req.profile,control_maps)
 
-        images = generate_image(req, seeds,  control_maps)
+        images = generate_image(req, seeds, control_maps)
+
+        validations_per_image = [validate(img, refined) for img in images]
 
         converter = ImageConverter.Pil_Image_to_Bytes_Png
 
@@ -48,19 +52,18 @@ class PipelineService():
 
         image_results: list[ImageResult] = []
         for i in range(len(images)):
-            validations = validate(images[i], refined)
             encoded = base64.b64encode(converter(images[i])).decode()
             image_results.append(ImageResult(
                 image=encoded,
                 seed=seeds[i],
-                quality=validations
+                quality=validations_per_image[i]
             ))
-        return GenerateResult(images = image_results, refined_prompt = refined)
+        return GenerateResult(images=image_results, refined_prompt=refined)
 
 def _refine_prompt(req: GenerateRequest) -> str:
     refined_prompt = req.prompt
     if req.refine:
-        from app.services.prompts.prompt_service import refine_prompt_with_ollama, refine_prompt_with_groq
+        from app.services.prompts.prompt_service import refine_prompt_with_groq, refine_prompt
         try:
             refined_prompt = refine_prompt_with_groq(req)
         except Exception as e_groq:

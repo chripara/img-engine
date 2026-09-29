@@ -184,6 +184,21 @@ Current, verified-against-code behavior for `batch_count > 1` (three distinct ca
 **Bottom line:** single-image requests and multi-image requests with an explicit `seed` (no `spread`) are both fully reproducible. Only the `spread` case is intentionally non-reproducible, by design.
 
 ---
+## Smoke tests
+
+`smoke_tests/` contains end-to-end checks that exercise the live, running API over real HTTP requests — not mocks, not unit tests. Each file covers one distinct workflow: validation, batch/seed reproducibility, prompt refinement, ControlNet guidance, LoRA style presets, upscaling, and quality gate response shape. Unlike the assert-based tests in `tests/`, these print `[OK]`/`[FAIL]` per check and keep running instead of stopping at the first failure, so a single run surfaces everything broken across the whole app at once.
+
+Run with the API already up (`python run.py` or `docker compose up`):
+
+```bash
+python -m smoke_tests.run_all
+```
+
+Or run one workflow at a time, e.g. `python -m smoke_tests.test_basic_generation`. Override the target server with the `SMOKE_TEST_BASE_URL` environment variable (default `http://localhost:5000`).
+
+**Note:** the full suite makes 30+ real generation requests and can take several minutes — meant for manual/occasional verification, not per-commit CI.
+
+---
 ## Prompt Refinement Engine (PRE)
 
 When `refine: true`, the engine expands short prompts into detailed image descriptions optimized for SDXL, before generation. This path is **hybrid**, not purely local:

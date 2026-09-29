@@ -18,8 +18,10 @@ class UpscalerEngine:
         return self
 
     def __exit__(self, *args):
-        if self._upscaler is not None:  # ← guard
+        print("self._upscaler is not None", self._upscaler is not None)
+        if self._upscaler is not None:
             self._upscaler.unload()
+
         del self._upscaler
         torch.cuda.empty_cache()
         gc.collect()
