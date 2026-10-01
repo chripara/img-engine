@@ -11,20 +11,12 @@ class SpandrelTensorRunner(TensorUpscaleRunner):
         self._model = None
 
     def load(self, model_path: str) -> None:
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info("VRAM before ESRGAN load: allocated=%.2fGB reserved=%.2fGB",
-                    torch.cuda.memory_allocated() / 1e9, torch.cuda.memory_reserved() / 1e9)
         self._model = ModelLoader().load_from_file(model_path).cuda()
-        logger.info("VRAM after ESRGAN .cuda(): allocated=%.2fGB reserved=%.2fGB",
-                    torch.cuda.memory_allocated() / 1e9, torch.cuda.memory_reserved() / 1e9)
 
     def run(self, image: Image.Image) -> Image.Image:
         if self._model is None:
             raise RuntimeError("SpandrelTensorRunner not loaded. Call load() first.")
 
-        import logging
-        logger = logging.getLogger(__name__)
         tensor = torch.from_numpy(np.array(image)).permute(2, 0, 1).float() / 255.0
         tensor = tensor.unsqueeze(0).to("cuda")
 

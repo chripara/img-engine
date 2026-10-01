@@ -14,9 +14,6 @@ def _load_iqa():
     return _iqa_metric
 
 def _compute_iqa_score(image: Image.Image) -> float:
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.info("IQA: input image size=%s", image.size)
 
     metric = _load_iqa()
     arr = np.array(image.convert("RGB")).transpose(2, 0, 1)
