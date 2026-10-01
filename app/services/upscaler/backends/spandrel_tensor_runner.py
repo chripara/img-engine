@@ -28,15 +28,8 @@ class SpandrelTensorRunner(TensorUpscaleRunner):
         tensor = torch.from_numpy(np.array(image)).permute(2, 0, 1).float() / 255.0
         tensor = tensor.unsqueeze(0).to("cuda")
 
-        logger.info("ESRGAN: forward pass done, allocated=%.2fGB reserved=%.2fGB",
-                    torch.cuda.memory_allocated() / 1e9, torch.cuda.memory_reserved() / 1e9)
-        logger.info("ESRGAN: tensor ready, shape=%s, starting forward pass", tuple(tensor.shape))
-
         with torch.no_grad():
             output = self._model(tensor)
-
-        logger.info("ESRGAN: forward pass done, allocated=%.2fGB reserved=%.2fGB",
-                    torch.cuda.memory_allocated() / 1e9, torch.cuda.memory_reserved() / 1e9)
 
         output = output.squeeze(0).permute(1, 2, 0).clamp(0, 1)
         return Image.fromarray((output * 255).byte().cpu().numpy())

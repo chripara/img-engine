@@ -22,14 +22,8 @@ def _compute_iqa_score(image: Image.Image) -> float:
     arr = np.array(image.convert("RGB")).transpose(2, 0, 1)
     tensor = torch.from_numpy(arr).float().unsqueeze(0) / 255.0
 
-    logger.info("IQA: VRAM before metric(): allocated=%.2fGB reserved=%.2fGB",
-                torch.cuda.memory_allocated() / 1e9, torch.cuda.memory_reserved() / 1e9)
-
     with torch.no_grad():
         result = metric(tensor).item() / 100
-
-    logger.info("IQA: VRAM after metric(): allocated=%.2fGB reserved=%.2fGB",
-                torch.cuda.memory_allocated() / 1e9, torch.cuda.memory_reserved() / 1e9)
 
     return result
 

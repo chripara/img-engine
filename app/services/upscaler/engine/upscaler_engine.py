@@ -18,7 +18,6 @@ class UpscalerEngine:
         return self
 
     def __exit__(self, *args):
-        print("self._upscaler is not None", self._upscaler is not None)
         if self._upscaler is not None:
             self._upscaler.unload()
 

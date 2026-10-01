@@ -9,7 +9,6 @@ from app.services.registries.profile_registry import _PROFILES
 from app.services.registries.guidance_registry import  _GUIDANCE_DETAILS
 from app.services.guidance.guidance_service import generate_guidance
 from app.services.validation.validator import validate
-from app.services.prompts.prompt_service import refine_prompt
 
 import base64, random, logging
 
