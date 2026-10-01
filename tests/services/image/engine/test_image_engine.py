@@ -58,7 +58,13 @@ def test_context_manager_calls_load_then_unload(fake_backend_registered):
 
 
 def test_generate_image_raises_when_prompt_is_empty(fake_backend_registered):
-    req = _make_request(prompt="")
+    # Schema validation (min_length=1) already rejects an empty prompt before a
+    # GenerateRequest can be built normally, so bypass it here with model_construct
+    # to exercise ImageEngine's own defense-in-depth check independently.
+    req = GenerateRequest.model_construct(
+        profile=Profile.CHARACTER, num_images=1, prompt="",
+        subject=None, environment=None, feeling=None,
+    )
     with ImageEngine(req, guidance_types=[]) as engine:
         with pytest.raises(ValueError):
             engine.generate_image(req)

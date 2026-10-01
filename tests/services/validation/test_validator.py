@@ -34,12 +34,23 @@ def test_validate_calls_all_five_validators_and_returns_their_results_in_order()
     ]
 
 
-def test_validate_propagates_exception_from_any_single_validator():
+def test_validate_converts_single_validator_exception_into_failed_gate_result():
     with patch.object(module, "tiling_validator", return_value=_fake_result(GateType.TILING)), \
          patch.object(module, "clip_validator", side_effect=RuntimeError("model failed")), \
          patch.object(module, "hands_validator", return_value=_fake_result(GateType.HANDS)), \
          patch.object(module, "face_validator", return_value=_fake_result(GateType.FACE)), \
          patch.object(module, "iqa_validator", return_value=_fake_result(GateType.IQA)):
 
-        with pytest.raises(RuntimeError, match="model failed"):
-            module.validate(Image.new("RGB", (2, 2)), "a cat")
+        results = module.validate(Image.new("RGB", (2, 2)), "a cat")
+
+    by_gate = {r.gate: r for r in results}
+
+    # the failing gate degrades to a non-passing result instead of crashing the whole batch
+    assert by_gate[GateType.CLIP].passed is None
+    assert "model failed" in by_gate[GateType.CLIP].suggested
+
+    # the other four gates still ran and returned their normal results
+    assert by_gate[GateType.TILING].passed is True
+    assert by_gate[GateType.HANDS].passed is True
+    assert by_gate[GateType.FACE].passed is True
+    assert by_gate[GateType.IQA].passed is True
