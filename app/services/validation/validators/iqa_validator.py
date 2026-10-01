@@ -14,12 +14,15 @@ def _load_iqa():
     return _iqa_metric
 
 def _compute_iqa_score(image: Image.Image) -> float:
+
     metric = _load_iqa()
     arr = np.array(image.convert("RGB")).transpose(2, 0, 1)
     tensor = torch.from_numpy(arr).float().unsqueeze(0) / 255.0
 
     with torch.no_grad():
-        return metric(tensor).item() / 100
+        result = metric(tensor).item() / 100
+
+    return result
 
 def iqa_validator(image: Image.Image) -> GateResult:
     score = _compute_iqa_score(image)

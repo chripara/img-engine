@@ -11,6 +11,7 @@ warnings.filterwarnings("ignore", message=".*Importing from timm.*")
 
 from ui.ui import launch_ui
 from app import create_app
+
 app = create_app()
 
 def run_flask():

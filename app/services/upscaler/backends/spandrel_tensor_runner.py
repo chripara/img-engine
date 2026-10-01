@@ -17,7 +17,7 @@ class SpandrelTensorRunner(TensorUpscaleRunner):
         if self._model is None:
             raise RuntimeError("SpandrelTensorRunner not loaded. Call load() first.")
 
-        tensor = torch.from_numpy(np.array(image.convert("RGB"))).permute(2, 0, 1).float() / 255.0
+        tensor = torch.from_numpy(np.array(image)).permute(2, 0, 1).float() / 255.0
         tensor = tensor.unsqueeze(0).to("cuda")
 
         with torch.no_grad():
