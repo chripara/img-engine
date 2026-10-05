@@ -1,7 +1,7 @@
 from flask import Flask
 import subprocess
 import atexit, os, shutil
-from config import DevelopmentConfig
+from config import Config, DevelopmentConfig
 
 import logging
 
@@ -31,7 +31,9 @@ def stop_ollama():
 
 def create_app():
         app = Flask(__name__)
-        app.config.from_object(DevelopmentConfig)
+        # Debug mode must be explicitly opted into via APP_ENV=development — safe (DEBUG=False) by default.
+        config_class = DevelopmentConfig if os.getenv("APP_ENV") == "development" else Config
+        app.config.from_object(config_class)
 
         start_ollama()
         atexit.register(stop_ollama)

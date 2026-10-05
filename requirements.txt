@@ -15,7 +15,6 @@ peft==0.17.0
 Pillow==11.3.0
 pydantic==2.12.3
 pyiqa==0.1.15
-pytest>=8.0
 python-dotenv==1.2.2
 Requests==2.34.2
 spandrel==0.4.2
