@@ -12,11 +12,13 @@
 ---
 ## What is img-engine?
 
-**img-engine** is a local-first image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend architecture. Swap diffusion models — SDXL-class, Flux, Stable Diffusion 3.5, or any future checkpoint — without changing the pipeline. Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
+A portfolio project exploring how to build a local image-generation service: pluggable model backends, GPU memory management, and automatic quality checks on every output. Built to learn and demonstrate, so it's local and single-user rather than production-hardened.
+
+**img-engine** is a local-first image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend interface. One backend ships today — SDXL, serving four checkpoints through the registry — and the interface is designed so other model families can be added without changing the pipeline. Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
 
 Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two documented exceptions: the optional [Prompt Refinement Engine](#prompt-refinement-engine-pre), and first-run model downloads for some [quality gates](#quality-gates).
 
-**The part of this project worth your attention isn't "it generates images" — it's the evaluation layer around that.** Every generated image is scored by five automatic quality gates (tiling, prompt-adherence, hand/face plausibility, general visual quality), and there's a dedicated benchmark harness that runs a fixed prompt set across every profile, checkpoint, and LoRA combination to make those gates comparable. That harness and its honest limitations are documented in full below — including where the gates themselves are still uncalibrated, and why that matters.
+Every generated image is scored by five automatic quality gates (tiling, prompt adherence, hand/face plausibility, general visual quality), and a benchmark harness runs a fixed prompt set across every profile, checkpoint, and LoRA combination. The gates are experimental and uncalibrated — see [Known limitations](#known-limitations).
 
 ---
 ## Architecture
@@ -65,11 +67,11 @@ git clone https://github.com/chripara/img-engine.git
 cd img-engine
 python -m venv venv
 venv\Scripts\activate      # Windows
-pip install -r requirements.txt
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
 python run.py
 ```
 
-Requires Python 3.11, a CUDA-capable GPU, and a downloaded SDXL checkpoint referenced from the profile registry. Full requirements, environment variables, the REST API contract, and a known dependency-conflict gotcha are in [`docs/SETUP.md`](./docs/SETUP.md).
+Requires Python 3.11+, a CUDA-capable GPU, and an internet connection on first run: the SDXL checkpoints and other models are downloaded automatically from Hugging Face and cached. The two ESRGAN upscaler weights are the exception and must be placed in `local_models/` by hand. Full requirements, environment variables, the REST API contract, and a known dependency-conflict gotcha are in [`docs/SETUP.md`](./docs/SETUP.md).
 
 ---
 ## Profiles
@@ -97,7 +99,7 @@ Each profile carries its own checkpoint, VAE, scheduler, CFG, steps, native size
 ---
 ## Quality Gates
 
-After each image is generated, it passes through five automatic quality checks. Each gate returns a score, a status (`PASS` / `WARNING` / `FAIL` / `NOT_APPLICABLE`), and (if not passing) a suggested reason — surfaced in the API response under `quality` per image. Gates run in parallel (`ThreadPoolExecutor`).
+After each image is generated, it passes through five automatic quality checks. Each gate returns a score, a status (`PASS` / `WARNING` / `FAIL` / `NOT_APPLICABLE`), and (if not passing) a suggested reason — surfaced in the API response under `quality` per image. Gates run in parallel (`ThreadPoolExecutor`). **These gates are experimental:** the thresholds are uncalibrated estimates, so treat results as directional signals, not ground truth — see [Known limitations](#known-limitations).
 
 | Gate | What it checks | How |
 |---|---|---|
@@ -119,7 +121,7 @@ python -m utils.generate_golden_set
 
 **Cross-profile / LoRA benchmark** (`utils/generate_benchmark.py`) runs a fixed prompt set across every profile, seed, and LoRA on/off variant, scoring each image with the same gates. Outputs go to a timestamped folder under `output/benchmark/`, alongside a `manifest.json` recording profile, prompt, seed, LoRA variant, and gate results.
 
-**This validates the benchmarking methodology, not a "best recipe" claim.** Since the gates aren't calibrated yet (see [Known limitations](#known-limitations-verified-not-aspirational)), pass/fail results here aren't proof that one profile or checkpoint is objectively better than another. What it does prove: the infrastructure to make that comparison exists, runs end-to-end, and produces comparable, structured evidence — the prerequisite for a real answer once calibration happens.
+**This validates the benchmarking methodology, not a "best recipe" claim.** Since the gates aren't calibrated yet (see [Known limitations](#known-limitations)), pass/fail results here aren't proof that one profile or checkpoint is objectively better than another. What it does prove: the infrastructure to make that comparison exists, runs end-to-end, and produces comparable, structured evidence — the prerequisite for a real answer once calibration happens.
 
 ```powershell
 python -m utils.generate_benchmark
@@ -210,9 +212,9 @@ When `refine: true`, the engine expands short prompts into detailed image descri
 `refine: true` is **not** purely local by default — it sends your prompt to Groq's cloud API unless `GROQ_API_KEY` is unset, in which case it's local-only via Ollama. Ollama itself is managed automatically when available (started on app launch, stopped on exit) — the app doesn't fail to start if Ollama isn't installed.
 
 ---
-## Known limitations (verified, not aspirational)
+## Known limitations
 
-Everything below was checked directly against the current code and current benchmark data — not a hedge, an actual account of what this system can and can't prove about itself yet.
+Everything below was checked against the current code and current benchmark data, and describes what this system can and can't prove about itself yet.
 
 - **The quality gates are not yet calibrated.** All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, `TILING`) are engineering estimates, not derived from labeled data. This means the benchmark below can show *consistency* across profiles/checkpoints/LoRA, but not yet *proof* that one recipe is objectively better than another — that requires calibrating the gates against a labeled golden set first.
 - **`HANDS` classifier reliability.** The anatomy classifier (`angusleung100`) was fine-tuned on a small dataset (~134 images) and, across manual testing on dozens of generations, doesn't meaningfully discriminate hand quality for this project's art style and pose distribution — grip/weapon-holding poses in particular. Treat the `HANDS` score as experimental, not a trustworthy signal.
