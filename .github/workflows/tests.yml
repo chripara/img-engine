@@ -2,6 +2,7 @@ name: Tests
 
 on:
   push:
+    branches: ['**']
   pull_request:
     branches: [main]
 
@@ -37,6 +38,9 @@ jobs:
             BEFORE="${{ github.event.before }}"
             if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
               echo "New branch, no previous commit to diff against — running full suite."
+              pytest -m "not gpu"
+            elif ! git cat-file -e "$BEFORE" 2>/dev/null; then
+              echo "Previous commit $BEFORE not found (likely a history rewrite) — running full suite."
               pytest -m "not gpu"
             else
               CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'app/*.py')
