@@ -50,6 +50,14 @@ def test_get_backend_resolves_to_registered_class(fake_backend_registered):
     assert isinstance(engine._backend, _FakeBackend)
 
 
+def test_get_backend_raises_when_checkpoint_has_no_registered_backend(monkeypatch):
+    # An unregistered checkpoint must fail loudly instead of silently yielding no backend.
+    checkpoint = image_engine_module._PROFILES[Profile.CHARACTER].model
+    monkeypatch.delitem(image_engine_module._BACKENDS, checkpoint)
+    with pytest.raises(ValueError, match="No backend registered"):
+        ImageEngine(_make_request(), guidance_types=[])
+
+
 def test_context_manager_calls_load_then_unload(fake_backend_registered):
     with ImageEngine(_make_request(), guidance_types=[]) as engine:
         assert len(engine._backend.load_calls) == 1

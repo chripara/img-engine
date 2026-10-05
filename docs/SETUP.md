@@ -20,10 +20,14 @@ git clone https://github.com/chripara/img-engine.git
 cd img-engine
 python -m venv venv
 venv\Scripts\activate      # Windows
-pip install -r requirements.txt
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
 ```
 
-Download your preferred SDXL checkpoint (`.safetensors`) and set the path via the profile registry.
+The `+cu128` PyTorch build pinned in `requirements.txt` is not on PyPI, which is why the extra index URL is needed.
+
+**Models.** The SDXL checkpoints (see `app/services/image/registries/checkpoint_registry.py`), the VAE, the ControlNet annotators and the quality-gate models are Hugging Face repo IDs. They are downloaded automatically on first use and cached under your user profile, so the first run needs an internet connection and several GB of disk.
+
+The only weights you must provide yourself are the two ESRGAN upscaler files, read from `local_models/` (git-ignored): `RealESRGAN_x4plus.pth` and `RealESRGAN_x4plus_anime_6B.pth`.
 
 **Use a dedicated virtual environment for this project.** Installing into a shared/global Python environment risks dependency conflicts with other projects (observed in practice: a global `torch`/`diffusers`/`mediapipe`/`protobuf` version clash caused by unrelated projects sharing the same site-packages). Always `venv\Scripts\activate` before running or installing anything for img-engine.
 

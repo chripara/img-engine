@@ -13,7 +13,6 @@ class ProfileSpec:
     scheduler: Type
     steps: int
     cfg: float
-    native_size: tuple
     esrgan_upscaler: Upscaler
     vae_id: str | None = None
 
@@ -24,7 +23,6 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         scheduler = EulerDiscreteScheduler,
         steps = 30,
         cfg = 7.0,
-        native_size = (1024, 1024),
         esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
     ),
@@ -34,7 +32,6 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         scheduler = EulerDiscreteScheduler,
         steps = 30,
         cfg = 7.0,
-        native_size = (1024, 1024),
         esrgan_upscaler = Upscaler.ANIME_ESRGAN,
         vae_id = "madebyollin/sdxl-vae-fp16-fix",
     ),
@@ -44,7 +41,6 @@ _PROFILES: dict[Profile, ProfileSpec] = {
         scheduler = DPMSolverMultistepScheduler,
         steps = 35,
         cfg = 4.5,
-        native_size = (832, 1216),
         esrgan_upscaler = Upscaler.ESRGAN,
         vae_id = None,
     ),

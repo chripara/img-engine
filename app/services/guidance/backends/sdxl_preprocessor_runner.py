@@ -3,7 +3,7 @@ from PIL import Image
 import torch, gc
 
 from app.services.guidance.backends.preprocessor_runner import GuidancePreprocessorRunner
-from app.services.guidance.registries.guidance_registry import _SDXL_PREPROCESSORS
+from app.services.registries.guidance_registry import _SDXL_PREPROCESSORS
 from utils.enums.guidance import GuidanceType
 
 
