@@ -1,6 +1,5 @@
 from PIL import Image
 from app.schemas.generate import GenerateRequest, GuidanceResult
-from utils.enums.checkpoint import Checkpoint
 from utils.enums.guidance import GuidanceType
 from utils.enums.aspect_ratio import AspectRatio
 from app.services.image.registries.backend_registry import _BACKENDS
@@ -33,14 +32,10 @@ class ImageEngine:
         gc.collect()
 
     def _get_backend(self, req: GenerateRequest) -> BaseBackend:
-        match self._model:
-            case (
-                Checkpoint.SDXL_BASE |
-                Checkpoint.ALBEDO_BASE |
-                Checkpoint.JUGGERNAUT_XL |
-                Checkpoint.DREAMSHAPER_XL
-            ):
-                return _BACKENDS[self._model]["backend"](profile=req.profile)
+        entry = _BACKENDS.get(self._model)
+        if entry is None:
+            raise ValueError(f"No backend registered for checkpoint {self._model}")
+        return entry["backend"](profile=req.profile)
 
     def generate_image(self, req: GenerateRequest, seed: int | None = None, controls: list[GuidanceResult] | None = None, index: int = 0) -> Image.Image:
         if not req.prompt:
