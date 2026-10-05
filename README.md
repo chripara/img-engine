@@ -9,6 +9,16 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 [![Tests](https://github.com/chripara/img-engine/actions/workflows/tests.yml/badge.svg)](https://github.com/chripara/img-engine/actions/workflows/tests.yml)
 
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/character.jpg" height="360" alt="CHARACTER profile sample: a battle-worn knight in plate armor"><br><sub><b>CHARACTER</b> &middot; AlbedoBase XL &middot; seed 101</sub></td>
+    <td align="center"><img src="docs/images/product.jpg" height="360" alt="PRODUCT profile sample: an ornate bronze hourglass with violet sand"><br><sub><b>PRODUCT</b> &middot; DreamShaper XL &middot; seed 215</sub></td>
+    <td align="center"><img src="docs/images/scene.jpg" height="360" alt="SCENE_FRAME profile sample: a moss-covered ruined temple in golden mist"><br><sub><b>SCENE_FRAME</b> &middot; Juggernaut XL &middot; seed 303</sub></td>
+  </tr>
+</table>
+
+<sub>Unretouched outputs of each profile's default recipe (no LoRA, ControlNet or upscaling), with seeds picked from a small batch.</sub>
+
 ---
 ## What is img-engine?
 
@@ -76,15 +86,13 @@ Requires Python 3.11+, a CUDA-capable GPU, and an internet connection on first r
 ---
 ## Profiles
 
-| Profile | Use Case | Default Checkpoint | Native Size |
-|---|---|---|---|
-| `CHARACTER` | Hero / character art | AlbedoBase XL | 1024×1024 |
-| `PRODUCT` | Equipment, weapons, relics, icons — isolated objects | DreamShaper XL | 1024×1024 |
-| `SCENE_FRAME` | Card frames, backgrounds, environments, logo | Juggernaut XL | 832×1216 (portrait)* |
+| Profile | Use Case | Default Checkpoint |
+|---|---|---|
+| `CHARACTER` | Hero / character art | AlbedoBase XL |
+| `PRODUCT` | Equipment, weapons, relics, icons — isolated objects | DreamShaper XL |
+| `SCENE_FRAME` | Card frames, backgrounds, environments, logo | Juggernaut XL |
 
-Each profile carries its own checkpoint, VAE, scheduler, CFG, steps, native size, and upscaler — defined as data in the registry, not branching code.
-
-\* *This reflects the current `native_size` value in `profile_registry.py`. Worth double-checking whether portrait is actually intended for a background/environment profile, or whether the registry values are swapped — flagging rather than silently picking one.*
+Each profile carries its own checkpoint, VAE, scheduler, CFG, steps, and upscaler — defined as data in the registry, not branching code.
 
 **Performance** (avg. per image, from `utils/generate_benchmark.py`, 36-image run):
 
