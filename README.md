@@ -26,7 +26,7 @@ A portfolio project exploring how to build a local image-generation service: plu
 
 **img-engine** is a local-first image generation engine built on [HuggingFace Diffusers](https://github.com/huggingface/diffusers) with a pluggable backend interface. One backend ships today — SDXL, serving four checkpoints through the registry — and the interface is designed so other model families can be added without changing the pipeline. Designed initially for generating game card artwork (characters, items, scene backgrounds), it is general-purpose and extensible for any creative or production use case requiring local AI image generation.
 
-Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two documented exceptions: the optional [Prompt Refinement Engine](#prompt-refinement-engine-pre), and first-run model downloads for some [quality gates](#quality-gates).
+Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two documented exceptions: the optional [Prompt Refinement Engine](#prompt-refinement-engine-pre), and first-run model downloads for some [quality gates](#quality-gates-and-benchmark-harness).
 
 Every generated image is scored by five automatic quality gates (tiling, prompt adherence, hand/face plausibility, general visual quality), and a benchmark harness runs a fixed prompt set across every profile, checkpoint, and LoRA combination. The gates are experimental and uncalibrated — see [Known limitations](#known-limitations).
 
@@ -70,20 +70,6 @@ Every generated image is scored by five automatic quality gates (tiling, prompt 
 **Note on load/unload lifecycle:** the SDXL backend is loaded fresh and unloaded after every request rather than kept resident in VRAM between requests. This is a deliberate choice, not an oversight: measured `load()` cost is ~0.5–1s (`safetensors` uses memory-mapped loading, so most of that time is the `.to('cuda')` transfer and LoRA fuse, not disk I/O) — negligible next to actual generation time. An instance cache to avoid reloading between requests was evaluated and not pursued for that reason; the per-request load/unload also keeps VRAM usage predictable on single-GPU hardware.
 
 ---
-## Quickstart
-
-```bash
-git clone https://github.com/chripara/img-engine.git
-cd img-engine
-python -m venv venv
-venv\Scripts\activate      # Windows
-pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
-python run.py
-```
-
-Requires Python 3.11+, a CUDA-capable GPU, and an internet connection on first run: the SDXL checkpoints and other models are downloaded automatically from Hugging Face and cached. The two ESRGAN upscaler weights are the exception and must be placed in `local_models/` by hand. Full requirements, environment variables, the REST API contract, and a known dependency-conflict gotcha are in [`docs/SETUP.md`](./docs/SETUP.md).
-
----
 ## Profiles
 
 | Profile | Use Case | Default Checkpoint |
@@ -103,9 +89,7 @@ Each profile carries its own checkpoint, VAE, scheduler, CFG, steps, and upscale
 | `SCENE_FRAME` | 16.79s | 10.94 GB |
 
 ---
-
----
-## Quality Gates
+## Quality gates and benchmark harness
 
 After each image is generated, it passes through five automatic quality checks. Each gate returns a score, a status (`PASS` / `WARNING` / `FAIL` / `NOT_APPLICABLE`), and (if not passing) a suggested reason — surfaced in the API response under `quality` per image. Gates run in parallel (`ThreadPoolExecutor`). **These gates are experimental:** the thresholds are uncalibrated estimates, so treat results as directional signals, not ground truth — see [Known limitations](#known-limitations).
 
@@ -138,6 +122,54 @@ python -m utils.generate_benchmark
 Run both as modules from the project root (not as a direct file path — otherwise Python won't resolve the `app` package).
 
 ---
+## Quickstart
+
+```bash
+git clone https://github.com/chripara/img-engine.git
+cd img-engine
+python -m venv venv
+venv\Scripts\activate      # Windows
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
+python run.py
+```
+
+Requires Python 3.11+, a CUDA-capable GPU, and an internet connection on first run: the SDXL checkpoints and other models are downloaded automatically from Hugging Face and cached. The two ESRGAN upscaler weights are the exception and must be placed in `local_models/` by hand. Full requirements, environment variables, the REST API contract, and a known dependency-conflict gotcha are in [`docs/SETUP.md`](./docs/SETUP.md).
+
+---
+## Guidance, style, and upscaling
+
+### ControlNet guidance
+Pass `controls` in the request body to condition generation on reference images: a list of base64 `images`, plus a `controls` list where each entry has a `selector` (index into `images`), a `type` (`canny` / `depth` / `pose` / `scribble`), and an optional per-control `strength`. Each control image is run through the matching preprocessor (Canny edge detection, MiDaS depth, OpenPose, HED scribble) before being fed to a type-specific SDXL ControlNet checkpoint. Omitted `strength` falls back to a per-checkpoint default tuned in the profile registry (defaults vary — e.g. Canny is 0.70 on the base SDXL checkpoint, 0.65 on Albedo/Juggernaut, 0.85 on DreamShaper). Requesting more than 3 simultaneous controls automatically switches to CPU offload to manage VRAM.
+
+### LoRA style presets
+`style_preset` selects one of 8 curated style LoRAs (`fantasy`, `dark_fantasy`, `cartoonish_fantasy`, `cyberpunk`, `realism_cartoonish`, `scifi_fantasy`, `medieval_fantasy`, `anime_aesthetic`), each mapped to a specific HuggingFace LoRA. `lora_strength` (0–1, default 0.8) controls blend weight. If the LoRA fails to load, generation continues without it rather than failing the request — logged as a warning, not silently dropped.
+
+### Upscaling
+`upscale_quality` controls post-generation upscaling: `none` (default, no upscaling), `enhanced` (ESRGAN — the specific checkpoint is chosen per profile, e.g. anime-tuned for `PRODUCT`, standard for `CHARACTER`/`SCENE_FRAME`), or `generative` (latent diffusion upscaler via `stabilityai/stable-diffusion-x4-upscaler`, fixed denoising strength 0.3 — slower, but can add detail rather than just sharpening).
+
+---
+## Seeds and batches
+
+Current, verified-against-code behavior for `batch_count > 1` (three distinct cases):
+
+- **No `seed` given** → each image is generated with an unseeded (fully random) generator. Output filenames get a positional suffix (`seed_NaN_1.png`, `seed_NaN_2.png`, ...) so files don't collide. The actual random value used internally is not captured anywhere — the response's `seed` field for these images is `null`, so they cannot be deterministically reproduced from the response alone.
+- **`seed` given, no `spread`** → each image in the batch gets a distinct, deterministic seed (`seed`, `seed+1`, `seed+2`, ...). Fully reproducible: the same request produces the same seeds, and each seed maps to its own output file.
+- **`seed` and `spread` both given** → intentionally *non-deterministic*: each image gets a random value in `[seed - spread, seed + spread]`, freshly randomized on every call. Deliberate exploration feature (get variations near a seed), not part of the core SRS contract — running the same request twice will not produce the same images.
+
+**Bottom line:** single-image requests and multi-image requests with an explicit `seed` (no `spread`) are both fully reproducible. Only the `spread` case is intentionally non-reproducible, by design.
+
+---
+## Prompt Refinement Engine (PRE)
+
+When `refine: true`, the engine expands short prompts into detailed image descriptions optimized for SDXL, before generation. This path is **hybrid**, not purely local:
+
+1. **First attempt:** [Groq](https://groq.com/)-hosted `qwen/qwen3.6-27b` (cloud API call, requires `GROQ_API_KEY`).
+2. **Fallback:** local **Mistral 7B** via Ollama, if Groq fails or `GROQ_API_KEY` isn't set.
+3. **Last resort:** the original, unrefined prompt is passed through unchanged if both fail.
+
+`refine: true` is **not** purely local by default — it sends your prompt to Groq's cloud API unless `GROQ_API_KEY` is unset, in which case it's local-only via Ollama. Ollama itself is managed automatically when available (started on app launch, stopped on exit) — the app doesn't fail to start if Ollama isn't installed.
+
+---
 ## Running the tests
 
 Install the test dependencies once (`requirements_for_tests.txt` mirrors `requirements.txt` but pulls the CPU-only build of `torch`/`torchvision`, so it installs fast and works without a GPU):
@@ -168,30 +200,6 @@ pre-commit install --hook-type pre-commit --hook-type pre-push
 
 - **On commit:** fast hygiene checks (trailing whitespace, end-of-file fixer).
 - **On push:** the same selective test + contract-test logic as CI, so breakage shows up before you open a PR, not after.
----
-
-## Guidance, style, and upscaling
-
-### ControlNet guidance
-Pass `controls` in the request body to condition generation on reference images: a list of base64 `images`, plus a `controls` list where each entry has a `selector` (index into `images`), a `type` (`canny` / `depth` / `pose` / `scribble`), and an optional per-control `strength`. Each control image is run through the matching preprocessor (Canny edge detection, MiDaS depth, OpenPose, HED scribble) before being fed to a type-specific SDXL ControlNet checkpoint. Omitted `strength` falls back to a per-checkpoint default tuned in the profile registry (defaults vary — e.g. Canny is 0.70 on the base SDXL checkpoint, 0.65 on Albedo/Juggernaut, 0.85 on DreamShaper). Requesting more than 3 simultaneous controls automatically switches to CPU offload to manage VRAM.
-
-### LoRA style presets
-`style_preset` selects one of 8 curated style LoRAs (`fantasy`, `dark_fantasy`, `cartoonish_fantasy`, `cyberpunk`, `realism_cartoonish`, `scifi_fantasy`, `medieval_fantasy`, `anime_aesthetic`), each mapped to a specific HuggingFace LoRA. `lora_strength` (0–1, default 0.8) controls blend weight. If the LoRA fails to load, generation continues without it rather than failing the request — logged as a warning, not silently dropped.
-
-### Upscaling
-`upscale_quality` controls post-generation upscaling: `none` (default, no upscaling), `enhanced` (ESRGAN — the specific checkpoint is chosen per profile, e.g. anime-tuned for `PRODUCT`, standard for `CHARACTER`/`SCENE_FRAME`), or `generative` (latent diffusion upscaler via `stabilityai/stable-diffusion-x4-upscaler`, fixed denoising strength 0.3 — slower, but can add detail rather than just sharpening).
-
----
-
-## Seeds and batches
-
-Current, verified-against-code behavior for `batch_count > 1` (three distinct cases):
-
-- **No `seed` given** → each image is generated with an unseeded (fully random) generator. Output filenames get a positional suffix (`seed_NaN_1.png`, `seed_NaN_2.png`, ...) so files don't collide. The actual random value used internally is not captured anywhere — the response's `seed` field for these images is `null`, so they cannot be deterministically reproduced from the response alone.
-- **`seed` given, no `spread`** → each image in the batch gets a distinct, deterministic seed (`seed`, `seed+1`, `seed+2`, ...). Fully reproducible: the same request produces the same seeds, and each seed maps to its own output file.
-- **`seed` and `spread` both given** → intentionally *non-deterministic*: each image gets a random value in `[seed - spread, seed + spread]`, freshly randomized on every call. Deliberate exploration feature (get variations near a seed), not part of the core SRS contract — running the same request twice will not produce the same images.
-
-**Bottom line:** single-image requests and multi-image requests with an explicit `seed` (no `spread`) are both fully reproducible. Only the `spread` case is intentionally non-reproducible, by design.
 
 ---
 ## Smoke tests
@@ -209,22 +217,11 @@ Or run one workflow at a time, e.g. `python -m smoke_tests.test_basic_generation
 **Note:** the full suite makes 30+ real generation requests and can take several minutes — meant for manual/occasional verification, not per-commit CI.
 
 ---
-## Prompt Refinement Engine (PRE)
-
-When `refine: true`, the engine expands short prompts into detailed image descriptions optimized for SDXL, before generation. This path is **hybrid**, not purely local:
-
-1. **First attempt:** [Groq](https://groq.com/)-hosted `qwen/qwen3.6-27b` (cloud API call, requires `GROQ_API_KEY`).
-2. **Fallback:** local **Mistral 7B** via Ollama, if Groq fails or `GROQ_API_KEY` isn't set.
-3. **Last resort:** the original, unrefined prompt is passed through unchanged if both fail.
-
-`refine: true` is **not** purely local by default — it sends your prompt to Groq's cloud API unless `GROQ_API_KEY` is unset, in which case it's local-only via Ollama. Ollama itself is managed automatically when available (started on app launch, stopped on exit) — the app doesn't fail to start if Ollama isn't installed.
-
----
 ## Known limitations
 
 Everything below was checked against the current code and current benchmark data, and describes what this system can and can't prove about itself yet.
 
-- **The quality gates are not yet calibrated.** All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, `TILING`) are engineering estimates, not derived from labeled data. This means the benchmark below can show *consistency* across profiles/checkpoints/LoRA, but not yet *proof* that one recipe is objectively better than another — that requires calibrating the gates against a labeled golden set first.
+- **The quality gates are not yet calibrated.** All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, `TILING`) are engineering estimates, not derived from labeled data. This means the benchmark above can show *consistency* across profiles/checkpoints/LoRA, but not yet *proof* that one recipe is objectively better than another — that requires calibrating the gates against a labeled golden set first.
 - **`HANDS` classifier reliability.** The anatomy classifier (`angusleung100`) was fine-tuned on a small dataset (~134 images) and, across manual testing on dozens of generations, doesn't meaningfully discriminate hand quality for this project's art style and pose distribution — grip/weapon-holding poses in particular. Treat the `HANDS` score as experimental, not a trustworthy signal.
 - **`FACE` detector domain mismatch.** mediapipe's face detector (BlazeFace) is trained exclusively on real photographs, per its official model card — not illustrated or stylized art. Observed false positives on symmetric, paired decorative hardware (a sword's crossguard/pommel; a book's brass clasp) suggest it can misfire on this project's fantasy-illustration style. Treat `FACE` results as directional, not ground truth.
 - **`CLIP` threshold is lenient relative to observed scores.** Across benchmark data, CLIP scores cluster around 0.29–0.39, comfortably above the current 0.20 fail / 0.25 warning thresholds — in practice this gate has not yet failed a real generation, which limits how much it's currently telling us.
