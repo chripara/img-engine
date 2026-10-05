@@ -35,6 +35,7 @@ Download your preferred SDXL checkpoint (`.safetensors`) and set the path via th
 |---|---|---|
 | `GROQ_API_KEY` | Optional | Enables the primary (cloud) PRE path. Without it, PRE falls back to local Ollama/Mistral, or passes the prompt through unrefined if neither is available. |
 | `OLLAMA_PATH` | Optional | Overrides auto-detection of the Ollama executable. If unset, the app tries `shutil.which("ollama")`, then falls back to assuming `ollama` is on PATH. |
+| `APP_ENV` | Optional | Set to `development` to enable Flask debug mode. Unset (the default) runs with `DEBUG=False`. Do not enable it when the API is reachable beyond localhost (`run.py` binds to `0.0.0.0`). |
 
 ---
 
@@ -58,7 +59,7 @@ Content-Type: application/json
 
 {
   "prompt": "tanzanite crystal orb held in an open palm, deep violet aura, fantasy game item",
-  "profile": "PRODUCT",
+  "profile": "product",
   "feeling": "Mystical & Ethereal",
   "environment": "Dark Dungeon",
   "num_images": 3,
