@@ -2,7 +2,7 @@
 
 > Local, offline image generation engine with pluggable model backends, profile-based recipes, batch generation, prompt refinement, automatic quality gates, and VRAM-safe execution. Built for game asset pipelines and creative production workflows.
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)
 ![PyTorch](https://img.shields.io/badge/PyTorch-CUDA-ee4c2c?logo=pytorch)
 ![Diffusers](https://img.shields.io/badge/HuggingFace-Diffusers-yellow?logo=huggingface)
 ![Flask](https://img.shields.io/badge/Flask-REST%20API-black?logo=flask)
