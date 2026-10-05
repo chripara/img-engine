@@ -1,6 +1,6 @@
 # img-engine
 
-> Local, offline image generation engine with pluggable model backends, profile-based recipes, batch generation, prompt refinement, automatic quality gates, and VRAM-safe execution. Built for game asset pipelines and creative production workflows.
+> Local, offline image generation engine with pluggable model backends, profile-based recipes, batch generation, prompt refinement, automatic quality gates, and VRAM-safe execution. A portfolio project built around game-asset generation.
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)
 ![PyTorch](https://img.shields.io/badge/PyTorch-CUDA-ee4c2c?logo=pytorch)
@@ -28,7 +28,7 @@ A portfolio project exploring how to build a local image-generation service: plu
 
 Image generation itself is 100% local — no cloud inference, no data leaving your machine for the actual diffusion pipeline. Two documented exceptions: the optional [Prompt Refinement Engine](#prompt-refinement-engine-pre), and first-run model downloads for some [quality gates](#quality-gates-and-benchmark-harness).
 
-Every generated image is scored by five automatic quality gates (tiling, prompt adherence, hand/face plausibility, general visual quality), and a benchmark harness runs a fixed prompt set across every profile, checkpoint, and LoRA combination. The gates are experimental and uncalibrated — see [Known limitations](#known-limitations).
+Every generated image is scored by five automatic quality gates (tiling, prompt adherence, hand/face plausibility, general visual quality), and a benchmark harness runs a fixed prompt set across all three profiles, with and without a style LoRA. The gates are experimental and uncalibrated — see [Known limitations](#known-limitations).
 
 ---
 ## Architecture
@@ -63,11 +63,7 @@ Every generated image is scored by five automatic quality gates (tiling, prompt 
 └─────────────────────────────────┘
 ```
 
-**Note on the Gradio UI:** the UI builds its own request object from raw form values and sends it as JSON over HTTP to the Flask API — it does not duplicate or bypass validation. The Flask API's `GenerateRequest` schema is the single source of truth; the UI's local schema is intentionally independent since it exists to serialize dropdown/form values for local debugging, not to enforce the contract.
-
-**Note on the upscaler backends:** `ESRGANBackend` and `LatentDiffusionBackend` share their `load`/`unload` context-manager protocol via a common `BaseBackend.__enter__`/`__exit__`, so each backend loads its model exactly once per batch. Per-image seed and index are threaded through to the upscaler stage, so upscaled output filenames don't collide even across a seedless batch.
-
-**Note on load/unload lifecycle:** the SDXL backend is loaded fresh and unloaded after every request rather than kept resident in VRAM between requests. This is a deliberate choice, not an oversight: measured `load()` cost is ~0.5–1s (`safetensors` uses memory-mapped loading, so most of that time is the `.to('cuda')` transfer and LoRA fuse, not disk I/O) — negligible next to actual generation time. An instance cache to avoid reloading between requests was evaluated and not pursued for that reason; the per-request load/unload also keeps VRAM usage predictable on single-GPU hardware.
+Design notes (UI vs. API validation, upscaler lifecycle, per-request load/unload) are in [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
 
 ---
 ## Profiles
@@ -105,7 +101,7 @@ After each image is generated, it passes through five automatic quality checks. 
 
 ### Development tools built around the gates
 
-**Golden-set generator** (`utils/generate_golden_set.py`) generates a fixed, reproducible sample of images (15 curated prompts × 4 fixed seeds = 60 images) for manually evaluating and calibrating the gates above. Outputs go to a timestamped folder under `output/golden_set/`, alongside a `manifest.json` recording each image's prompt, profile, seed, and gate scores. Sample outputs (images + manifests) are hosted as downloadable assets on the [GitHub Releases page](https://github.com/chripara/img-engine/releases/tag/assets-v1) rather than committed in this repo, keeping the clone lightweight while still making results reviewable without a GPU.
+**Golden-set generator** (`utils/generate_golden_set.py`) generates a fixed, reproducible sample of images (15 curated prompts × 4 fixed seeds = 60 images) for manually reviewing the gates above. Outputs go to a timestamped folder under `output/golden_set/`, alongside a `manifest.json` recording each image's prompt, profile, seed, and gate scores. Sample outputs (images + manifests) are hosted as downloadable assets on the [GitHub Releases page](https://github.com/chripara/img-engine/releases/tag/assets-v1) rather than committed in this repo, keeping the clone lightweight while still making results reviewable without a GPU.
 
 ```powershell
 python -m utils.generate_golden_set
@@ -113,7 +109,7 @@ python -m utils.generate_golden_set
 
 **Cross-profile / LoRA benchmark** (`utils/generate_benchmark.py`) runs a fixed prompt set across every profile, seed, and LoRA on/off variant, scoring each image with the same gates. Outputs go to a timestamped folder under `output/benchmark/`, alongside a `manifest.json` recording profile, prompt, seed, LoRA variant, and gate results.
 
-**This validates the benchmarking methodology, not a "best recipe" claim.** Since the gates aren't calibrated yet (see [Known limitations](#known-limitations)), pass/fail results here aren't proof that one profile or checkpoint is objectively better than another. What it does prove: the infrastructure to make that comparison exists, runs end-to-end, and produces comparable, structured evidence — the prerequisite for a real answer once calibration happens.
+**This validates the benchmarking methodology, not a "best recipe" claim.** Since the gates aren't calibrated (see [Known limitations](#known-limitations)), pass/fail results here aren't proof that one profile or checkpoint is objectively better than another. What it does prove: the infrastructure to make that comparison exists, runs end-to-end, and produces comparable, structured evidence — the groundwork a calibration effort would start from.
 
 ```powershell
 python -m utils.generate_benchmark
@@ -221,7 +217,7 @@ Or run one workflow at a time, e.g. `python -m smoke_tests.test_basic_generation
 
 Everything below was checked against the current code and current benchmark data, and describes what this system can and can't prove about itself yet.
 
-- **The quality gates are not yet calibrated.** All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, `TILING`) are engineering estimates, not derived from labeled data. This means the benchmark above can show *consistency* across profiles/checkpoints/LoRA, but not yet *proof* that one recipe is objectively better than another — that requires calibrating the gates against a labeled golden set first.
+- **Gate calibration is out of scope.** All threshold values (`CLIP`, `HANDS`, `FACE`, `IQA`, `TILING`) are engineering estimates, not derived from labeled data. Calibrating them is a research problem of its own; the gates are here to demonstrate the evaluation pipeline, not to claim accuracy. So the benchmark above can show *consistency* across profiles/checkpoints/LoRA, but not *proof* that one recipe is objectively better than another.
 - **`HANDS` classifier reliability.** The anatomy classifier (`angusleung100`) was fine-tuned on a small dataset (~134 images) and, across manual testing on dozens of generations, doesn't meaningfully discriminate hand quality for this project's art style and pose distribution — grip/weapon-holding poses in particular. Treat the `HANDS` score as experimental, not a trustworthy signal.
 - **`FACE` detector domain mismatch.** mediapipe's face detector (BlazeFace) is trained exclusively on real photographs, per its official model card — not illustrated or stylized art. Observed false positives on symmetric, paired decorative hardware (a sword's crossguard/pommel; a book's brass clasp) suggest it can misfire on this project's fantasy-illustration style. Treat `FACE` results as directional, not ground truth.
 - **`CLIP` threshold is lenient relative to observed scores.** Across benchmark data, CLIP scores cluster around 0.29–0.39, comfortably above the current 0.20 fail / 0.25 warning thresholds — in practice this gate has not yet failed a real generation, which limits how much it's currently telling us.
